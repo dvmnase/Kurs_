@@ -1,2 +1,2 @@
-# Kurs_
-backend, Java, Spring, Rest, JPA, topik Bank
+# Bank
+backend, Java, Spring, Rest, JPA, topik bank 
