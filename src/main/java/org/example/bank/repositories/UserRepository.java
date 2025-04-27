@@ -1,6 +1,6 @@
-package org.example.remontpro.repositories;
+package org.example.bank.repositories;
 
-import org.example.remontpro.models.User;
+import org.example.bank.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

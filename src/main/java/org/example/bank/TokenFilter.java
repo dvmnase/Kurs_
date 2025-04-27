@@ -1,6 +1,5 @@
-package org.example.remontpro;
+package org.example.bank;
 
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

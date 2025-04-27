@@ -1,4 +1,4 @@
-package org.example.remontpro.controllers;
+package org.example.bank.controllers;
 
 
 import org.springframework.web.bind.annotation.GetMapping;

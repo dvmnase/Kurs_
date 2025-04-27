@@ -1,9 +1,8 @@
-package org.example.remontpro;
+package org.example.bank;
 
-import org.example.remontpro.models.User;
+import org.example.bank.models.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

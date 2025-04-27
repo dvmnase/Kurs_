@@ -1,13 +1,32 @@
-package org.example.remontpro.requests;
+package org.example.bank.models;
 
 
-import lombok.Data;
+import jakarta.persistence.*;
 
+@Entity
+@Table (name ="users")
 
-public class SigninRequest {
+public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    private Long id;
+    @Column
     private String username;
-    private String email;
-    private String password;
+    @Column
+    private  String email;
+    @Column
+    private  String password;
+
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getUsername() {
         return username;

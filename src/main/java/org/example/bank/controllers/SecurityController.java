@@ -1,18 +1,17 @@
-package org.example.remontpro.controllers;
+package org.example.bank.controllers;
 
 
-import org.example.remontpro.JwtCore;
-import org.example.remontpro.models.User;
-import org.example.remontpro.repositories.UserRepository;
-import org.example.remontpro.requests.SigninRequest;
-import org.example.remontpro.requests.SignupRequest;
+import org.example.bank.JwtCore;
+import org.example.bank.models.User;
+import org.example.bank.repositories.UserRepository;
+import org.example.bank.requests.SigninRequest;
+import org.example.bank.requests.SignupRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;

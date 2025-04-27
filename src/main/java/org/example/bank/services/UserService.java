@@ -1,9 +1,9 @@
-package org.example.remontpro.services;
+package org.example.bank.services;
 
 
-import org.example.remontpro.UserDetailsImpl;
-import org.example.remontpro.models.User;
-import org.example.remontpro.repositories.UserRepository;
+import org.example.bank.UserDetailsImpl;
+import org.example.bank.models.User;
+import org.example.bank.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

@@ -1,4 +1,4 @@
-package org.example.remontpro;
+package org.example.bank;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

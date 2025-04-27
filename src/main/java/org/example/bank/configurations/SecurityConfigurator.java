@@ -1,7 +1,7 @@
-package org.example.remontpro.configurations;
+package org.example.bank.configurations;
 
-import org.example.remontpro.TokenFilter;
-import org.example.remontpro.services.UserService;
+import org.example.bank.TokenFilter;
+import org.example.bank.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

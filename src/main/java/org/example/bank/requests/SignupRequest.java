@@ -1,4 +1,4 @@
-package org.example.remontpro.requests;
+package org.example.bank.requests;
 
 public class SignupRequest {
     private String username;
