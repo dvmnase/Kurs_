@@ -29,6 +29,8 @@ public class TokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
+        logger.info("Incoming request to: " + request.getRequestURI());
+
         try {
             String jwt = parseJwt(request);
             logger.debug("Extracted JWT: " + jwt);
@@ -52,9 +54,11 @@ public class TokenFilter extends OncePerRequestFilter {
         } catch (Exception e) {
             logger.error("Authentication error: " + e.getMessage(), e);
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Invalid token or authentication failed");
+            response.getWriter().flush();
             return;
         }
-
+        logger.info("Passing request down the filter chain...");
         filterChain.doFilter(request, response);
     }
 
