@@ -8,7 +8,8 @@ example JSON
 {
     "username": "qwоerty",
     "email": "qwerоty@gmail.com",
-    "password": "sdfghj"
+    "password": "sdfghj",
+    "role": "ADMIN"
 }
 
 authentication (return token) POST http://localhost:8080/auth/signin 
