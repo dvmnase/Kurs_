@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -47,14 +48,20 @@ public class JwtCore {
     }
     public String generateToken(Authentication auth) {
         UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
+        String role = userDetails.getAuthorities().stream()
+                .findFirst()
+                .map(GrantedAuthority::getAuthority)
+                .orElse("ROLE_USER");
+
         String token = Jwts.builder()
                 .subject(userDetails.getUsername())
+                .claim("role", role.replace("ROLE_", ""))
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + lifetime))
                 .signWith(secretKey)
                 .compact();
 
-        logger.debug("Generated token for user: {}", userDetails.getUsername());
+        logger.debug("Generated token for user: {} with role: {}", userDetails.getUsername(), role);
         return token;
     }
 

@@ -18,8 +18,19 @@ public class User {
     private  String email;
     @Column
     private  String password;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, columnDefinition = "ENUM('ADMIN', 'USER', 'EMPLOYEE')")
+    private Role role;
 
 
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
     public Long getId() {
         return id;
     }
@@ -51,4 +62,6 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+
+
 }
