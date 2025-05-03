@@ -4,4 +4,56 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     role ENUM('ADMIN', 'USER', 'EMPLOYEE') NOT NULL
-);
+    );
+
+CREATE TABLE IF NOT EXISTS employees (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    user_id BIGINT NOT NULL,
+    full_name VARCHAR(255) NOT NULL,
+    phone_number VARCHAR(20),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+
+CREATE TABLE IF NOT EXISTS clients (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    user_id BIGINT NOT NULL,
+    full_name VARCHAR(255) NOT NULL,
+    phone_number VARCHAR(20),
+    is_blocked BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+
+CREATE TABLE IF NOT EXISTS accounts (
+    id  BIGINT PRIMARY KEY AUTO_INCREMENT,
+    user_id BIGINT NOT NULL,
+    account_number VARCHAR(20) UNIQUE NOT NULL,
+    type ENUM('CURRENT', 'DEPOSIT', 'CURRENCY') NOT NULL,
+    balance DECIMAL(15,2) DEFAULT 0.00,
+    status ENUM('ACTIVE', 'BLOCKED') DEFAULT 'ACTIVE',
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+
+CREATE TABLE IF NOT EXISTS transactions (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    from_account_id BIGINT NOT NULL,
+    to_account_id BIGINT,
+    to_external VARCHAR(34),
+    amount DECIMAL(15,2) NOT NULL,
+    type ENUM('INTERNAL', 'EXTERNAL') NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (from_account_id) REFERENCES accounts(id),
+    FOREIGN KEY (to_account_id) REFERENCES accounts(id)
+    );
+
+CREATE TABLE IF NOT EXISTS applications (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    user_id BIGINT NOT NULL,
+    type ENUM('CARD_ISSUE', 'ACCOUNT_CLOSE') NOT NULL,
+    account_id BIGINT,
+    status ENUM('NEW', 'IN_PROGRESS', 'APPROVED', 'REJECTED') DEFAULT 'NEW',
+    comment TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (account_id) REFERENCES accounts(id)
+    );

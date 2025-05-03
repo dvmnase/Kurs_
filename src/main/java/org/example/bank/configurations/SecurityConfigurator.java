@@ -59,9 +59,10 @@ public class SecurityConfigurator {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
-                    config.setAllowedOrigins(List.of("*"));
-                    config.setAllowedMethods(List.of("*"));
+                    config.setAllowedOrigins(List.of("http://localhost:3000"));
+                    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                     config.setAllowedHeaders(List.of("*"));
+                    config.setAllowCredentials(true);
                     return config;
                 }))
                 .exceptionHandling(exceptions -> exceptions
@@ -70,11 +71,8 @@ public class SecurityConfigurator {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/secured/**").authenticated()
-
                 .requestMatchers("/secured/admin/**").hasRole("ADMIN")
                 .requestMatchers("/secured/employee/**").hasAnyRole("EMPLOYEE", "ADMIN")
-                .requestMatchers("/secured/**").authenticated()  // <--- добавляем это!
                 .anyRequest().authenticated()                    // <--- и это!
                 )
                 .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);

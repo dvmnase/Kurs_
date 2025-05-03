@@ -4,9 +4,20 @@ public class AuthResponse {
     private String token;
     private String role;
 
-    public AuthResponse(String token, String role) {
+    public Object getData() {
+        return data;
+    }
+
+    public void setData(Object data) {
+        this.data = data;
+    }
+
+    private Object data;
+
+    public AuthResponse(String token, String role, Object data) {
         this.token = token;
         this.role = role;
+        this.data = data;
     }
 
     // Геттеры и сеттеры
