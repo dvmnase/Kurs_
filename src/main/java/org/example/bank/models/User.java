@@ -1,9 +1,11 @@
 package org.example.bank.models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Table (name ="users")
 
 public class User {
@@ -23,7 +25,6 @@ public class User {
     private Role role;
 
 
-
     public Role getRole() {
         return role;
     }
@@ -31,6 +32,10 @@ public class User {
     public void setRole(Role role) {
         this.role = role;
     }
+
+
+
+
     public Long getId() {
         return id;
     }
@@ -62,6 +67,4 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
-
-
 }
