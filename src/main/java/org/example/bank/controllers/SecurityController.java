@@ -24,6 +24,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/auth")
 public class SecurityController {
@@ -120,21 +122,24 @@ public class SecurityController {
         String role = userDetails.getAuthorities().stream()
                 .findFirst()
                 .map(GrantedAuthority::getAuthority)
-                .orElse("ROLE_USER")
-                .replace("ROLE_", "");
+                .orElse("ROLE_USER");
 
         Long userId = userDetails.getId();
 
         return switch (role) {
-            case "USER" -> clientRepository.findByUserId(userId)
-                    .map(client -> ResponseEntity.ok(new AuthResponse(jwt, role, client)))
-                    .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body(new AuthResponse(jwt, role, null)));
+            case "ROLE_USER" -> clientRepository.findByUserId(userId)
+                    .map(client -> ResponseEntity.ok(new AuthResponse(jwt, "USER", Map.of(  // Возвращаем "USER" без префикса
+                            "id", client.getId(),
+                            "fullName", client.getFullName(),
+                            "phoneNumber", client.getPhoneNumber()
+                    ))))
+                    .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body(new AuthResponse(jwt, "USER", null)));
 
-            case "EMPLOYEE" -> employeeRepository.findByUserId(userId)
-                    .map(employee -> ResponseEntity.ok(new AuthResponse(jwt, role, employee)))
-                    .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body(new AuthResponse(jwt, role, null)));
+            case "ROLE_EMPLOYEE" -> employeeRepository.findByUserId(userId)
+                    .map(employee -> ResponseEntity.ok(new AuthResponse(jwt, "EMPLOYEE", employee)))
+                    .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body(new AuthResponse(jwt, "EMPLOYEE", null)));
 
-            case "ADMIN" -> ResponseEntity.ok(new AuthResponse(jwt, role, null));
+            case "ROLE_ADMIN" -> ResponseEntity.ok(new AuthResponse(jwt, "ADMIN", null));
 
             default -> ResponseEntity.status(HttpStatus.FORBIDDEN).body(new AuthResponse(jwt, "UNKNOWN", null));
         };
