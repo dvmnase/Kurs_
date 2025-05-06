@@ -1,0 +1,207 @@
+@import ../helpers
+
+.container
+    padding: 20px
+
+.header
+    display: flex
+    justify-content: space-between
+    align-items: center
+    margin-bottom: 20px
+
+.title
+    font-size: 24px
+    font-weight: 600
+    color: $neutrals2
+    +dark
+        color: $neutrals8
+
+.addButton
+    padding: 8px 16px
+    background: $yellow
+    color: $neutrals8
+    border-radius: 4px
+    font-weight: 500
+    cursor: pointer
+    transition: all .2s
+    &:hover
+        background: darken($yellow, 10)
+
+.table
+    background: $neutrals8
+    border-radius: 12px
+    overflow: hidden
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1)
+    +dark
+        background: $neutrals2
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3)
+
+.tableHeader
+    display: grid
+    grid-template-columns: 60px 100px 1fr 2fr 100px 150px
+    padding: 16px
+    background: $neutrals6
+    font-weight: 600
+    color: $neutrals2
+    +dark
+        background: $neutrals3
+        color: $neutrals8
+
+.tableRow
+    display: grid
+    grid-template-columns: 60px 100px 1fr 2fr 100px 150px
+    padding: 16px
+    border-bottom: 1px solid $neutrals6
+    +dark
+        border-color: $neutrals3
+    &:last-child
+        border-bottom: none
+
+.cell
+    padding: 0 8px
+    color: $neutrals2
+    +dark
+        color: $neutrals8
+
+.serviceImage
+    width: 80px
+    height: 80px
+    object-fit: cover
+    border-radius: 4px
+    border: 1px solid $neutrals6
+    +dark
+        border-color: $neutrals4
+
+.editButton, .deleteButton
+    padding: 6px 12px
+    border-radius: 4px
+    font-size: 14px
+    font-weight: 500
+    cursor: pointer
+    transition: all .2s
+    margin-top: 5px
+
+
+.editButton
+    background: $yellow
+    color: $neutrals8
+    &:hover
+        background: darken($yellow, 10)
+
+.deleteButton
+    background: $orange
+    color: $neutrals8
+    &:hover
+        background: darken($orange, 10)
+
+.modal
+    position: fixed
+    top: 0
+    left: 0
+    width: 100%
+    height: 100%
+    background: rgba(0, 0, 0, 0.5)
+    display: flex
+    justify-content: center
+    align-items: center
+    z-index: 1000
+
+.modalContent
+    background: white
+    padding: 20px
+    border-radius: 8px
+    width: 500px
+    max-width: 90%
+    max-height: 90vh
+    overflow-y: auto
+    +dark
+        background: $neutrals2
+
+    h2
+        margin-bottom: 20px
+        text-align: center
+        color: $neutrals2
+        +dark
+            color: $neutrals8
+
+.formGroup
+    margin-bottom: 15px
+
+    label
+        display: block
+        margin-bottom: 5px
+        color: $neutrals2
+        +dark
+            color: $neutrals8
+
+    input, textarea
+        width: 100%
+        padding: 8px
+        border: 1px solid $neutrals6
+        border-radius: 4px
+        background: $neutrals8
+        color: $neutrals2
+        +dark
+            background: $neutrals3
+            border-color: $neutrals4
+            color: $neutrals8
+
+    textarea
+        min-height: 100px
+        resize: vertical
+
+.imagePreview
+    margin-top: 10px
+    display: flex
+    justify-content: center
+    align-items: center
+    max-width: 100%
+    overflow: hidden
+
+    .previewImage
+        max-width: 200px
+        max-height: 200px
+        object-fit: contain
+        border-radius: 4px
+        border: 1px solid $neutrals6
+        +dark
+            border-color: $neutrals4
+
+.modalActions
+    display: flex
+    justify-content: flex-end
+    gap: 12px
+    margin-top: 24px
+
+    button
+        padding: 8px 16px
+        border-radius: 4px
+        font-weight: 500
+        cursor: pointer
+        transition: all .2s
+
+        &[type="submit"]
+            background: $yellow
+            color: $neutrals8
+            &:hover
+                background: darken($yellow, 10)
+
+        &[type="button"]
+            background: $neutrals6
+            color: $neutrals2
+            +dark
+                background: $neutrals3
+                color: $neutrals8
+            &:hover
+                background: darken($neutrals6, 10)
+                +dark
+                    background: darken($neutrals3, 10)
+
+.error
+    color: $orange
+    margin-bottom: 16px
+    padding: 8px
+    background: rgba($orange, 0.1)
+    border-radius: 4px
+    +dark
+        background: rgba($orange, 0.2) 

@@ -4,6 +4,7 @@ import org.example.bank.entities.Account;
 import org.example.bank.models.AccountStatus;
 import org.example.bank.models.AccountType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,6 +17,9 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     List<Account> findByStatus(AccountStatus status);
     List<Account> findByType(AccountType type);
     List<Account> findByUserIdAndStatus(Long userId, AccountStatus status);
-
+    long count();
+    long countByStatus(AccountStatus status);
+    @Query("SELECT COUNT(a) FROM Account a WHERE a.status = :status")
+    long countAccountsByStatus(AccountStatus status);
 
 }

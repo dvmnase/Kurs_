@@ -1,0 +1,91 @@
+@import ../helpers
+
+.container
+    background: $neutrals8
+    padding: 20px
+    border-radius: 8px
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1)
+    +dark
+        background: $neutrals2
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3)
+
+    h3
+        font-size: 18px
+        font-weight: 600
+        color: $neutrals2
+        margin-bottom: 20px
+        +dark
+            color: $neutrals8
+
+.rating, .comment
+    margin-bottom: 20px
+
+    label
+        display: block
+        font-size: 14px
+        color: $neutrals4
+        margin-bottom: 8px
+        +dark
+            color: $neutrals6
+
+.ratingSelect
+    width: 100%
+    padding: 8px
+    border: 1px solid $neutrals6
+    border-radius: 4px
+    background: $neutrals8
+    color: $neutrals2
+    font-size: 14px
+    +dark
+        background: $neutrals3
+        border-color: $neutrals3
+        color: $neutrals8
+
+.commentTextarea
+    width: 100%
+    min-height: 100px
+    padding: 8px
+    border: 1px solid $neutrals6
+    border-radius: 4px
+    background: $neutrals8
+    color: $neutrals2
+    font-size: 14px
+    resize: vertical
+    +dark
+        background: $neutrals3
+        border-color: $neutrals3
+        color: $neutrals8
+
+.error
+    color: $orange
+    font-size: 14px
+    margin-bottom: 16px
+    padding: 8px
+    background: rgba($orange, 0.1)
+    border-radius: 4px
+    +dark
+        background: rgba($orange, 0.2)
+
+.success
+    color: $green
+    font-size: 14px
+    margin-bottom: 16px
+    padding: 8px
+    background: rgba($green, 0.1)
+    border-radius: 4px
+    +dark
+        background: rgba($green, 0.2)
+
+.submitButton
+    width: 100%
+    padding: 12px
+    background: $yellow
+    color: $neutrals8
+    border: none
+    border-radius: 4px
+    font-weight: 500
+    cursor: pointer
+    transition: all .2s
+
+    &:hover
+        background: darken($yellow, 10) 

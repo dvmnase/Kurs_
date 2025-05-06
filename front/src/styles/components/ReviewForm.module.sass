@@ -1,0 +1,118 @@
+@import ../helpers;
+
+.form
+    max-width: 700px
+    margin: 0 auto
+    padding: 24px
+
+.field
+    margin-bottom: 24px
+
+    label
+        display: block
+        font-size: 14px
+        font-weight: 500
+        color: $neutrals2
+        margin-bottom: 8px
+        +dark
+            color: $neutrals8
+
+.select,
+.textarea
+    width: 100%
+    padding: 12px 16px
+    border: 2px solid $neutrals6
+    border-radius: 8px
+    background: $neutrals8
+    font-size: 16px
+    transition: all 0.3s ease
+    +dark
+        background: $neutrals2
+        border-color: $neutrals3
+        color: $neutrals8
+
+    &:focus
+        outline: none
+        border-color: $orange
+        box-shadow: 0 0 0 3px rgba($orange, 0.1)
+
+.textarea
+    min-height: 120px
+    resize: vertical
+
+.rating
+    display: flex
+    gap: 15px
+    margin: 10px
+
+.star
+    width: 40px
+    height: 40px
+    display: flex
+    align-items: center
+    justify-content: center
+    background: $neutrals8
+    border: 2px solid $neutrals6
+    border-radius: 50% // Сделаем звездочки круглыми
+    color: $neutrals4
+    font-size: 24px
+    cursor: pointer
+    transition: all 0.3s ease
+    +dark
+        background: $neutrals2
+        border-color: $neutrals3
+
+    &:hover
+        border-color: $orange
+        color: $orange
+        transform: scale(1.1)
+
+    &.active
+        background: $orange
+        border-color: $orange
+        color: white
+
+.submitButton
+    width: 100%
+    padding: 16px
+    background: $orange
+    color: white
+    border: none
+    border-radius: 8px
+    font-size: 16px
+    font-weight: 600
+    cursor: pointer
+    transition: all 0.3s ease
+
+    &:hover
+        background: darken($orange, 5%)
+
+    &:disabled
+        background: $neutrals6
+        cursor: not-allowed
+        +dark
+            background: $neutrals3
+
+.error
+    padding: 12px 16px
+    background: rgba($orange, 0.1)
+    color: $orange
+    border-radius: 8px
+    margin-bottom: 24px
+    font-size: 14px
+
+.success
+    padding: 12px 16px
+    background: rgba($green, 0.1)
+    color: $green
+    border-radius: 8px
+    margin-bottom: 24px
+    font-size: 14px
+
+.empty
+    text-align: center
+    padding: 40px
+    font-size: 16px
+    color: $neutrals4
+    +dark
+        color: $neutrals6

@@ -1,0 +1,144 @@
+@import ../helpers
+
+.container
+    max-width: 1200px
+    margin: 0 auto
+    padding: 20px
+
+    h1
+        font-size: 24px
+        font-weight: 600
+        color: $neutrals2
+        margin-bottom: 30px
+        +dark
+            color: $neutrals8
+
+.filters
+    display: flex
+    gap: 16px
+    margin-bottom: 30px
+    +m
+        flex-direction: column
+
+.filterButton
+    padding: 8px 16px
+    border: 2px solid $neutrals6
+    border-radius: 8px
+    background: $neutrals8
+    color: $neutrals4
+    font-weight: 500
+    cursor: pointer
+    transition: all .2s
+    +dark
+        background: $neutrals2
+        border-color: $neutrals3
+        color: $neutrals6
+    &:hover
+        border-color: $orange
+        color: $orange
+    &.active
+        background: $orange
+        border-color: $orange
+        color: white
+        +dark
+            background: $orange
+            border-color: $orange
+            color: white
+
+.ordersList
+    display: flex
+    flex-direction: column
+    gap: 20px
+
+.orderCard
+    background: $neutrals8
+    border-radius: 12px
+    padding: 20px
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1)
+    cursor: pointer
+    transition: transform .2s, box-shadow .2s
+    +dark
+        background: $neutrals2
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3)
+    &:hover
+        transform: translateY(-4px)
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15)
+        +dark
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4)
+
+.orderHeader
+    display: flex
+    justify-content: space-between
+    align-items: center
+    margin-bottom: 16px
+
+    h3
+        font-size: 18px
+        font-weight: 600
+        color: $neutrals2
+        +dark
+            color: $neutrals8
+
+.status
+    padding: 6px 12px
+    border-radius: 4px
+    font-weight: 500
+    font-size: 14px
+
+    &.NEW
+        background: rgba($blue, 0.1)
+        color: $blue
+
+    &.IN_PROGRESS
+        background: rgba($yellow, 0.1)
+        color: $yellow
+
+    &.COMPLETED
+        background: rgba($green, 0.1)
+        color: $green
+
+    &.CANCELLED
+        background: rgba($orange, 0.1)
+        color: $orange
+
+.orderDetails
+    p
+        margin: 8px 0
+        color: $neutrals4
+        +dark
+            color: $neutrals6
+
+        strong
+            color: $neutrals2
+            margin-right: 8px
+            +dark
+                color: $neutrals8
+
+.empty
+    text-align: center
+    padding: 40px
+    background: $neutrals8
+    border-radius: 12px
+    color: $neutrals4
+    font-size: 18px
+    +dark
+        background: $neutrals2
+        color: $neutrals6
+
+.loading
+    text-align: center
+    padding: 40px
+    font-size: 18px
+    color: $neutrals4
+    +dark
+        color: $neutrals6
+
+.error
+    text-align: center
+    padding: 20px
+    background: rgba($orange, 0.1)
+    color: $orange
+    border-radius: 8px
+    margin: 20px 0
+    +dark
+        background: rgba($orange, 0.2) 

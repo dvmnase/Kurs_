@@ -1,0 +1,95 @@
+@import ../../styles/helpers
+
+.serviceSearch
+    display: flex
+    flex-direction: column
+    gap: 24px
+
+.searchBar
+    position: relative
+    width: 100%
+
+.searchInput
+    width: 100%
+    padding: 16px
+    padding-left: 48px
+    border: 2px solid $neutrals3
+    border-radius: 12px
+    font-size: 16px
+    transition: all 0.3s ease
+    +dark
+        background: $neutrals1
+        border-color: $neutrals2
+        color: $white
+
+    &:focus
+        outline: none
+        border-color: $orange
+        box-shadow: 0 0 0 4px rgba($orange, 0.1)
+
+    &::placeholder
+        color: $neutrals4
+        +dark
+            color: $neutrals6
+
+.serviceList
+    display: grid
+    gap: 24px
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr))
+
+.serviceCard
+    background: $white
+    border-radius: 12px
+    padding: 24px
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1)
+    transition: transform 0.3s ease
+    +dark
+        background: $neutrals1
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2)
+
+    &:hover
+        transform: translateY(-4px)
+
+.serviceHeader
+    display: flex
+    justify-content: space-between
+    align-items: center
+    margin-bottom: 16px
+
+    h3
+        margin: 0
+        font-size: 18px
+        font-weight: 600
+
+.price
+    font-size: 20px
+    font-weight: 600
+    color: $orange
+
+.description
+    margin: 16px 0
+    color: $neutrals4
+    line-height: 1.5
+    +dark
+        color: $neutrals6
+
+.orderButton
+    width: 100%
+    padding: 12px
+    background: $orange
+    color: $white
+    border: none
+    border-radius: 8px
+    font-weight: 600
+    cursor: pointer
+    transition: background 0.3s ease
+
+    &:hover
+        background: darken($orange, 10%)
+
+.loading, .error, .empty
+    text-align: center
+    padding: 40px
+    color: $neutrals4
+    +dark
+        color: $neutrals6 

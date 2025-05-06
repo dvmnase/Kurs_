@@ -1,0 +1,233 @@
+@import ../helpers
+
+.container
+    max-width: 800px
+    margin: 2rem auto
+    padding: 2rem
+    background: #ffffff
+    border-radius: 12px
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1)
+
+.title
+    font-size: 1.8rem
+    color: #2c3e50
+    margin-bottom: 2rem
+    text-align: center
+    font-weight: 600
+
+.selectContainer
+    margin-bottom: 2rem
+
+.label
+    display: block
+    font-size: 1.1rem
+    color: #34495e
+    margin-bottom: 0.5rem
+    font-weight: 500
+
+.select
+    width: 100%
+    padding: 0.8rem 1rem
+    font-size: 1rem
+    border: 2px solid #e0e0e0
+    border-radius: 8px
+    background-color: #ffffff
+    color: #2c3e50
+    cursor: pointer
+    transition: all 0.3s ease
+    appearance: none
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e")
+    background-repeat: no-repeat
+    background-position: right 1rem center
+    background-size: 1em
+
+    &:hover
+        border-color: $orange
+
+    &:focus
+        outline: none
+        border-color: $orange
+        box-shadow: 0 0 0 3px rgba(219, 163, 52, 0.2)
+
+.orderDetails
+    background: #f8f9fa
+    padding: 1.5rem
+    border-radius: 8px
+    margin-top: 1rem
+
+    h3
+        font-size: 1.4rem
+        color: #2c3e50
+        margin-bottom: 1.5rem
+        padding-bottom: 0.5rem
+        border-bottom: 2px solid #e0e0e0
+
+.detail
+    display: flex
+    margin-bottom: 1rem
+    padding: 0.5rem 0
+    border-bottom: 1px solid #e0e0e0
+
+    &:last-child
+        border-bottom: none
+        margin-bottom: 0
+
+.label
+    flex: 0 0 200px
+    font-weight: 500
+    color: #7f8c8d
+
+.value
+    flex: 1
+    color: #2c3e50
+
+    &.new
+        color: #3498db
+        font-weight: 500
+
+    &.inProgress
+        color: #f39c12
+        font-weight: 500
+
+    &.completed
+        color: #27ae60
+        font-weight: 500
+
+    &.cancelled
+        color: #e74c3c
+        font-weight: 500
+
+.loading
+    text-align: center
+    padding: 2rem
+    font-size: 1.2rem
+    color: #7f8c8d
+
+.error
+    text-align: center
+    padding: 2rem
+    color: #e74c3c
+    background: #fde8e8
+    border-radius: 8px
+    margin: 1rem 0
+
+.ordersList
+    flex: 1
+    max-width: 400px
+    display: flex
+    flex-direction: column
+    gap: 12px
+    +m
+        max-width: 100%
+
+.orderButton
+    padding: 16px
+    background: $neutrals8
+    border: 2px solid $neutrals6
+    border-radius: 8px
+    text-align: left
+    cursor: pointer
+    transition: all 0.3s ease
+    +dark
+        background: $neutrals2
+        border-color: $neutrals3
+
+    &:hover
+        border-color: $orange
+        transform: translateX(4px)
+
+    &.active
+        border-color: $orange
+        background: rgba($orange, 0.1)
+
+.orderInfo
+    display: flex
+    justify-content: space-between
+    align-items: center
+    margin-bottom: 8px
+
+.serviceName
+    font-weight: 600
+    color: $neutrals2
+    +dark
+        color: $neutrals8
+
+.status
+    padding: 4px 8px
+    border-radius: 4px
+    font-size: 12px
+    font-weight: 500
+
+    &.new
+        background: rgba($blue, 0.1)
+        color: $blue
+
+    &.inProgress
+        background: rgba($yellow, 0.1)
+        color: $yellow
+
+    &.completed
+        background: rgba($green, 0.1)
+        color: $green
+
+    &.cancelled
+        background: rgba($orange, 0.1)
+        color: $orange
+
+.date
+    font-size: 12px
+    color: $neutrals4
+    +dark
+        color: $neutrals6
+
+.loading,
+.error,
+.empty
+    text-align: center
+    padding: 40px
+    font-size: 16px
+    color: $neutrals4
+    +dark
+        color: $neutrals6
+
+.error
+    color: $orange
+
+.cancelButtonContainer
+    margin-top: 1.5rem
+    text-align: center
+
+.cancelButton
+    background-color: #dc3545
+    color: white
+    border: none
+    padding: 0.75rem 1.5rem
+    border-radius: 4px
+    font-size: 1rem
+    cursor: pointer
+    transition: background-color 0.2s ease
+
+    &:hover
+        background-color: #c82333
+
+    &:disabled
+        background-color: #e4606d
+        cursor: not-allowed
+
+.successMessage
+    text-align: center
+    padding: 1rem
+    margin-bottom: 1rem
+    background-color: #d4edda
+    color: #155724
+    border: 1px solid #c3e6cb
+    border-radius: 4px
+    animation: fadeIn 0.3s ease-in-out
+
+@keyframes fadeIn
+    from
+        opacity: 0
+        transform: translateY(-10px)
+    to
+        opacity: 1
+        transform: translateY(0) 

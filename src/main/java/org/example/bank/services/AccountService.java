@@ -1,9 +1,6 @@
 package org.example.bank.services;
 
-import org.example.bank.dto.AccountDTO;
-import org.example.bank.dto.CreateAccountDTO;
-import org.example.bank.dto.TransactionDTO;
-import org.example.bank.dto.UpdateAccountDTO;
+import org.example.bank.dto.*;
 import org.example.bank.entities.Account;
 import org.example.bank.entities.Transaction;
 import org.example.bank.exceptions.ResourceNotFoundException;
@@ -84,6 +81,15 @@ public class AccountService {
         return dto;
     }
 
+    public StaticDTO getStats(){
+        long totalAccounts = accountRepository.count();
+        long activeAccounts = accountRepository.countByStatus(AccountStatus.ACTIVE);
+        StaticDTO stats = new StaticDTO();
+        stats.setCount_accounts((int) totalAccounts);
+        stats.setCount_active_accounts((int) activeAccounts);
+
+        return stats;
+    }
     public List<AccountDTO> getCurrentUserAccounts() {
         User currentUser = getCurrentUser();
         return accountRepository.findByUserId(currentUser.getId()).stream()

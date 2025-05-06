@@ -1,0 +1,78 @@
+@import ../helpers
+
+.container
+    max-width: 1200px
+    margin: 0 auto
+    padding: 40px 20px
+
+.title
+    font-size: 32px
+    font-weight: 600
+    color: $neutrals2
+    margin-top: 54px
+    text-align: center
+    +dark
+        color: $neutrals8
+
+.welcome
+    margin-bottom: 40px
+    text-align: center
+    p
+        font-size: 18px
+        color: $neutrals4
+        +dark
+            color: $neutrals6
+
+.actions
+    display: grid
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr))
+    gap: 24px
+    margin-bottom: 40px
+
+.actionButton
+    display: flex
+    align-items: flex-start
+    gap: 16px
+    padding: 24px
+    background: $neutrals8
+    border: 2px solid $neutrals6
+    border-radius: 12px
+    cursor: pointer
+    transition: all 0.3s ease
+    text-align: left
+    +dark
+        background: $neutrals2
+        border-color: $neutrals3
+
+    &:hover
+        transform: translateY(-4px)
+        border-color: $orange
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1)
+        +dark
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3)
+
+    .icon
+        width: 48px
+        height: 48px
+        display: flex
+        align-items: center
+        justify-content: center
+        background: rgba($orange, 0.1)
+        border-radius: 8px
+        color: $orange
+        font-size: 24px
+
+    .content
+        flex: 1
+        h3
+            font-size: 18px
+            font-weight: 600
+            color: $neutrals2
+            margin-bottom: 8px
+            +dark
+                color: $neutrals8
+        p
+            font-size: 14px
+            color: $neutrals4
+            +dark
+                color: $neutrals6 

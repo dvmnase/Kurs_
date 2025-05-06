@@ -1,0 +1,125 @@
+@import ../helpers
+
+.container
+    max-width: 800px
+    margin: 0 auto
+    padding: 20px
+
+    h2
+        font-size: 24px
+        font-weight: 600
+        color: $neutrals2
+        margin-bottom: 30px
+        +dark
+            color: $neutrals8
+
+.details
+    background: $neutrals8
+    padding: 20px
+    border-radius: 8px
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1)
+    margin-bottom: 20px
+    +dark
+        background: $neutrals2
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3)
+
+.section
+    margin-bottom: 20px
+    padding-bottom: 20px
+    border-bottom: 1px solid $neutrals6
+    +dark
+        border-color: $neutrals3
+
+    &:last-child
+        margin-bottom: 0
+        padding-bottom: 0
+        border-bottom: none
+
+    h3
+        font-size: 18px
+        font-weight: 600
+        color: $neutrals2
+        margin-bottom: 15px
+        +dark
+            color: $neutrals8
+
+    p
+        margin: 8px 0
+        color: $neutrals4
+        +dark
+            color: $neutrals6
+
+        strong
+            color: $neutrals2
+            margin-right: 8px
+            +dark
+                color: $neutrals8
+
+.status
+    display: inline-block
+    padding: 6px 12px
+    border-radius: 4px
+    font-weight: 500
+    margin-bottom: 10px
+
+    &.NEW
+        background: rgba($blue, 0.1)
+        color: $blue
+
+    &.IN_PROGRESS
+        background: rgba($yellow, 0.1)
+        color: $yellow
+
+    &.COMPLETED
+        background: rgba($green, 0.1)
+        color: $green
+
+    &.CANCELLED
+        background: rgba($orange, 0.1)
+        color: $orange
+
+.actions
+    display: flex
+    gap: 10px
+    margin-top: 20px
+
+.cancelButton, .reviewButton
+    padding: 12px 20px
+    border-radius: 4px
+    font-weight: 500
+    cursor: pointer
+    transition: all .2s
+
+.cancelButton
+    background: $orange
+    color: white
+    border: none
+
+    &:hover
+        background: darken($orange, 10)
+
+.reviewButton
+    background: $yellow
+    color: $neutrals8
+    border: none
+
+    &:hover
+        background: darken($yellow, 10)
+
+.loading
+    text-align: center
+    padding: 40px
+    font-size: 18px
+    color: $neutrals4
+    +dark
+        color: $neutrals6
+
+.error
+    text-align: center
+    padding: 20px
+    background: rgba($orange, 0.1)
+    color: $orange
+    border-radius: 8px
+    margin: 20px 0
+    +dark
+        background: rgba($orange, 0.2) 

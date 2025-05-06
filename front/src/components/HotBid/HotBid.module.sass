@@ -1,0 +1,79 @@
+@import ../../styles/helpers
+
+.section
+    overflow: hidden
+    padding: 80px 0
+    +m
+        padding: 60px 0
+    +s
+        padding: 40px 0
+
+.wrapper
+    position: relative
+
+.header
+    display: flex
+    justify-content: space-between
+    align-items: center
+
+.title
+    margin-bottom: 48px
+    font-size: 40px
+    font-weight: 600
+    color: $neutrals2
+    +m
+        margin-bottom: 32px
+        font-size: 32px
+    +s
+        font-size: 24px
+    +dark
+        color: $neutrals8
+
+.inner
+    margin: 0 -16px
+    +m
+        margin: 0 -8px
+
+.card
+    width: 100%
+    margin: 0 16px
+    +m
+        margin: 0 8px
+
+.loading, .error
+    text-align: center
+    padding: 40px
+    font-size: 18px
+    color: $neutrals4
+    +dark
+        color: $neutrals6
+
+.error
+    color: $orange
+    +dark
+        color: $orange
+
+.viewAllButton
+    display: block
+    margin: 40px auto 0
+    padding: 16px 32px
+    font-size: 18px
+    font-weight: 600
+    background: $orange
+    color: $neutrals8
+    border-radius: 12px
+    transition: all .2s
+    &:hover
+        background: darken($orange, 10%)
+    +m
+        margin: 32px auto 0
+        padding: 12px 24px
+        font-size: 16px
+    +s
+        margin: 24px auto 0
+        padding: 10px 20px
+        font-size: 14px
+    +dark
+        background: $orange
+        &:hover
+            background: lighten($orange, 10%)

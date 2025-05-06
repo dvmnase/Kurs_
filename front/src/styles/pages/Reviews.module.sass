@@ -1,0 +1,90 @@
+.container
+    max-width: 1200px
+    margin: 0 auto
+    padding: 2rem
+
+.title
+    font-size: 2rem
+    color: #333
+    margin-bottom: 2rem
+    text-align: center
+
+.reviewsList
+    display: grid
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr))
+    gap: 2rem
+
+.reviewCard
+    background: white
+    border-radius: 8px
+    padding: 1.5rem
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1)
+    transition: transform 0.2s ease
+
+    &:hover
+        transform: translateY(-2px)
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15)
+
+.reviewHeader
+    display: flex
+    justify-content: space-between
+    align-items: flex-start
+    margin-bottom: 1rem
+
+.serviceName
+    font-size: 1.2rem
+    color: #333
+    margin: 0
+
+.rating
+    display: flex
+    align-items: center
+    gap: 0.5rem
+
+.stars
+    color: #ffd700
+    font-size: 1.2rem
+
+.ratingNumber
+    color: #666
+    font-size: 0.9rem
+
+.comment
+    color: #444
+    line-height: 1.5
+    margin: 1rem 0
+    font-size: 1rem
+
+.reviewFooter
+    display: flex
+    justify-content: space-between
+    align-items: center
+    margin-top: 1rem
+    padding-top: 1rem
+    border-top: 1px solid #eee
+
+.clientName
+    color: #666
+    font-size: 0.9rem
+
+.date
+    color: #999
+    font-size: 0.8rem
+
+.loading
+    text-align: center
+    padding: 2rem
+    color: #666
+    font-size: 1.2rem
+
+.error
+    text-align: center
+    padding: 2rem
+    color: #dc3545
+    font-size: 1.2rem
+
+.empty
+    text-align: center
+    padding: 2rem
+    color: #666
+    font-size: 1.2rem 

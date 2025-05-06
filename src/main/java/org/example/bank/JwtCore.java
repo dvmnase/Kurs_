@@ -16,7 +16,7 @@ import java.util.Date;
 
 @Component
 public class JwtCore {
-    private static final Logger logger = LoggerFactory.getLogger(JwtCore.class);
+     private static final Logger logger = LoggerFactory.getLogger(JwtCore.class);
     private final SecretKey secretKey;
     private final int lifetime;
 
@@ -25,6 +25,10 @@ public class JwtCore {
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
         this.lifetime = lifetime;
         logger.info("JwtCore initialized with secret key length: {} bits", secretKey.getEncoded().length * 8);
+    }
+
+    public SecretKey getSecretKey() {
+        return secretKey;
     }
 
     public boolean validateToken(String token) {
@@ -46,6 +50,7 @@ public class JwtCore {
             return false;
         }
     }
+
     public String generateToken(Authentication auth) {
         UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
         String role = userDetails.getAuthorities().stream()
@@ -55,7 +60,7 @@ public class JwtCore {
 
         String token = Jwts.builder()
                 .subject(userDetails.getUsername())
-                .claim("role", role.replace("ROLE_", ""))
+                .claim("role", role)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + lifetime))
                 .signWith(secretKey)

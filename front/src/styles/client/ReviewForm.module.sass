@@ -1,0 +1,98 @@
+@import ../../styles/helpers
+
+.reviewForm
+    max-width: 600px
+    margin: 0 auto
+    padding: 24px
+    background: $white
+    border-radius: 12px
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1)
+    +dark
+        background: $neutrals1
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2)
+
+    h2
+        margin: 0 0 24px
+        text-align: center
+        font-size: 24px
+        font-weight: 600
+
+.formGroup
+    margin-bottom: 24px
+
+    label
+        display: block
+        margin-bottom: 8px
+        font-weight: 500
+        color: $neutrals4
+        +dark
+            color: $neutrals6
+
+    select, textarea
+        width: 100%
+        padding: 12px
+        border: 2px solid $neutrals3
+        border-radius: 8px
+        font-size: 16px
+        transition: all 0.3s ease
+        +dark
+            background: $neutrals1
+            border-color: $neutrals2
+            color: $white
+
+        &:focus
+            outline: none
+            border-color: $orange
+            box-shadow: 0 0 0 4px rgba($orange, 0.1)
+
+    textarea
+        resize: vertical
+        min-height: 120px
+
+.rating
+    display: flex
+    gap: 8px
+
+.star
+    font-size: 32px
+    color: $neutrals3
+    background: none
+    border: none
+    cursor: pointer
+    transition: color 0.3s ease
+    +dark
+        color: $neutrals4
+
+    &:hover, &.active
+        color: $orange
+
+.submitButton
+    width: 100%
+    padding: 16px
+    background: $orange
+    color: $white
+    border: none
+    border-radius: 8px
+    font-size: 16px
+    font-weight: 600
+    cursor: pointer
+    transition: background 0.3s ease
+
+    &:hover
+        background: darken($orange, 10%)
+
+.success
+    margin-bottom: 24px
+    padding: 12px
+    background: rgba($green, 0.1)
+    border-radius: 8px
+    color: $green
+    text-align: center
+    font-weight: 500
+
+.loading, .error
+    text-align: center
+    padding: 40px
+    color: $neutrals4
+    +dark
+        color: $neutrals6 

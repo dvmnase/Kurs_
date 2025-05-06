@@ -90,6 +90,9 @@ public class EmployeeService {
         if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
             user.setPassword(passwordEncoder.encode(dto.getPassword()));
         }
+        if (dto.getUsername() != null && !dto.getUsername().isEmpty()) {
+            user.setUsername(dto.getUsername());
+        }
         userRepository.save(user);
 
         return convertToDto(employee);

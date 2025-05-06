@@ -1,0 +1,160 @@
+@import ../helpers
+
+.container
+    max-width: 1200px
+    margin: 0 auto
+    padding: 40px 20px
+
+    h1
+        margin-bottom: 40px
+        font-size: 32px
+        font-weight: 600
+        color: $neutrals2
+        +dark
+            color: $neutrals8
+
+.employeesGrid
+    display: grid
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr))
+    gap: 30px
+
+.employeeCard
+    background: $neutrals8
+    border-radius: 16px
+    overflow: hidden
+    cursor: pointer
+    transition: transform .2s, box-shadow .2s
+    +dark
+        background: $neutrals2
+
+    &:hover
+        transform: translateY(-4px)
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1)
+        +dark
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3)
+
+.employeeImage
+    position: relative
+    width: 100%
+    height: 300px
+
+.employeeInfo
+    padding: 24px
+
+    h3
+        margin: 0 0 8px
+        font-size: 20px
+        font-weight: 600
+        color: $neutrals2
+        +dark
+            color: $neutrals8
+
+    .position
+        margin: 0 0 12px
+        font-size: 16px
+        color: $orange
+        font-weight: 500
+
+    .description
+        margin: 0 0 16px
+        font-size: 14px
+        color: $neutrals4
+        line-height: 1.5
+        +dark
+            color: $neutrals6
+
+.rating
+    display: flex
+    gap: 4px
+
+    .star, .starFilled
+        font-size: 20px
+        cursor: pointer
+
+    .star
+        color: $neutrals6
+
+    .starFilled
+        color: $orange
+
+.modal
+    max-width: 600px
+
+.modalContent
+    padding: 24px
+    background: $neutrals8
+    border-radius: 16px
+    +dark
+        background: $neutrals2
+
+    h2
+        margin: 0 0 24px
+        font-size: 24px
+        font-weight: 600
+        color: $neutrals2
+        +dark
+            color: $neutrals8
+
+.ratingInput
+    display: flex
+    align-items: center
+    gap: 16px
+    margin-bottom: 24px
+
+    p
+        margin: 0
+        font-size: 16px
+        color: $neutrals4
+        +dark
+            color: $neutrals6
+
+.reviewInput
+    width: 100%
+    padding: 12px
+    border: 2px solid $neutrals6
+    border-radius: 8px
+    font-size: 16px
+    color: $neutrals2
+    background: $white
+    resize: vertical
+    margin-bottom: 24px
+    +dark
+        background: $neutrals2
+        border-color: $neutrals4
+        color: $neutrals8
+
+    &:focus
+        outline: none
+        border-color: $orange
+
+.submitButton
+    width: 100%
+    padding: 16px
+    background: $orange
+    color: $white
+    border: none
+    border-radius: 8px
+    font-size: 16px
+    font-weight: 600
+    cursor: pointer
+    transition: background .2s
+
+    &:hover
+        background: darken($orange, 10)
+
+    &:disabled
+        background: $neutrals6
+        cursor: not-allowed
+
+.loading, .error
+    text-align: center
+    padding: 40px
+    font-size: 18px
+    color: $neutrals4
+    +dark
+        color: $neutrals6
+
+.error
+    color: $dark-orange
+    +dark
+        color: $dark-orange 

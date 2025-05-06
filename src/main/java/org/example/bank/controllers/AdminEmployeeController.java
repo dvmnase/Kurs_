@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/secured/admin/employees")
+@RequestMapping("secured/admin/employees")
 @Secured("ROLE_ADMIN")
 public class AdminEmployeeController {
 
@@ -35,6 +35,7 @@ public class AdminEmployeeController {
     @PostMapping
     public ResponseEntity<EmployeeResponseDTO> createEmployee(
             @RequestBody EmployeeRequestDTO dto) throws IOException {
+        System.out.println(dto);
         return ResponseEntity.ok(employeeService.createEmployee(dto));
     }
 

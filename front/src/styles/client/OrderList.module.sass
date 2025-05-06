@@ -1,0 +1,81 @@
+@import ../../styles/helpers
+
+.orderList
+    display: grid
+    gap: 24px
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr))
+
+.orderCard
+    background: $white
+    border-radius: 12px
+    padding: 24px
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1)
+    transition: transform 0.3s ease
+    +dark
+        background: $neutrals1
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2)
+
+    &:hover
+        transform: translateY(-4px)
+
+.orderHeader
+    display: flex
+    justify-content: space-between
+    align-items: center
+    margin-bottom: 16px
+
+    h3
+        margin: 0
+        font-size: 18px
+        font-weight: 600
+
+.status
+    padding: 4px 12px
+    border-radius: 16px
+    font-size: 14px
+    font-weight: 500
+
+    &.new
+        background: rgba($blue, 0.1)
+        color: $blue
+
+    &.in_progress
+        background: rgba($orange, 0.1)
+        color: $orange
+
+    &.completed
+        background: rgba($green, 0.1)
+        color: $green
+
+    &.cancelled
+        background: rgba($orange, 0.1)
+        color: $orange
+
+.orderDetails
+    p
+        margin: 8px 0
+        color: $neutrals4
+        +dark
+            color: $neutrals6
+
+.cancelButton
+    width: 100%
+    margin-top: 16px
+    padding: 12px
+    background: $orange
+    color: $white
+    border: none
+    border-radius: 8px
+    font-weight: 600
+    cursor: pointer
+    transition: background 0.3s ease
+
+    &:hover
+        background: darken($orange, 10%)
+
+.loading, .error, .empty
+    text-align: center
+    padding: 40px
+    color: $neutrals4
+    +dark
+        color: $neutrals6 

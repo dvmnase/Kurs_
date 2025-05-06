@@ -1,0 +1,198 @@
+@import ../helpers
+
+.container
+    min-height: 100vh
+    background: $neutrals8
+    padding: 80px 20px 40px
+    +dark
+        background: $neutrals1
+
+.header
+    max-width: 1200px
+    margin: 0 auto 40px
+    display: flex
+    justify-content: space-between
+    align-items: center
+    flex-wrap: wrap
+    gap: 20px
+
+    h1
+        font-size: 32px
+        font-weight: 700
+        color: $neutrals2
+        +dark
+            color: $neutrals8
+
+.filters
+    display: flex
+    gap: 16px
+    flex-wrap: wrap
+
+.searchInput
+    padding: 8px 16px
+    border: 2px solid $neutrals6
+    border-radius: 8px
+    font-size: 16px
+    color: $neutrals2
+    background: $white
+    min-width: 250px
+    transition: border-color 0.3s ease
+    +dark
+        background: $neutrals2
+        border-color: $neutrals4
+        color: $neutrals8
+
+    &:focus
+        outline: none
+        border-color: $neutrals2
+        +dark
+            border-color: $neutrals6
+
+.filterSelect
+    padding: 8px 16px
+    border: 2px solid $neutrals6
+    border-radius: 8px
+    font-size: 16px
+    color: $neutrals2
+    background: $white
+    cursor: pointer
+    transition: border-color 0.3s ease
+    +dark
+        background: $neutrals2
+        border-color: $neutrals4
+        color: $neutrals8
+
+    &:focus
+        outline: none
+        border-color: $neutrals2
+        +dark
+            border-color: $neutrals6
+
+.servicesGrid
+    max-width: 1200px
+    margin: 0 auto
+    display: grid
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr))
+    gap: 24px
+
+.card
+    cursor: pointer
+    transition: transform 0.3s ease
+
+    &:hover
+        transform: translateY(-4px)
+
+.loading, .error
+    text-align: center
+    padding: 40px
+    font-size: 18px
+    color: $neutrals4
+    +dark
+        color: $neutrals6
+
+.error
+    color: $dark-orange
+    +dark
+        color: $dark-orange
+
+.serviceCard
+    background: $white
+    border-radius: 12px
+    overflow: hidden
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1)
+    transition: transform 0.3s ease, box-shadow 0.3s ease
+    +dark
+        background: $neutrals2
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2)
+
+    &:hover
+        transform: translateY(-4px)
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1)
+        +dark
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2)
+
+.serviceContent
+    display: flex
+    min-height: 300px
+
+.serviceInfo
+    flex: 1
+    padding: 24px
+    display: flex
+    flex-direction: column
+
+    h3
+        font-size: 24px
+        font-weight: 600
+        color: $neutrals2
+        margin-bottom: 12px
+        +dark
+            color: $neutrals8
+
+    p
+        font-size: 16px
+        color: $neutrals4
+        margin-bottom: 16px
+        line-height: 1.5
+        flex: 1
+        +dark
+            color: $neutrals6
+
+.category
+    font-size: 14px
+    color: $neutrals4
+    margin-bottom: 12px
+    +dark
+        color: $neutrals6
+
+.price
+    font-size: 20px
+    font-weight: 600
+    color: $neutrals2
+    margin-bottom: 16px
+    +dark
+        color: $neutrals8
+
+.orderButton
+    width: 100%
+    padding: 12px
+    background: $neutrals2
+    color: $white
+    border: none
+    border-radius: 8px
+    font-size: 16px
+    font-weight: 600
+    cursor: pointer
+    transition: background 0.3s ease
+    +dark
+        background: $neutrals8
+
+    &:hover
+        background: $neutrals3
+        +dark
+            background: $neutrals7
+
+.imageContainer
+    width: 300px
+    height: 100%
+    overflow: hidden
+
+.serviceImage
+    width: 100%
+    height: 100%
+    object-fit: cover
+    transition: transform 0.3s ease
+
+.serviceCard:hover .serviceImage
+    transform: scale(1.05)
+
+@media (max-width: 768px)
+    .servicesGrid
+        grid-template-columns: 1fr
+
+    .serviceContent
+        flex-direction: column-reverse
+
+    .imageContainer
+        width: 100%
+        height: 200px 

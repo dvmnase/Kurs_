@@ -1,6 +1,7 @@
 package org.example.bank.controllers;
 
 import org.example.bank.dto.AccountResponseDTO;
+import org.example.bank.dto.StaticDTO;
 import org.example.bank.entities.Account;
 import org.example.bank.models.AccountType;
 import org.example.bank.services.AccountService;
@@ -83,5 +84,10 @@ public class AdminAccountController {
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
+    }
+
+    @GetMapping("/static")
+    public StaticDTO getAccountsStatic() {
+        return accountService.getStats();
     }
 }

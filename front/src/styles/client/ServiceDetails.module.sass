@@ -1,0 +1,123 @@
+@import ../helpers
+
+.container
+    max-width: 1200px
+    margin: 0 auto
+    padding: 40px 20px
+
+.serviceDetails
+    display: grid
+    grid-template-columns: 1fr 1fr
+    gap: 40px
+    background: $neutrals8
+    border-radius: 16px
+    padding: 40px
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1)
+    +dark
+        background: $neutrals2
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3)
+    +m
+        grid-template-columns: 1fr
+        gap: 24px
+        padding: 24px
+
+.imageContainer
+    position: relative
+    width: 100%
+    padding-bottom: 100%
+    border-radius: 12px
+    overflow: hidden
+    background: $neutrals6
+    +dark
+        background: $neutrals3
+
+.serviceImage
+    position: absolute
+    top: 0
+    left: 0
+    width: 100%
+    height: 100%
+    object-fit: cover
+
+.noImage
+    position: absolute
+    top: 50%
+    left: 50%
+    transform: translate(-50%, -50%)
+    color: $neutrals4
+    font-size: 16px
+    +dark
+        color: $neutrals6
+
+.infoContainer
+    display: flex
+    flex-direction: column
+    gap: 24px
+
+.title
+    font-size: 32px
+    font-weight: 600
+    color: $neutrals2
+    +dark
+        color: $neutrals8
+    +m
+        font-size: 24px
+
+.description
+    font-size: 16px
+    line-height: 1.5
+    color: $neutrals4
+    +dark
+        color: $neutrals6
+
+.price
+    font-size: 28px
+    font-weight: 600
+    color: $orange
+    +m
+        font-size: 24px
+
+.orderButton
+    padding: 16px 24px
+    background: $orange
+    color: white
+    border: none
+    border-radius: 8px
+    font-size: 16px
+    font-weight: 500
+    cursor: pointer
+    transition: background .2s
+    &:hover
+        background: darken($orange, 10)
+    +m
+        padding: 12px 20px
+
+.authButton
+    padding: 16px 24px
+    background: $neutrals6
+    color: $neutrals2
+    border: none
+    border-radius: 8px
+    font-size: 16px
+    font-weight: 500
+    cursor: pointer
+    transition: all .2s
+    &:hover
+        background: darken($neutrals6, 10)
+    +m
+        padding: 12px 20px
+    +dark
+        background: $neutrals3
+        color: $neutrals8
+        &:hover
+            background: darken($neutrals3, 10)
+
+.error
+    text-align: center
+    padding: 20px
+    background: rgba($orange, 0.1)
+    color: $orange
+    border-radius: 8px
+    margin: 20px 0
+    +dark
+        background: rgba($orange, 0.2) 

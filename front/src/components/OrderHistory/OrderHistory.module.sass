@@ -1,0 +1,137 @@
+@import ../../styles/helpers
+
+
+.title
+  margin-bottom: 10px
+  font-size: 24px
+  font-weight: 600
+  color: $neutrals2
+  +dark
+    color: $white
+
+
+.ordersGrid
+  display: grid
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr))
+  gap: 20px
+
+.orderCard
+  margin-top: 10px
+  border: 1px solid $neutrals6
+  border-radius: 12px
+  padding: 20px
+  background: $white
+  +dark
+    background: $neutrals2
+    border-color: $neutrals3
+
+.orderHeader
+  display: flex
+  justify-content: space-between
+  align-items: center
+  margin-bottom: 15px
+
+.status
+  padding: 6px 12px
+  border-radius: 20px
+  font-size: 14px
+  font-weight: 500
+  background: $yellow
+
+.statusNew
+  background: $blue
+  color: $white
+
+.statusInProgress
+  background: $orange
+  color: $white
+
+.statusCompleted
+  background: $green
+  color: $white
+
+.statusCanceled
+  background: $orange
+  color: $white
+
+.date
+  font-size: 14px
+  color: $neutrals4
+
+.orderInfo
+  margin-bottom: 15px
+
+.serviceName
+  margin: 0 0 10px
+  font-size: 18px
+  font-weight: 600
+  color: $neutrals2
+  +dark
+    color: $white
+
+.description
+  margin: 0 0 5px
+  font-size: 14px
+  color: $neutrals4
+
+.employeeInfo
+  margin-bottom: 15px
+  padding: 10px
+  background: $neutrals8
+  border-radius: 8px
+  +dark
+    background: $neutrals3
+
+.employeeName
+  margin: 0 0 5px
+  font-size: 14px
+  color: $neutrals2
+  +dark
+    color: $white
+
+.employeeContact
+  margin: 0
+  font-size: 14px
+  color: $neutrals4
+
+.actions
+  display: flex
+  gap: 10px
+
+.cancelButton
+  background: $orange
+  color: $white
+  &:hover
+    background: darken($orange, 10%)
+
+.reviewButton
+  background: $orange
+  color: $white
+  &:hover
+    background: darken($orange, 10%)
+
+.loading
+  text-align: center
+  padding: 40px
+  font-size: 18px
+  color: $neutrals4
+
+.error
+  text-align: center
+  padding: 40px
+  font-size: 18px
+  color: $dark-orange
+  background: rgba($dark-orange, 0.1)
+  border-radius: 12px
+  margin: 20px 0
+
+.noOrders
+  text-align: center
+  padding: 40px
+  font-size: 18px
+  color: $neutrals4
+  background: $neutrals8
+  border-radius: 12px
+  margin: 20px 0
+  +dark
+    background: $neutrals3 

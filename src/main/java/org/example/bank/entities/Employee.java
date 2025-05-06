@@ -43,8 +43,6 @@ public class Employee {
         this.fullName = fullName;
     }
 
-
-
     public String getPhoneNumber() {
         return phoneNumber;
     }

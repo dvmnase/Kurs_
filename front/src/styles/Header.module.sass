@@ -1,0 +1,76 @@
+@import ./helpers
+
+.header
+    background: $white
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1)
+    position: fixed
+    top: 0
+    left: 0
+    right: 0
+    z-index: 100
+    +dark
+        background: $neutrals1
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2)
+
+.container
+    max-width: 1200px
+    margin: 0 auto
+    padding: 16px 20px
+    display: flex
+    align-items: center
+    justify-content: space-between
+
+.logo
+    font-size: 24px
+    font-weight: 700
+    color: $neutrals2
+    cursor: pointer
+    transition: color 0.3s ease
+    text-decoration: none
+    +dark
+        color: $neutrals8
+
+    &:hover
+        color: $neutrals3
+        +dark
+            color: $neutrals7
+
+.navigation
+    display: flex
+    gap: 24px
+    align-items: center
+
+.navLink
+    color: $neutrals4
+    cursor: pointer
+    transition: color 0.3s ease
+    text-decoration: none
+    +dark
+        color: $neutrals6
+
+    &:hover
+        color: $neutrals2
+        +dark
+            color: $neutrals8
+
+    &.active
+        color: $neutrals2
+        font-weight: 600
+        +dark
+            color: $neutrals8
+
+.logoutButton
+    background: $neutrals2
+    color: $white
+    border: none
+    padding: 8px 16px
+    border-radius: 8px
+    cursor: pointer
+    transition: background 0.3s ease
+    +dark
+        background: $neutrals8
+
+    &:hover
+        background: $neutrals3
+        +dark
+            background: $neutrals7 
