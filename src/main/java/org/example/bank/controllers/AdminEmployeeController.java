@@ -1,3 +1,6 @@
+// DEPRECATED: This controller is no longer used in the cargo management system
+// Employee management is not part of the cargo system
+/*
 package org.example.bank.controllers;
 
 
@@ -57,3 +60,4 @@ public class AdminEmployeeController {
         }
     }
 }
+*/

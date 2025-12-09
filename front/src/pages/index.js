@@ -1,139 +1,84 @@
-import { useEffect, useCallback } from 'react'
-import { useStateContext } from '../utils/context/StateContext'
-import Layout from '../components/Layout'
-import {
-  Intro,
-  Selection,
-  Partners,
-  HotBid,
-  Categories,
-  Discover,
-  Description,
-} from '../screens/Home'
-import chooseBySlug from '../utils/chooseBySlug'
-import { getDataByCategory, getAllDataByType } from '../lib/cosmic'
-import { authService } from '../services/authService'
+'use client';
 
-const Home = ({
-  reviews,
-  landing,
-  categoriesGroup,
-  categoryTypes,
-  navigationItems,
-}) => {
-  const { categories, onCategoriesChange, setNavigation } = useStateContext()
-  const isAuthenticated = authService.isAuthenticated()
-  const userRole = authService.getRole()
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import { authService } from '../services/authService';
+import SignInForm from '../components/auth/SignInForm';
+import SignUpForm from '../components/auth/SignUpForm';
+import styles from '../styles/auth/auth.module.sass';
 
-  const handleContextAdd = useCallback(
-    (category, data, navigation) => {
-      onCategoriesChange({ groups: category, type: data })
-      setNavigation(navigation)
-    },
-    [onCategoriesChange, setNavigation]
-  )
+export default function HomePage() {
+    const router = useRouter();
+    const [showSignUp, setShowSignUp] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    let isMounted = true
-
-    if (!categories['groups']?.length && isMounted) {
-      const navigation = !userRole ? {
-        menu: [
-          {
-            title: 'Отзывы',
-            url: '/#reviews',
-          },
-          {
-            title: 'О нас',
-            url: '/about',
-          },
-        ]
-      } : navigationItems[0]?.metadata
-
-      handleContextAdd(
-        categoriesGroup?.groups,
-        categoriesGroup?.type,
-        navigation
-      )
-    }
-
-    return () => {
-      isMounted = false
-    }
-  }, [
-    categories,
-    categoriesGroup,
-    categoryTypes,
-    handleContextAdd,
-    navigationItems,
-    userRole,
-  ])
-
-  return (
-    <Layout navigationPaths={!userRole ? {
-      menu: [
-        {
-          title: 'Отзывы',
-          url: '/#reviews',
-        },
-        {
-          title: 'О нас',
-          url: '/about',
-        },
-      ]
-    } : navigationItems[0]?.metadata}>
-      <Description info={{
-        title: "ПРОФЕССИОНАЛЬНЫЙ РЕМОНТ",
-        metadata: {
-          subtitle: "РЕМОНТ ПРО",
-          description: "Найдите лучших мастеров для ремонта вашего дома. Быстро, качественно и по доступным ценам.",
-          button: {
-            text: "Наши контакты",
-            onClick: () => {
-              const footer = document.getElementById('footer');
-              if (footer) {
-                footer.scrollIntoView({ behavior: 'smooth' });
-              }
+    useEffect(() => {
+        // Проверяем, авторизован ли пользователь
+        if (authService.isAuthenticated()) {
+            setIsAuthenticated(true);
+            const role = authService.getRole();
+            
+            // Редиректим в зависимости от роли
+            if (role === 'ADMIN') {
+                router.push('/admin/dashboard');
+            } else if (role === 'OWNER') {
+                router.push('/owner/cargo');
+            } else if (role === 'CARRIER') {
+                router.push('/carrier/requests');
             }
-          }
         }
-      }} />
-      <HotBid classSection="section" info={categoriesGroup['groups'][0]} />
-      <Partners info={reviews} />
-    </Layout>
-  )
-}
+        setIsLoading(false);
+    }, [router]);
 
-export default Home
+    const handleSignInSuccess = () => {
+        const role = authService.getRole();
+        if (role === 'ADMIN') {
+            router.push('/admin/dashboard');
+        } else if (role === 'OWNER') {
+            router.push('/owner/cargo');
+        } else if (role === 'CARRIER') {
+            router.push('/carrier/requests');
+        }
+    };
 
-export async function getServerSideProps() {
-  const reviews = (await getAllDataByType('reviews')) || []
-  const landing = (await getAllDataByType('landings')) || []
-  const categoryTypes = (await getAllDataByType('categories')) || []
-  const categoriesData = await Promise.all(
-    categoryTypes?.map(category => {
-      return getDataByCategory(category?.id)
-    })
-  )
-  const navigationItems = (await getAllDataByType('navigation')) || []
+    if (isLoading) {
+        return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Загрузка...</div>;
+    }
 
-  const categoriesGroups = categoryTypes?.map(({ id }, index) => {
-    return { [id]: categoriesData[index] }
-  })
+    if (isAuthenticated) {
+        return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Перенаправление...</div>;
+    }
 
-  const categoriesType = categoryTypes?.reduce((arr, { title, id }) => {
-    return { ...arr, [id]: title }
-  }, {})
-
-  const categoriesGroup = { groups: categoriesGroups, type: categoriesType }
-
-  return {
-    props: {
-      reviews,
-      landing,
-      categoriesGroup,
-      categoryTypes,
-      navigationItems,
-    },
-  }
+    return (
+        <div className={styles.authContainer}>
+            <div className={styles.authHeader}>
+                <h1>Система грузоперевозок</h1>
+                <p>Управление грузами и заявками на перевозку</p>
+            </div>
+            
+            <div className={styles.authContent}>
+                {!showSignUp ? (
+                    <>
+                        <SignInForm onSuccess={handleSignInSuccess} />
+                        <div className={styles.switchForm}>
+                            <p>Нет аккаунта? <button onClick={() => setShowSignUp(true)}>Зарегистрироваться</button></p>
+                        </div>
+                    </>
+                ) : (
+                    <>
+                        <SignUpForm 
+                            onSuccess={() => {
+                                setShowSignUp(false);
+                            }}
+                            onSwitchToLogin={() => setShowSignUp(false)}
+                        />
+                        <div className={styles.switchForm}>
+                            <p>Уже есть аккаунт? <button onClick={() => setShowSignUp(false)}>Войти</button></p>
+                        </div>
+                    </>
+                )}
+            </div>
+        </div>
+    );
 }

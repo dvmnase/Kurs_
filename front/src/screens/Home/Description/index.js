@@ -14,11 +14,10 @@ const Description = ({ info }) => {
       if (servicesSection) {
         servicesSection.scrollIntoView({ behavior: 'smooth' })
       }
-    }
-    else if (href === '#footer') {
-      const servicesSection = document.getElementById('footer')
-      if (servicesSection) {
-        servicesSection.scrollIntoView({ behavior: 'smooth' })
+    } else if (href === '#footer') {
+      const footerSection = document.getElementById('footer')
+      if (footerSection) {
+        footerSection.scrollIntoView({ behavior: 'smooth' })
       }
     } else {
       push(href)
@@ -29,9 +28,11 @@ const Description = ({ info }) => {
     <div className={styles.section}>
       <div className={cn('container', styles.container)}>
         <div className={styles.wrap}>
-          <div className={styles.stage}>ПРОФЕССИОНАЛЬНЫЙ РЕМОНТ</div>
-          <h1 className={cn('h1', styles.title)}>РЕМОНТ ПРО</h1>
-          <div className={styles.text}>Найдите лучших мастеров для ремонта вашего дома. Быстро, качественно и по доступным ценам.</div>
+          <div className={styles.stage}>Quantum Bank</div>
+          <h1 className={cn('h1', styles.title)}>Ваш надежный финансовый партнер</h1>
+          <div className={styles.text}>
+            Мы предлагаем широкий спектр банковских услуг для удовлетворения ваших финансовых нужд.
+          </div>
           <div className={styles.btns}>
             <button
               aria-hidden="true"
@@ -55,11 +56,11 @@ const Description = ({ info }) => {
               quality={60}
               className={styles.preview}
               layout="fill"
-              src="/images/content/mainPict.png"
+              src="/images/content/bankHeroImage.jpg" // Replace with appropriate image path
               placeholder="blur"
-              blurDataURL="/images/content/mainPict.png"
+              blurDataURL="/images/content/bankHeroImage.jpg" // Replace with appropriate image path
               objectFit="cover"
-              alt="Team"
+              alt="Quantum Bank"
               priority
             />
           </div>

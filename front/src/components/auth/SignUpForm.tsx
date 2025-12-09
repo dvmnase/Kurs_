@@ -16,10 +16,10 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ className, onSuccess, onSwitchT
     username: '',
     email: '',
     password: '',
-    role: 'USER',
+    role: 'OWNER',
     fullName: '',
     phoneNumber: '',
-    address: ''
+    companyName: ''
   });
   const [error, setError] = useState<string>('');
   const [success, setSuccess] = useState<string>('');
@@ -122,16 +122,30 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ className, onSuccess, onSwitchT
             />
           </div>
           <div className={styles.field}>
-            <input
+            <select
               className={styles.input}
-              type="text"
-              name="address"
-              placeholder="Адрес"
+              name="role"
               onChange={handleChange}
-              value={formData.address}
+              value={formData.role}
               required
-            />
+            >
+              <option value="OWNER">Грузовладелец</option>
+              <option value="CARRIER">Перевозчик</option>
+            </select>
           </div>
+          {formData.role === 'CARRIER' && (
+            <div className={styles.field}>
+              <input
+                className={styles.input}
+                type="text"
+                name="companyName"
+                placeholder="Название компании"
+                onChange={handleChange}
+                value={formData.companyName}
+                required
+              />
+            </div>
+          )}
           <div className={styles.btns}>
             <button 
               type="submit" 

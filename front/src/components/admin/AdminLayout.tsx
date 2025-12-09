@@ -20,7 +20,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             <header className={styles.header}>
                 <div className={styles.headerContent}>
                     <div className={styles.logo} onClick={() => router.push('/admin/dashboard')}>
-                        RemontPro Admin
+                        Admin
                     </div>
                     <button className={styles.logoutButton} onClick={handleLogout}>
                         Выйти

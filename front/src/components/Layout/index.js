@@ -42,7 +42,7 @@ const Layout = ({ children, title, navigationPaths, showLogout, onLogout }) => {
   return (
     <>
       <Meta />
-      <PageMeta title="remontPro" />
+      <PageMeta title="Quantum Bank" />
       <ScrollToSection />
       <div className={styles.page}>
         <Header

@@ -1,3 +1,6 @@
+// DEPRECATED: This controller is no longer used in the cargo management system
+// Replaced by CarrierRequestController for carriers
+/*
 package org.example.bank.controllers;
 
 import org.example.bank.dto.ApplicationStatsDTO;
@@ -70,3 +73,4 @@ public class EmployeeApplicationController {
     }
 
 }
+*/

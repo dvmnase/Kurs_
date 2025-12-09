@@ -1,3 +1,6 @@
+// DEPRECATED: This service is no longer used in the cargo management system
+// Employee management is not part of the cargo system
+/*
 package org.example.bank.services;
 
 
@@ -112,3 +115,4 @@ public class EmployeeService {
 
     }
 }
+*/

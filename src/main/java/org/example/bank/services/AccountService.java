@@ -1,3 +1,6 @@
+// DEPRECATED: This service is no longer used in the cargo management system
+// Account management is not part of the cargo system
+/*
 package org.example.bank.services;
 
 import org.example.bank.dto.*;
@@ -236,6 +239,7 @@ public class AccountService {
 
     @Transactional
     public void transferToExternalAccount(Long fromAccountId, String toExternalAccount, Double amount) {
+        // Проверка входных данных
         if (amount == null || amount <= 0) {
             throw new IllegalArgumentException("Transfer amount must be positive");
         }
@@ -245,32 +249,31 @@ public class AccountService {
         }
 
         User currentUser = getCurrentUser();
+
+        // Получаем счет отправителя
         Account fromAccount = accountRepository.findById(fromAccountId)
                 .orElseThrow(() -> new ResourceNotFoundException("Source account not found"));
 
+        // Проверяем права доступа
         if (!fromAccount.getUser().getId().equals(currentUser.getId())) {
             throw new SecurityException("Access denied to source account");
         }
 
-        if (fromAccount.getStatus() == AccountStatus.BLOCKED) {
-            throw new IllegalStateException("Source account is BLOCKED");
-        }
-
+        // Проверяем статус счета отправителя
         if (fromAccount.getStatus() != AccountStatus.ACTIVE) {
             throw new IllegalStateException("Source account is not active");
         }
 
+        // Ищем счет получателя
         Account toAccount = accountRepository.findByAccountNumber(toExternalAccount)
                 .orElseThrow(() -> new ResourceNotFoundException("Destination account not found"));
 
-        if (toAccount.getStatus() == AccountStatus.BLOCKED) {
-            throw new IllegalStateException("Destination account is BLOCKED");
-        }
-
+        // Проверяем статус счета получателя
         if (toAccount.getStatus() != AccountStatus.ACTIVE) {
             throw new IllegalStateException("Destination account is not active");
         }
 
+        // Проверяем достаточность средств
         if (fromAccount.getBalance() < amount) {
             throw new IllegalStateException(
                     String.format("Insufficient funds. Available: %.2f, Required: %.2f",
@@ -278,12 +281,19 @@ public class AccountService {
             );
         }
 
+        // !!! ИСПРАВЛЕНИЕ: Зачисляем деньги на счет получателя !!!
         fromAccount.setBalance(fromAccount.getBalance() - amount);
-        accountRepository.save(fromAccount);
+        toAccount.setBalance(toAccount.getBalance() + amount);  // Эта строка была добавлена
 
+        // Сохраняем изменения
+        accountRepository.save(fromAccount);
+        accountRepository.save(toAccount);
+
+        // Создаем запись о транзакции
         Transaction transaction = new Transaction();
         transaction.setFromAccountId(fromAccount.getId());
-        transaction.setTo_external(toExternalAccount);
+        transaction.setToAccountId(toAccount.getId());  // Фиксируем ID получателя
+        transaction.setTo_external(toExternalAccount);  // И номер счета для истории
         transaction.setAmount(amount);
         transaction.setType(TransactionType.EXTERNAL);
         transaction.setCreatedAt(new Timestamp(System.currentTimeMillis()));
@@ -336,3 +346,4 @@ public class AccountService {
 
 
 }
+*/

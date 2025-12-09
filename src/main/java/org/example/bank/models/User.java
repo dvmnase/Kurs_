@@ -21,8 +21,11 @@ public class User {
     @Column
     private  String password;
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "ENUM('ADMIN', 'USER', 'EMPLOYEE')")
+    @Column(nullable = false)
     private Role role;
+    
+    @Column(name = "created_at", updatable = false)
+    private java.sql.Timestamp createdAt;
 
 
     public Role getRole() {
@@ -66,5 +69,13 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+    
+    public java.sql.Timestamp getCreatedAt() {
+        return createdAt;
+    }
+    
+    public void setCreatedAt(java.sql.Timestamp createdAt) {
+        this.createdAt = createdAt;
     }
 }

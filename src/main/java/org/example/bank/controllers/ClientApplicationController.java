@@ -1,3 +1,6 @@
+// DEPRECATED: This controller is no longer used in the cargo management system
+// Replaced by OwnerRequestController
+/*
 package org.example.bank.controllers;
 
 
@@ -49,3 +52,4 @@ public class ClientApplicationController {
         }
     }
 }
+*/

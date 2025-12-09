@@ -1,3 +1,6 @@
+// DEPRECATED: This controller is no longer used in the cargo management system
+// Replaced by AdminAnalyticsController
+/*
 package org.example.bank.controllers;
 
 import org.example.bank.dto.AccountResponseDTO;
@@ -91,3 +94,4 @@ public class AdminAccountController {
         return accountService.getStats();
     }
 }
+*/

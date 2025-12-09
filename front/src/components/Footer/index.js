@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import cn from 'classnames'
 import AppLink from '../AppLink'
 import Group from './Group'
@@ -13,54 +13,69 @@ const Footers = ({ navigation }) => {
     <footer id="footer" className={styles.footer}>
       <div className={cn('container', styles.container)}>
         <div className={styles.row}>
-          <div className={styles.col} aria-hidden="true">
-            <AppLink className={styles.logo} href="/">
+          <div className={styles.col}>
+            <div className={styles.logo}>
               <Image
-                size={{ width: '100px', height: '100px' }}
                 className={styles.pic}
-                src="/favicon/footlogo.png"
-                srcDark={navigation['logo']?.imgix_url}
-                alt="Logo"
-                objectFit="cntain"
+                src="/images/logo.png"
+                width={120}
+                height={40}
+                alt="Quantum Bank"
               />
-            </AppLink>
-            <div className={styles.info}>Выбирайте нас.</div>
-            <div className={styles.version}>
-              <div className={styles.details}>Dark theme</div>
-              <Theme className="theme-big" />
+            </div>
+            <div className={styles.info}>
+              Quantum Bank - Ваш надежный финансовый партнер. Мы предлагаем инновационные банковские решения для современного бизнеса.
+            </div>
+            <div className={styles.contacts}>
+              <p>Телефон: +375 (29) 123-45-67</p>
+              <p>Email: info@quantumbank.by</p>
+              <p>Адрес: г. Минск, ул. Банковская, 1</p>
             </div>
           </div>
           <div className={styles.col}>
-            <Group className={styles.group} item={navigation?.['menu']} />
+            <h3 className={styles.category}>Банковские услуги</h3>
+            <AppLink href="/services#accounts">
+              <p className={styles.text}>Открытие счетов</p>
+            </AppLink>
+            <AppLink href="/services#loans">
+              <p className={styles.text}>Кредиты</p>
+            </AppLink>
+            <AppLink href="/services#cards">
+              <p className={styles.text}>Банковские карты</p>
+            </AppLink>
+            <AppLink href="/services#investments">
+              <p className={styles.text}>Инвестиции</p>
+            </AppLink>
           </div>
           <div className={styles.col}>
-            <AppLink href={`https://molnar.by/news/remont-v-kvartire-k-peremenam-v-zhizni/`}>
-              <p className={styles.category}>О ремонте</p>
+            <h3 className={styles.category}>Информация</h3>
+            <AppLink href="/about">
+              <p className={styles.text}>О банке</p>
             </AppLink>
-            <AppLink href={`https://www.houzz.ru/statyi/vtorichka-pravilynaya-posledovatelynosty-rabot-pri-remonte-kvartiry-stsetivw-vs~56925434`}>
-              <p className={styles.text}>Теория</p>
+            <AppLink href="/news">
+              <p className={styles.text}>Новости</p>
             </AppLink>
-            <AppLink href={`https://www.tiktok.com/foryou`}>
-              <p className={styles.text}>Наши контакты</p>
+            <AppLink href="/career">
+              <p className={styles.text}>Карьера</p>
             </AppLink>
-            <SocialMedia className={styles.form} />
+            <AppLink href="/contacts">
+              <p className={styles.text}>Контакты</p>
+            </AppLink>
+            <SocialMedia className={styles.social} />
           </div>
         </div>
+        <div className={styles.foot}>
+          <div className={styles.copyright}>
+            © 2024 Quantum Bank. Все права защищены.
+          </div>
+          <div className={styles.note}>
+            <AppLink href="/privacy">
+              <span>Политика конфиденциальности</span>
+            </AppLink>
+            <AppLink href="/terms">
+              <span>Условия использования</span>
+            </AppLink>
       </div>
-      <div>
-        <div className={styles.copyright} aria-hidden="true">
-          <span className={styles.cosmicGroup}>
-            <p className={styles.powered}>Powered by </p>
-            <a href="https://www.youtube.com/watch?v=lqYKkloAWMc">
-              <Image
-                className={styles.cosmic}
-                size={{ width: '50px', height: '90px' }}
-                src="/favicon/favicon.png"
-                alt="Cosmic Logo"
-                objectFit="contain"
-              />
-            </a>
-          </span>
         </div>
       </div>
     </footer>
@@ -68,3 +83,4 @@ const Footers = ({ navigation }) => {
 }
 
 export default Footers
+

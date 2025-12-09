@@ -362,26 +362,26 @@ const EmployeeDashboard = () => {
                   </div>
               </div>
 
-              <div className={styles.filters}>
-                  <button
+                  <div className={styles.filters}>
+                      <button
                     className={filter === 'ALL' ? styles.active : ''}
-                    onClick={() => setFilter('ALL')}
-                  >
+                        onClick={() => setFilter('ALL')}
+                      >
                       Все
-                  </button>
-                  <button
+                      </button>
+                      <button
                     className={filter === 'NEW' ? styles.active : ''}
                     onClick={() => setFilter('NEW')}
-                  >
+                      >
                       Новые
-                  </button>
-                  <button
+                      </button>
+                      <button
                     className={filter === 'IN_PROGRESS' ? styles.active : ''}
-                    onClick={() => setFilter('IN_PROGRESS')}
-                  >
-                      В работе
-                  </button>
-                  <button
+                        onClick={() => setFilter('IN_PROGRESS')}
+                      >
+                          В работе
+                      </button>
+                      <button
                     className={filter === 'APPROVED' ? styles.active : ''}
                     onClick={() => setFilter('APPROVED')}
                   >
@@ -392,7 +392,7 @@ const EmployeeDashboard = () => {
                     onClick={() => setFilter('REJECTED')}
                   >
                       Отклоненные
-                  </button>
+                      </button>
               </div>
 
               <div className={styles.applicationsList}>
@@ -410,8 +410,8 @@ const EmployeeDashboard = () => {
                           <div className={styles.cardBody}>
                               {app.client ? (
                                 <>
-                                    <p><strong>Клиент:</strong> {app.client.fullName}</p>
-                                    <p><strong>Телефон:</strong> {app.client.phoneNumber}</p>
+                              <p><strong>Клиент:</strong> {app.client.fullName}</p>
+                              <p><strong>Телефон:</strong> {app.client.phoneNumber}</p>
                                 </>
                               ) : (
                                 <p><strong>Клиент:</strong> Не указан</p>

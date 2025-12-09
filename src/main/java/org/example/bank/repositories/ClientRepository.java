@@ -12,5 +12,7 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
     List<Client> findAllByOrderByIdAsc();
     Optional<Client> findByUserId(Long userId);
     Optional<Client> findByUser(User user);
+
+    Optional<Client> findByUserUsername(String username);
 }
 

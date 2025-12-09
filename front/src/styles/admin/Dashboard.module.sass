@@ -1,47 +1,133 @@
-@import ../helpers
-
 .dashboard
     display: flex
-    min-height: calc(100vh - 80px)
-    margin-top: 10px
+    min-height: 100vh
 
 .sidebar
     width: 250px
-    background: $neutrals8
+    background: #f5f5f5
     padding: 20px
-    border-right: 1px solid $neutrals6
-    +dark
-        background: $neutrals1
-        border-color: $neutrals3
+    border-right: 1px solid #ddd
 
 .tab
     display: block
     width: 100%
-    padding: 12px
-    margin-bottom: 8px
-    border-radius: 8px
-    background: none
-    color: $neutrals2
+    padding: 15px
+    margin-bottom: 10px
+    background: white
+    border: 1px solid #ddd
+    border-radius: 5px
+    cursor: pointer
     text-align: left
-    transition: all .2s
-    +dark
-        color: $neutrals6
+    transition: all 0.3s
+
     &:hover
-        background: $neutrals6
-        color: $neutrals1
-        +dark
-            background: $neutrals3
-            color: $neutrals8
+        background: #e9e9e9
+
     &.active
-        background: $yellow
-        color: $neutrals8
-        +dark
-            background: $yellow
-            color: $neutrals1
+        background: #007bff
+        color: white
+        border-color: #007bff
 
 .content
     flex: 1
-    padding: 10px
-    background: $neutrals8
-    +dark
-        background: $neutrals1 
+    padding: 30px
+
+.chart
+    margin-top: 20px
+
+.chartBar
+    margin-bottom: 15px
+
+.chartLabel
+    font-size: 14px
+    margin-bottom: 5px
+    font-weight: 500
+
+.chartBarContainer
+    width: 100%
+    height: 30px
+    background: #f0f0f0
+    border-radius: 5px
+    overflow: hidden
+
+.chartBarFill
+    height: 100%
+    background: #007bff
+    display: flex
+    align-items: center
+    padding: 0 10px
+    color: white
+    font-weight: bold
+    transition: width 0.3s
+
+.pieChart
+    display: flex
+    flex-direction: column
+    align-items: center
+    gap: 20px
+
+.pieLegend
+    display: flex
+    flex-direction: column
+    gap: 10px
+    margin-top: 20px
+
+.legendItem
+    display: flex
+    align-items: center
+    gap: 10px
+
+.legendColor
+    width: 20px
+    height: 20px
+    border-radius: 3px
+
+.modal
+    position: fixed
+    top: 50%
+    left: 50%
+    transform: translate(-50%, -50%)
+    background: white
+    padding: 30px
+    border-radius: 10px
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3)
+    z-index: 1000
+    max-width: 500px
+    width: 90%
+    max-height: 90vh
+    overflow-y: auto
+
+    form
+        display: flex
+        flex-direction: column
+        gap: 15px
+
+        input, select
+            padding: 10px
+            border: 1px solid #ddd
+            border-radius: 5px
+            font-size: 14px
+
+        button
+            padding: 10px 20px
+            background: #007bff
+            color: white
+            border: none
+            border-radius: 5px
+            cursor: pointer
+
+            &:hover
+                background: #0056b3
+
+            &[type="button"]
+                background: #6c757d
+
+                &:hover
+                    background: #5a6268
+
+.error
+    background: #f8d7da
+    color: #721c24
+    padding: 15px
+    border-radius: 5px
+    margin-bottom: 20px

@@ -26,6 +26,7 @@ public class SignupRequest {
 
     private String fullName;
     private String phoneNumber;
+    private String companyName; // для перевозчиков
 
 
 
@@ -63,5 +64,13 @@ public class SignupRequest {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+    
+    public String getCompanyName() {
+        return companyName;
+    }
+    
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
     }
 }

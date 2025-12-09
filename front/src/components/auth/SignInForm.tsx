@@ -50,11 +50,12 @@ const SignInForm: React.FC<SignInFormProps> = ({ className, onSuccess }) => {
         // Проверяем роль и перенаправляем
         if (response.role === 'ADMIN') {
           router.push('/admin/dashboard');
-        } else if (response.role === 'EMPLOYEE') {
-          router.push('/employee/dashboard');
-        }
-        else {
-          router.push('/client');
+        } else if (response.role === 'OWNER') {
+          router.push('/owner/cargo');
+        } else if (response.role === 'CARRIER') {
+          router.push('/carrier/requests');
+        } else {
+          router.push('/');
         }
       }
     } catch (err: any) {

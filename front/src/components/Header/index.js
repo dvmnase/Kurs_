@@ -58,10 +58,6 @@ const Header = ({ navigation, showLogout, onLogout }) => {
 
   const defaultNavigation = userRole === 'USER' ? [
     {
-      name: 'Личный каааабинет',
-      path: '/client/personal-cabinet',
-    },
-    {
       name: 'Услуги',
       path: '/client/services',
     },

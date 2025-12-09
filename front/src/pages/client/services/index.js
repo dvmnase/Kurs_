@@ -16,10 +16,6 @@ export default function ServicesPage() {
     const navigation = {
         menu: [
             {
-                title: 'Личный кабинет',
-                url: '/client/personal-cabinet',
-            },
-            {
                 title: 'Услуги',
                 url: '/client/services',
             },

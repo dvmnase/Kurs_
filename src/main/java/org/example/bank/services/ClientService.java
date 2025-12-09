@@ -1,3 +1,6 @@
+// DEPRECATED: This service is no longer used in the cargo management system
+// Replaced by OwnerRepository and CarrierRepository
+/*
 package org.example.bank.services;
 
 
@@ -32,3 +35,4 @@ public class ClientService {
         return clientRepository.save(client);
     }
 }
+*/

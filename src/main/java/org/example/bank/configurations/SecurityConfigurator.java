@@ -71,9 +71,12 @@ public class SecurityConfigurator {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/secured/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/secured/employee/**").hasAnyRole("EMPLOYEE", "ADMIN")
-                        .anyRequest().authenticated()                    // <--- и это!
+                        .requestMatchers("/api/public/**").permitAll()
+                        .requestMatchers("/api/geocoding/**").permitAll()
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/owner/**").hasAnyRole("OWNER", "ADMIN")
+                        .requestMatchers("/api/carrier/**").hasAnyRole("CARRIER", "ADMIN")
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
 

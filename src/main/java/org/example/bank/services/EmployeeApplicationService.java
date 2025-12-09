@@ -1,3 +1,6 @@
+// DEPRECATED: This service is no longer used in the cargo management system
+// Replaced by RequestService
+/*
 package org.example.bank.services;
 
 import org.example.bank.dto.ApplicationStatsDTO;
@@ -131,3 +134,4 @@ public class EmployeeApplicationService {
     }
 
 }
+*/

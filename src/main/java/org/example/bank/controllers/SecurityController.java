@@ -3,11 +3,12 @@ package org.example.bank.controllers;
 
 import org.example.bank.JwtCore;
 import org.example.bank.UserDetailsImpl;
-import org.example.bank.entities.Client;
+import org.example.bank.entities.Owner;
+import org.example.bank.entities.Carrier;
 import org.example.bank.models.Role;
 import org.example.bank.models.User;
-import org.example.bank.repositories.ClientRepository;
-import org.example.bank.repositories.EmployeeRepository;
+import org.example.bank.repositories.OwnerRepository;
+import org.example.bank.repositories.CarrierRepository;
 import org.example.bank.repositories.UserRepository;
 import org.example.bank.requests.SigninRequest;
 import org.example.bank.requests.SignupRequest;
@@ -35,8 +36,8 @@ public class SecurityController {
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
     private AuthenticationManager authenticationManager;
-    private ClientRepository clientRepository;
-    private EmployeeRepository employeeRepository;
+    private OwnerRepository ownerRepository;
+    private CarrierRepository carrierRepository;
     private JwtCore jwtCore;
 
 
@@ -50,12 +51,12 @@ public class SecurityController {
 
 
     @Autowired
-    public void setClientRepository(ClientRepository clientRepository) {
-        this.clientRepository = clientRepository;
+    public void setOwnerRepository(OwnerRepository ownerRepository) {
+        this.ownerRepository = ownerRepository;
     }
     @Autowired
-    public void setEmployeeRepository(EmployeeRepository employeeRepository) {
-        this.employeeRepository = employeeRepository;
+    public void setCarrierRepository(CarrierRepository carrierRepository) {
+        this.carrierRepository = carrierRepository;
     }
 
     @Autowired
@@ -85,22 +86,43 @@ public class SecurityController {
                 return ResponseEntity.badRequest().body("Email already exists");
             }
 
-            // создаем пользователя с ролью USER
+            // Определяем роль
+            Role role = Role.OWNER; // по умолчанию
+            if (signupRequest.getRole() != null) {
+                try {
+                    role = Role.valueOf(signupRequest.getRole().toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    return ResponseEntity.badRequest().body("Invalid role");
+                }
+            }
+
+            // создаем пользователя
             User user = new User();
             user.setUsername(signupRequest.getUsername());
             user.setEmail(signupRequest.getEmail());
             user.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
-            user.setRole(Role.USER);
+            user.setRole(role);
+            user.setCreatedAt(new java.sql.Timestamp(System.currentTimeMillis()));
             user = userRepository.save(user);
 
-            // создаем клиента, привязываем к пользователю
-            Client client = new Client();
-            client.setUser(user);
-            client.setFullName(signupRequest.getFullName());
-            client.setPhoneNumber(signupRequest.getPhoneNumber());
-            clientRepository.save(client);
-
-            return ResponseEntity.ok("Client registered successfully");
+            // создаем соответствующую сущность в зависимости от роли
+            if (role == Role.OWNER) {
+                Owner owner = new Owner();
+                owner.setUser(user);
+                owner.setFullName(signupRequest.getFullName());
+                owner.setPhone(signupRequest.getPhoneNumber());
+                ownerRepository.save(owner);
+                return ResponseEntity.ok("Owner registered successfully");
+            } else if (role == Role.CARRIER) {
+                Carrier carrier = new Carrier();
+                carrier.setUser(user);
+                carrier.setCompanyName(signupRequest.getCompanyName());
+                carrier.setPhone(signupRequest.getPhoneNumber());
+                carrierRepository.save(carrier);
+                return ResponseEntity.ok("Carrier registered successfully");
+            } else {
+                return ResponseEntity.badRequest().body("Invalid role for registration");
+            }
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Registration failed: " + e.getMessage());
         }
@@ -130,17 +152,21 @@ public class SecurityController {
         Long userId = userDetails.getId();
 
         return switch (role) {
-            case "ROLE_USER" -> clientRepository.findByUserId(userId)
-                    .map(client -> ResponseEntity.ok(new AuthResponse(jwt, "USER", Map.of(  // Возвращаем "USER" без префикса
-                            "id", client.getId(),
-                            "fullName", client.getFullName(),
-                            "phoneNumber", client.getPhoneNumber()
+            case "ROLE_OWNER" -> ownerRepository.findByUserId(userId)
+                    .map(owner -> ResponseEntity.ok(new AuthResponse(jwt, "OWNER", Map.of(
+                            "id", owner.getId(),
+                            "fullName", owner.getFullName(),
+                            "phone", owner.getPhone()
                     ))))
-                    .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body(new AuthResponse(jwt, "USER", null)));
+                    .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body(new AuthResponse(jwt, "OWNER", null)));
 
-            case "ROLE_EMPLOYEE" -> employeeRepository.findByUserId(userId)
-                    .map(employee -> ResponseEntity.ok(new AuthResponse(jwt, "EMPLOYEE", employee)))
-                    .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body(new AuthResponse(jwt, "EMPLOYEE", null)));
+            case "ROLE_CARRIER" -> carrierRepository.findByUserId(userId)
+                    .map(carrier -> ResponseEntity.ok(new AuthResponse(jwt, "CARRIER", Map.of(
+                            "id", carrier.getId(),
+                            "companyName", carrier.getCompanyName() != null ? carrier.getCompanyName() : "",
+                            "phone", carrier.getPhone() != null ? carrier.getPhone() : ""
+                    ))))
+                    .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body(new AuthResponse(jwt, "CARRIER", null)));
 
             case "ROLE_ADMIN" -> ResponseEntity.ok(new AuthResponse(jwt, "ADMIN", null));
 

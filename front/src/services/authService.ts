@@ -9,7 +9,7 @@ export interface SignUpData {
     role: string;
     fullName: string;
     phoneNumber: string;
-    address: string;
+    companyName?: string; // для перевозчиков
 }
 
 export interface SignInData {
@@ -52,11 +52,11 @@ export interface AuthService {
     getUser: () => UserData | null;
     isAuthenticated: () => boolean;
     getUserFullName: () => string | null;
-    getClientId: () => number | null;
-    getEmployeeId: () => number | null;
+    getOwnerId: () => number | null;
+    getCarrierId: () => number | null;
     isAdmin: () => boolean;
-    isClient: () => boolean;
-    isEmployee: () => boolean;
+    isOwner: () => boolean;
+    isCarrier: () => boolean;
 }
 
 export const authService: AuthService = {
@@ -106,6 +106,15 @@ export const authService: AuthService = {
                         role: role
                     };
                     localStorage.setItem('user', JSON.stringify(adminData));
+                } else if (role === 'OWNER' || role === 'CARRIER') {
+                    // Для OWNER и CARRIER сохраняем базовые данные из ответа
+                    const basicData = {
+                        id: userData?.id || 0,
+                        fullName: userData?.fullName || '',
+                        phone: userData?.phone || userData?.phoneNumber || '',
+                        role: role
+                    };
+                    localStorage.setItem('user', JSON.stringify(basicData));
                 } else {
                     throw new Error('Данные пользователя не получены от сервера');
                 }
@@ -182,31 +191,31 @@ export const authService: AuthService = {
         }
     },
 
-    getClientId: () => {
+    getOwnerId: () => {
         if (!isBrowser) return null;
         const userStr = localStorage.getItem('user');
-        console.log('Получение clientId из localStorage:', userStr);
+        console.log('Получение ownerId из localStorage:', userStr);
         if (!userStr || userStr === 'undefined') return null;
         try {
             const user = JSON.parse(userStr);
             console.log('Распарсенные данные пользователя:', user);
-            if (!user || user.role !== 'USER') return null;
-            console.log('Возвращаемый clientId:', user.id);
-            return user.id.toString();
+            if (!user || user.role !== 'OWNER') return null;
+            console.log('Возвращаемый ownerId:', user.id);
+            return user.id;
         } catch (e) {
             console.error('Error parsing user data:', e);
             return null;
         }
     },
 
-    getEmployeeId: () => {
+    getCarrierId: () => {
         if (!isBrowser) return null;
         const userStr = localStorage.getItem('user');
         if (!userStr || userStr === 'undefined') return null;
         try {
             const user = JSON.parse(userStr);
-            if (!user || user.role !== 'EMPLOYEE') return null;
-            return user.id.toString();
+            if (!user || user.role !== 'CARRIER') return null;
+            return user.id;
         } catch (e) {
             console.error('Error parsing user data:', e);
             return null;
@@ -219,15 +228,15 @@ export const authService: AuthService = {
         return role === 'ADMIN';
     },
 
-    isClient: () => {
+    isOwner: () => {
         if (!isBrowser) return false;
         const role = localStorage.getItem('role');
-        return role === 'USER';
+        return role === 'OWNER';
     },
 
-    isEmployee: () => {
+    isCarrier: () => {
         if (!isBrowser) return false;
         const role = localStorage.getItem('role');
-        return role === 'EMPLOYEE';
+        return role === 'CARRIER';
     }
 }; 

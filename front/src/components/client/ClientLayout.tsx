@@ -26,10 +26,6 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({ children }) => {
 
     const authorizedNavigation = [
         {
-            name: 'Личный кабинет',
-            path: '/client/personal-cabinet',
-        },
-        {
             name: 'Услуги',
             path: '/client/services',
         },

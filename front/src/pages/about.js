@@ -25,7 +25,7 @@ const AboutUs = ({ navigationItems, landing }) => {
     <Layout navigationPaths={!userRole ? {
       menu: [
         {
-          title: 'Отзывы',
+          title: 'Главная страница',
           url: '/#reviews',
         },
         {
@@ -35,9 +35,9 @@ const AboutUs = ({ navigationItems, landing }) => {
       ]
     } : navigationItems[0]?.metadata}>
       <PageMeta
-        title={'О нас | Ремонт Про'}
+        title={'О нас | Quantum Bank'}
         description={
-          'Профессиональный ремонт квартир и домов. Качественные услуги по доступным ценам.'
+          'Quantum Bank - Ваш надежный финансовый партнер. Инновационные банковские решения для современного бизнеса.'
         }
       />
       <div className={cn('section', styles.section)}>
@@ -47,22 +47,23 @@ const AboutUs = ({ navigationItems, landing }) => {
               <Image
                 quality={60}
                 layout="fill"
-                src="/images/content/about.jpg"
+                src="/images/content/about.png"
                 placeholder="blur"
-                blurDataURL="/images/content/about.jpg"
+                blurDataURL="/images/content/about.png"
                 objectFit="cover"
-                alt="О нашей компании"
+                alt="О Quantum Bank"
                 priority
               />
             </div>
             <h2 className={cn('h2', styles.title)}>
-              О нашей компании
+              О Quantum Bank
             </h2>
-            <h3 className={styles.info}>Профессиональный ремонт квартир и домов</h3>
+            <h3 className={styles.info}>Инновационный банк будущего</h3>
             <p className={styles.info}>
-              Мы - команда профессионалов, специализирующаяся на качественном ремонте квартир и домов.
-              Наша цель - сделать ваш дом уютным и комфортным, используя современные технологии и материалы.
-              Мы предлагаем широкий спектр услуг по доступным ценам и гарантируем высокое качество работ.
+              Quantum Bank - это современный финансовый институт, который сочетает в себе традиционные банковские ценности с инновационными технологиями. Мы стремимся предоставлять нашим клиентам передовые финансовые решения, обеспечивая при этом высочайший уровень безопасности и надежности.
+            </p>
+            <p className={styles.info}>
+              Наша миссия - сделать банковские услуги доступными, удобными и эффективными для каждого клиента. Мы постоянно развиваемся и внедряем новые технологии, чтобы обеспечить вам лучший банковский опыт.
             </p>
           </div>
         </div>

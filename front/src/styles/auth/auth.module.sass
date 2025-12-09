@@ -1,0 +1,139 @@
+.authContainer
+    min-height: 100vh
+    display: flex
+    flex-direction: column
+    align-items: center
+    justify-content: center
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+    padding: 20px
+
+.authHeader
+    text-align: center
+    color: white
+    margin-bottom: 40px
+
+    h1
+        font-size: 48px
+        font-weight: 700
+        margin-bottom: 16px
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2)
+
+    p
+        font-size: 20px
+        opacity: 0.9
+
+.authContent
+    background: white
+    border-radius: 16px
+    padding: 40px
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2)
+    max-width: 450px
+    width: 100%
+
+.switchForm
+    margin-top: 20px
+    text-align: center
+
+    p
+        color: #666
+        font-size: 14px
+
+    button
+        background: none
+        border: none
+        color: #667eea
+        cursor: pointer
+        text-decoration: underline
+        font-size: 14px
+        padding: 0
+        margin-left: 5px
+
+        &:hover
+            color: #764ba2
+
+.transfer
+    width: 100%
+
+.title
+    font-size: 28px
+    font-weight: 700
+    margin-bottom: 8px
+    color: #333
+
+.text
+    font-size: 14px
+    color: #666
+    margin-bottom: 24px
+
+.form
+    display: flex
+    flex-direction: column
+    gap: 16px
+
+.field
+    display: flex
+    flex-direction: column
+
+.input
+    padding: 12px 16px
+    border: 2px solid #e0e0e0
+    border-radius: 8px
+    font-size: 16px
+    transition: border-color 0.3s ease
+
+    &:focus
+        outline: none
+        border-color: #667eea
+
+    &::placeholder
+        color: #999
+
+.btns
+    display: flex
+    gap: 12px
+    margin-top: 8px
+
+.button
+    flex: 1
+    padding: 12px 24px
+    background: #667eea
+    color: white
+    border: none
+    border-radius: 8px
+    font-size: 16px
+    font-weight: 600
+    cursor: pointer
+    transition: background 0.3s ease
+
+    &:hover
+        background: #764ba2
+
+    &:disabled
+        background: #ccc
+        cursor: not-allowed
+
+.loginButton
+    background: #6c757d
+
+    &:hover
+        background: #5a6268
+
+.error
+    background: #fee
+    color: #c33
+    padding: 12px 16px
+    border-radius: 8px
+    margin-bottom: 16px
+    font-size: 14px
+    border: 1px solid #fcc
+
+.success
+    background: #efe
+    color: #3c3
+    padding: 12px 16px
+    border-radius: 8px
+    margin-bottom: 16px
+    font-size: 14px
+    border: 1px solid #cfc
+
+
