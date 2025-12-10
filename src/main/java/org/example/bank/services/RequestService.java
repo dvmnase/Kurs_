@@ -5,11 +5,13 @@ import org.example.bank.entities.Cargo;
 import org.example.bank.entities.Carrier;
 import org.example.bank.entities.Owner;
 import org.example.bank.entities.Request;
+import org.example.bank.entities.Route;
 import org.example.bank.models.RequestStatus;
 import org.example.bank.repositories.CargoRepository;
 import org.example.bank.repositories.CarrierRepository;
 import org.example.bank.repositories.OwnerRepository;
 import org.example.bank.repositories.RequestRepository;
+import org.example.bank.repositories.RouteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +36,9 @@ public class RequestService {
 
     @Autowired
     private CargoService cargoService;
+
+    @Autowired
+    private RouteRepository routeRepository;
 
     @Transactional
     public RequestDTO createRequest(Long ownerId, CreateRequestDTO dto) {
@@ -217,6 +222,35 @@ public class RequestService {
         dto.setCreatedAt(request.getCreatedAt());
         dto.setUpdatedAt(request.getUpdatedAt());
         dto.setCargo(cargoService.getCargoById(request.getCargo().getId()));
+        
+        // Проверяем наличие подтвержденного маршрута для этой заявки
+        dto.setHasRoute(request.getConfirmedRoute() != null);
+        
+        return dto;
+    }
+
+    public RouteDTO getConfirmedRouteByRequestId(Long requestId) {
+        Request request = requestRepository.findById(requestId)
+                .orElseThrow(() -> new RuntimeException("Request not found"));
+        
+        if (request.getConfirmedRoute() == null) {
+            throw new RuntimeException("No confirmed route for this request");
+        }
+        
+        return convertRouteToDTO(request.getConfirmedRoute());
+    }
+
+    private RouteDTO convertRouteToDTO(Route route) {
+        RouteDTO dto = new RouteDTO();
+        dto.setId(route.getId());
+        dto.setCargoId(route.getCargo().getId());
+        dto.setStartAddress(route.getStartAddress());
+        dto.setEndAddress(route.getEndAddress());
+        dto.setStartLat(route.getStartLat());
+        dto.setStartLng(route.getStartLng());
+        dto.setEndLat(route.getEndLat());
+        dto.setEndLng(route.getEndLng());
+        dto.setCreatedAt(route.getCreatedAt());
         return dto;
     }
 }

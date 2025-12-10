@@ -57,6 +57,17 @@ public class OwnerRequestController {
         requestService.deleteRequest(id, ownerId);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/{id}/route")
+    public ResponseEntity<RouteDTO> getConfirmedRoute(@PathVariable Long id, Authentication authentication) {
+        Long ownerId = getOwnerId(authentication);
+        // Проверяем, что заявка принадлежит владельцу
+        RequestDTO request = requestService.getRequestById(id);
+        if (!request.getOwnerId().equals(ownerId)) {
+            throw new RuntimeException("Unauthorized");
+        }
+        return ResponseEntity.ok(requestService.getConfirmedRouteByRequestId(id));
+    }
 }
 
 

@@ -150,8 +150,14 @@ public class MessageService {
 
             route = routeRepository.save(route);
 
+            // Сохраняем подтвержденный маршрут в заявке
+            request.setConfirmedRoute(route);
+            request.setRouteConfirmedAt(new java.sql.Timestamp(System.currentTimeMillis()));
+            request.setRouteConfirmedBy(user);
+            
             // Обновляем статус заявки на IN_PROGRESS
             request.setStatus(RequestStatus.IN_PROGRESS);
+            request.setUpdatedAt(new java.sql.Timestamp(System.currentTimeMillis()));
             requestRepository.save(request);
 
             return convertRouteToDTO(route);

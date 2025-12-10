@@ -106,6 +106,21 @@ CREATE TABLE IF NOT EXISTS requests (
     FOREIGN KEY (carrier_id) REFERENCES carriers(id)
     );
 
+-- 1. Добавляем поля в requests
+ALTER TABLE requests
+    ADD COLUMN confirmed_route_id BIGINT NULL,
+ADD COLUMN route_confirmed_at TIMESTAMP NULL,
+ADD COLUMN route_confirmed_by BIGINT NULL;
+
+-- 2. Создаём внешние ключи (если routes и users уже существуют)
+ALTER TABLE requests
+    ADD CONSTRAINT fk_requests_confirmed_route
+        FOREIGN KEY (confirmed_route_id) REFERENCES routes(id) ON DELETE SET NULL;
+
+ALTER TABLE requests
+    ADD CONSTRAINT fk_requests_route_confirmed_by
+        FOREIGN KEY (route_confirmed_by) REFERENCES users(id) ON DELETE SET NULL;
+
 -- ============================
 -- REVIEWS
 -- ============================

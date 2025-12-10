@@ -17,6 +17,7 @@ interface Request {
         name: string;
     };
     ownerName: string;
+    hasRoute?: boolean;
 }
 
 const CarrierRequestsPage = () => {

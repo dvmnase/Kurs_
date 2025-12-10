@@ -430,7 +430,19 @@ const RequestChat: React.FC<RequestChatProps> = ({ requestId, currentUserId, isO
     const confirmRoute = async (messageId: number) => {
         try {
             await api.post(`/api/messages/route/${messageId}/confirm`);
+            setError(null);
+            // Показываем уведомление об успешном подтверждении
+            const successMessage = '✅ Маршрут успешно подтвержден!';
+            setError(successMessage);
+            // Убираем сообщение об ошибке через 3 секунды
+            setTimeout(() => {
+                setError(null);
+            }, 3000);
             fetchMessages();
+            // Закрываем чат после подтверждения
+            setTimeout(() => {
+                onClose();
+            }, 2000);
         } catch (err: any) {
             console.error('Ошибка подтверждения маршрута:', err);
             setError('Ошибка подтверждения маршрута');
@@ -473,7 +485,14 @@ const RequestChat: React.FC<RequestChatProps> = ({ requestId, currentUserId, isO
                 </div>
 
                 {error && (
-                    <div style={{ background: '#f8d7da', color: '#721c24', padding: '12px', borderRadius: '4px', marginBottom: '16px' }}>
+                    <div style={{ 
+                        background: error.startsWith('✅') ? '#d4edda' : '#f8d7da', 
+                        color: error.startsWith('✅') ? '#155724' : '#721c24', 
+                        padding: '12px', 
+                        borderRadius: '4px', 
+                        marginBottom: '16px',
+                        border: error.startsWith('✅') ? '1px solid #c3e6cb' : '1px solid #f5c6cb'
+                    }}>
                         {error}
                     </div>
                 )}

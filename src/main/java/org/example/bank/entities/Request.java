@@ -46,6 +46,17 @@ public class Request {
     @Column(name = "updated_at", nullable = false)
     private Timestamp updatedAt = new Timestamp(System.currentTimeMillis());
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "confirmed_route_id")
+    private Route confirmedRoute;
+
+    @Column(name = "route_confirmed_at")
+    private Timestamp routeConfirmedAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "route_confirmed_by")
+    private org.example.bank.models.User routeConfirmedBy;
+
     public Long getId() {
         return id;
     }
@@ -124,6 +135,30 @@ public class Request {
 
     public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Route getConfirmedRoute() {
+        return confirmedRoute;
+    }
+
+    public void setConfirmedRoute(Route confirmedRoute) {
+        this.confirmedRoute = confirmedRoute;
+    }
+
+    public Timestamp getRouteConfirmedAt() {
+        return routeConfirmedAt;
+    }
+
+    public void setRouteConfirmedAt(Timestamp routeConfirmedAt) {
+        this.routeConfirmedAt = routeConfirmedAt;
+    }
+
+    public org.example.bank.models.User getRouteConfirmedBy() {
+        return routeConfirmedBy;
+    }
+
+    public void setRouteConfirmedBy(org.example.bank.models.User routeConfirmedBy) {
+        this.routeConfirmedBy = routeConfirmedBy;
     }
 }
 

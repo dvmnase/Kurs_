@@ -5,6 +5,7 @@ import api from '../../services/api';
 import Layout from '../../components/Layout';
 import ChatBot from '../../components/ChatBot';
 import RequestChat from '../../components/RequestChat';
+import RouteMapView from '../../components/RouteMapView';
 import styles from '../../styles/client/ClientHome.module.sass';
 
 interface Request {
@@ -18,6 +19,7 @@ interface Request {
         name: string;
     };
     carrierName?: string;
+    hasRoute?: boolean;
 }
 
 interface Carrier {
@@ -45,6 +47,8 @@ const OwnerRequestsPage = () => {
     const [showChat, setShowChat] = useState(false);
     const [chatRequestId, setChatRequestId] = useState<number | null>(null);
     const [currentUserId, setCurrentUserId] = useState<number>(0);
+    const [showRouteModal, setShowRouteModal] = useState(false);
+    const [viewingRoute, setViewingRoute] = useState<any>(null);
     const [formData, setFormData] = useState({
         cargoId: '',
         carrierId: '',
@@ -421,8 +425,40 @@ const OwnerRequestsPage = () => {
                                 {request.deliveryDate && <p>Дата доставки: {request.deliveryDate}</p>}
                                 {request.comment && <p>Комментарий: {request.comment}</p>}
                                 <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                                    <button onClick={() => handleEditRequest(request)}>✏️ Редактировать</button>
-                                    <button onClick={() => handleDeleteRequest(request.id)}>🗑️ Удалить</button>
+                                    {!request.hasRoute && (
+                                        <>
+                                            <button onClick={() => handleEditRequest(request)}>✏️ Редактировать</button>
+                                            <button onClick={() => handleDeleteRequest(request.id)}>🗑️ Удалить</button>
+                                        </>
+                                    )}
+                                    {request.hasRoute && (
+                                        <button 
+                                            onClick={async () => {
+                                                try {
+                                                    const response = await api.get(`/api/owner/requests/${request.id}/route`);
+                                                    const route = response.data;
+                                                    if (route) {
+                                                        setViewingRoute(route);
+                                                        setShowRouteModal(true);
+                                                    }
+                                                } catch (err) {
+                                                    console.error('Ошибка загрузки маршрута:', err);
+                                                    setError('Ошибка загрузки маршрута');
+                                                }
+                                            }}
+                                            style={{ 
+                                                background: 'linear-gradient(135deg, #17a2b8 0%, #138496 100%)',
+                                                color: 'white',
+                                                border: 'none',
+                                                padding: '8px 16px',
+                                                borderRadius: '4px',
+                                                cursor: 'pointer',
+                                                fontWeight: 'bold'
+                                            }}
+                                        >
+                                            🗺️ Просмотреть маршрут
+                                        </button>
+                                    )}
                                     {request.status === 'ACCEPTED' && (
                                         <button 
                                             onClick={() => {
@@ -525,8 +561,60 @@ const OwnerRequestsPage = () => {
                         onClose={() => {
                             setShowChat(false);
                             setChatRequestId(null);
+                            fetchRequests(); // Обновляем список заявок после закрытия чата
                         }}
                     />
+                )}
+
+                {showRouteModal && viewingRoute && (
+                    <div className={styles.modalOverlay} onClick={(e) => {
+                        if (e.target === e.currentTarget) {
+                            setShowRouteModal(false);
+                            setViewingRoute(null);
+                        }
+                    }}>
+                        <div className={styles.modalContent} onClick={(e) => e.stopPropagation()} style={{ maxWidth: '900px', width: '95%' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                                <h2>🗺️ Маршрут заявки</h2>
+                                <button 
+                                    onClick={() => {
+                                        setShowRouteModal(false);
+                                        setViewingRoute(null);
+                                    }}
+                                    style={{ 
+                                        background: '#dc3545', 
+                                        color: 'white', 
+                                        border: 'none', 
+                                        padding: '8px 16px', 
+                                        borderRadius: '4px', 
+                                        cursor: 'pointer' 
+                                    }}
+                                >
+                                    ✕ Закрыть
+                                </button>
+                            </div>
+                            <div style={{ marginBottom: '16px', padding: '16px', background: '#f8f9fa', borderRadius: '8px' }}>
+                                <p style={{ margin: '4px 0', fontSize: '14px' }}>
+                                    <strong>📍 От:</strong> {viewingRoute.startAddress}
+                                </p>
+                                <p style={{ margin: '4px 0', fontSize: '14px' }}>
+                                    <strong>📍 До:</strong> {viewingRoute.endAddress}
+                                </p>
+                                <p style={{ margin: '8px 0 0 0', fontSize: '12px', color: '#666' }}>
+                                    Создан: {new Date(viewingRoute.createdAt).toLocaleString('ru-RU')}
+                                </p>
+                            </div>
+                            <RouteMapView
+                                startLat={viewingRoute.startLat}
+                                startLng={viewingRoute.startLng}
+                                endLat={viewingRoute.endLat}
+                                endLng={viewingRoute.endLng}
+                                startAddress={viewingRoute.startAddress}
+                                endAddress={viewingRoute.endAddress}
+                                height="500px"
+                            />
+                        </div>
+                    </div>
                 )}
                 <ChatBot />
             </div>

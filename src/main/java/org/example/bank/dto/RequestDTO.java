@@ -19,6 +19,7 @@ public class RequestDTO {
     private CargoDTO cargo;
     private String ownerName;
     private String carrierName;
+    private Boolean hasRoute; // есть ли подтвержденный маршрут
 
     public Long getId() {
         return id;
@@ -122,6 +123,14 @@ public class RequestDTO {
 
     public void setCarrierName(String carrierName) {
         this.carrierName = carrierName;
+    }
+
+    public Boolean getHasRoute() {
+        return hasRoute;
+    }
+
+    public void setHasRoute(Boolean hasRoute) {
+        this.hasRoute = hasRoute;
     }
 }
 
