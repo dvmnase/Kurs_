@@ -20,6 +20,7 @@ public class RequestDTO {
     private String ownerName;
     private String carrierName;
     private Boolean hasRoute; // есть ли подтвержденный маршрут
+    private Boolean hasReview; // есть ли отзыв для перевозчика
 
     public Long getId() {
         return id;
@@ -131,6 +132,14 @@ public class RequestDTO {
 
     public void setHasRoute(Boolean hasRoute) {
         this.hasRoute = hasRoute;
+    }
+
+    public Boolean getHasReview() {
+        return hasReview;
+    }
+
+    public void setHasReview(Boolean hasReview) {
+        this.hasReview = hasReview;
     }
 }
 

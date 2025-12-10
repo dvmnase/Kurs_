@@ -207,7 +207,7 @@ const CarrierRequestsPage = () => {
                                                         boxShadow: '0 2px 8px rgba(40, 167, 69, 0.3)'
                                                     }}
                                                 >
-                                                    ✓ Принять заявку
+                                                    Принять заявку
                                                 </button>
                                                 <button 
                                                     onClick={() => handleDeclineRequest(request.id)}
@@ -246,17 +246,17 @@ const CarrierRequestsPage = () => {
                                                         setShowChat(true);
                                                     }}
                                                     style={{ 
-                                                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                                                        color: 'white',
-                                                        border: 'none',
-                                                        padding: '10px 20px',
-                                                        borderRadius: '8px',
-                                                        cursor: 'pointer',
-                                                        fontWeight: 'bold',
-                                                        boxShadow: '0 2px 8px rgba(102, 126, 234, 0.3)'
-                                                    }}
-                                                >
-                                                    💬 Начать чат
+                                                    background: 'linear-gradient(135deg, #ffc107 0%, #ffb300 100%)',
+                                                    color: '#1a1a1a',
+                                                    border: 'none',
+                                                    padding: '10px 20px',
+                                                    borderRadius: '8px',
+                                                    cursor: 'pointer',
+                                                    fontWeight: 'bold',
+                                                    boxShadow: '0 2px 8px rgba(255, 193, 7, 0.3)'
+                                                }}
+                                            >
+                                                Начать чат
                                                 </button>
                                                 <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px' }}>
                                                     <strong>Статус:</strong>
@@ -296,7 +296,7 @@ const CarrierRequestsPage = () => {
                                                         boxShadow: '0 2px 8px rgba(102, 126, 234, 0.3)'
                                                     }}
                                                 >
-                                                    💬 Чат
+                                                    Чат
                                                 </button>
                                                 <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px' }}>
                                                     <strong>Статус:</strong>

@@ -42,7 +42,7 @@ const Layout = ({ children, title, navigationPaths, showLogout, onLogout }) => {
   return (
     <>
       <Meta />
-      <PageMeta title="Quantum Bank" />
+      <PageMeta title="HeatTruck" />
       <ScrollToSection />
       <div className={styles.page}>
         <Header
@@ -50,6 +50,13 @@ const Layout = ({ children, title, navigationPaths, showLogout, onLogout }) => {
           showLogout={showLogout}
           onLogout={onLogout}
         />
+        <div className={styles.banner}>
+          <img 
+            src="/images/girlyanda.png" 
+            alt="Гирлянда" 
+            className={styles.bannerImage}
+          />
+        </div>
         <main className={styles.inner}>{children}</main>
         <Footer navigation={getNavigation()} />
       </div>

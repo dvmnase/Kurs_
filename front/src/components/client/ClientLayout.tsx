@@ -59,6 +59,13 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({ children }) => {
                     onLogout={handleLogout}
                 />
             )}
+            <div className={styles.banner}>
+                <img 
+                    src="/images/girlyanda.png" 
+                    alt="Гирлянда" 
+                    className={styles.bannerImage}
+                />
+            </div>
             <main className={styles.main}>
                 {children}
             </main>

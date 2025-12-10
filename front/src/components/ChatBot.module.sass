@@ -3,7 +3,7 @@
     bottom: 20px
     right: 20px
     padding: 15px 20px
-    background: #007bff
+    background: #d32f2f
     color: white
     border: none
     border-radius: 25px
@@ -13,7 +13,7 @@
     font-size: 16px
 
     &:hover
-        background: #0056b3
+        background: #b71c1c
 
 .chatBot
     position: fixed
@@ -30,8 +30,8 @@
 
 .chatHeader
     padding: 15px
-    background: #007bff
-    color: white
+    background: linear-gradient(135deg, #ffc107 0%, #ffb300 100%)
+    color: #1a1a1a
     border-radius: 10px 10px 0 0
     display: flex
     justify-content: space-between
@@ -40,16 +40,36 @@
     h3
         margin: 0
         font-size: 18px
+        font-weight: 600
+        color: #1a1a1a
+
+    .chatHeaderButtons
+        display: flex
+        gap: 10px
 
     button
-        background: none
+        background: rgba(0, 0, 0, 0.1)
         border: none
-        color: white
-        font-size: 20px
+        color: #1a1a1a
+        font-size: 12px
         cursor: pointer
+        padding: 5px 10px
+        border-radius: 5px
+        transition: background 0.3s ease
+        font-weight: 500
+
+        &:hover
+            background: rgba(0, 0, 0, 0.2)
+
+    .closeButton
+        font-size: 18px
         padding: 0
         width: 30px
         height: 30px
+        display: flex
+        align-items: center
+        justify-content: center
+        color: #1a1a1a
 
 .chatMessages
     flex: 1
@@ -59,6 +79,19 @@
     flex-direction: column
     gap: 10px
 
+    &::-webkit-scrollbar
+        width: 6px
+
+    &::-webkit-scrollbar-track
+        background: #f1f1f1
+
+    &::-webkit-scrollbar-thumb
+        background: #888
+        border-radius: 3px
+
+        &:hover
+            background: #555
+
 .message
     padding: 10px 15px
     border-radius: 10px
@@ -66,10 +99,11 @@
     word-wrap: break-word
 
 .userMessage
-    background: #007bff
+    background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%)
     color: white
     align-self: flex-end
     margin-left: auto
+    font-weight: 500
 
 .botMessage
     background: #f1f1f1
@@ -91,18 +125,57 @@
 
     button
         padding: 10px 20px
-        background: #007bff
+        background: rgb(47, 119, 47)
         color: white
         border: none
         border-radius: 5px
         cursor: pointer
 
         &:hover
-            background: #0056b3
+            background: rgb(17, 44, 17)
 
         &:disabled
             background: #ccc
             cursor: not-allowed
+
+.menuContainer
+    margin-top: 10px
+    padding: 15px
+    background: #f8f9fa
+    border-radius: 10px
+    border: 1px solid #e0e0e0
+
+    .menuTitle
+        font-weight: 600
+        margin-bottom: 12px
+        color: #333
+        font-size: 14px
+
+    .menuButtons
+        display: flex
+        flex-direction: column
+        gap: 8px
+
+    .menuButton
+        padding: 10px 15px
+        background: white
+        border: 1px solid #ddd
+        border-radius: 8px
+        cursor: pointer
+        text-align: left
+        font-size: 13px
+        color: #333
+        transition: all 0.3s ease
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05)
+
+        &:hover
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%)
+            border-color:rgb(221, 25, 25)
+            transform: translateX(4px)
+            box-shadow: 0 2px 6px rgba(102, 126, 234, 0.2)
+
+        &:active
+            transform: translateX(2px)
 
 
 

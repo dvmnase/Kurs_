@@ -228,22 +228,6 @@ const RouteMapView: React.FC<RouteMapViewProps> = ({
     return (
         <div>
             <div ref={mapRef} style={{ width: '100%', height, margin: '20px 0' }} />
-            {startAddress && (
-                <p style={{ marginTop: '10px' }}>
-                    <strong>От:</strong> {startAddress}
-                    {startLatNum && startLngNum && !isNaN(startLatNum) && !isNaN(startLngNum) && (
-                        ` (${startLatNum.toFixed(7)}, ${startLngNum.toFixed(7)})`
-                    )}
-                </p>
-            )}
-            {endAddress && (
-                <p style={{ marginTop: '5px' }}>
-                    <strong>До:</strong> {endAddress}
-                    {endLatNum && endLngNum && !isNaN(endLatNum) && !isNaN(endLngNum) && (
-                        ` (${endLatNum.toFixed(7)}, ${endLngNum.toFixed(7)})`
-                    )}
-                </p>
-            )}
         </div>
     );
 };

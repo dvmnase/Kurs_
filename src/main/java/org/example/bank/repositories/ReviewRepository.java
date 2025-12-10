@@ -10,6 +10,7 @@ import java.util.List;
 public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findByCarrierId(Long carrierId);
     List<Review> findByOwnerId(Long ownerId);
+    boolean existsByOwnerIdAndCarrierId(Long ownerId, Long carrierId);
 }
 
 

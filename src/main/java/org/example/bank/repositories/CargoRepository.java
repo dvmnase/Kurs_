@@ -14,7 +14,7 @@ import java.util.List;
 public interface CargoRepository extends JpaRepository<Cargo, Long> {
     List<Cargo> findByOwnerId(Long ownerId);
     
-    @Query("SELECT c FROM Cargo c WHERE c.name LIKE %:searchTerm% OR c.description LIKE %:searchTerm%")
+    @Query("SELECT c FROM Cargo c WHERE LOWER(c.name) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR LOWER(c.description) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
     List<Cargo> searchByNameOrDescription(@Param("searchTerm") String searchTerm);
     
     List<Cargo> findByOwnerId(Long ownerId, Sort sort);

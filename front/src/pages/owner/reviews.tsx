@@ -102,7 +102,7 @@ const OwnerReviewsPage = () => {
         menu: [
             { title: 'Мои грузы', url: '/owner/cargo' },
             { title: 'Заявки', url: '/owner/requests' },
-            { title: 'Маршруты', url: '/owner/routes' },
+            { title: 'Чаты', url: '/owner/chats' },
             { title: 'Отзывы', url: '/owner/reviews' },
             { title: 'Настройки', url: '/owner/settings' },
         ],
@@ -117,9 +117,36 @@ const OwnerReviewsPage = () => {
                 <button onClick={() => setShowCreateModal(true)}>Оставить отзыв</button>
                 
                 {showCreateModal && (
-                    <div className={styles.modal}>
+                    <div className={styles.modalOverlay} onClick={(e) => {
+                        if (e.target === e.currentTarget) {
+                            setShowCreateModal(false);
+                        }
+                    }}>
+                        <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
                         <form onSubmit={handleCreateReview}>
-                            <h2>Создать отзыв</h2>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                                <h2 style={{ margin: 0 }}>Создать отзыв</h2>
+                                <button 
+                                    type="button"
+                                    onClick={() => setShowCreateModal(false)}
+                                    style={{ 
+                                        background: 'transparent', 
+                                        border: 'none', 
+                                        fontSize: '24px', 
+                                        cursor: 'pointer',
+                                        color: '#333',
+                                        padding: '0',
+                                        width: '30px',
+                                        height: '30px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        lineHeight: '1'
+                                    }}
+                                >
+                                    ×
+                                </button>
+                            </div>
                             <select
                                 value={formData.carrierId}
                                 onChange={(e) => setFormData({ ...formData, carrierId: e.target.value })}
@@ -151,6 +178,7 @@ const OwnerReviewsPage = () => {
                             <button type="submit">Создать</button>
                             <button type="button" onClick={() => setShowCreateModal(false)}>Отмена</button>
                         </form>
+                        </div>
                     </div>
                 )}
 
@@ -163,7 +191,7 @@ const OwnerReviewsPage = () => {
                             {carriers.map((carrier) => (
                                 <div key={carrier.id} className={styles.item}>
                                     <h3>{carrier.companyName}</h3>
-                                    <p>Средний рейтинг: {carrier.averageRating ? `${carrier.averageRating.toFixed(1)} ⭐` : 'Нет оценок'}</p>
+                                    <p>Средний рейтинг: {carrier.averageRating ? `${carrier.averageRating.toFixed(1)}` : 'Нет оценок'}</p>
                                 </div>
                             ))}
                         </div>

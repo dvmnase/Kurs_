@@ -33,6 +33,7 @@ interface RequestChatProps {
     currentUserId: number;
     isOwner: boolean;
     onClose: () => void;
+    isEmbedded?: boolean;
 }
 
 declare global {
@@ -41,7 +42,7 @@ declare global {
     }
 }
 
-const RequestChat: React.FC<RequestChatProps> = ({ requestId, currentUserId, isOwner, onClose }) => {
+const RequestChat: React.FC<RequestChatProps> = ({ requestId, currentUserId, isOwner, onClose, isEmbedded = false }) => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState('');
     const [loading, setLoading] = useState(true);
@@ -54,6 +55,7 @@ const RequestChat: React.FC<RequestChatProps> = ({ requestId, currentUserId, isO
     const [geocodingStart, setGeocodingStart] = useState(false);
     const [geocodingEnd, setGeocodingEnd] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const messagesContainerRef = useRef<HTMLDivElement>(null);
     const mapRef = useRef<HTMLDivElement>(null);
     const mapInstanceRef = useRef<any>(null);
     const routePolylineRef = useRef<any>(null);
@@ -67,9 +69,30 @@ const RequestChat: React.FC<RequestChatProps> = ({ requestId, currentUserId, isO
         return () => clearInterval(interval);
     }, [requestId]);
 
+    const prevMessagesLengthRef = useRef<number>(0);
+    const isInitialLoadRef = useRef<boolean>(true);
+    
     useEffect(() => {
-        scrollToBottom();
+        // При первой загрузке не прокручиваем
+        if (isInitialLoadRef.current) {
+            isInitialLoadRef.current = false;
+            return;
+        }
+        
+        // Прокручиваем только если появилось новое сообщение
+        if (messages.length > prevMessagesLengthRef.current && messagesContainerRef.current) {
+            setTimeout(() => {
+                scrollToBottom();
+            }, 100);
+            prevMessagesLengthRef.current = messages.length;
+        }
     }, [messages]);
+    
+    // Сбрасываем флаг при смене requestId
+    useEffect(() => {
+        isInitialLoadRef.current = true;
+        prevMessagesLengthRef.current = 0;
+    }, [requestId]);
 
     useEffect(() => {
         if (showRouteBuilder && mapRef.current) {
@@ -98,7 +121,9 @@ const RequestChat: React.FC<RequestChatProps> = ({ requestId, currentUserId, isO
     }, [routeData?.startLat, routeData?.startLng, routeData?.endLat, routeData?.endLng, showRouteBuilder]);
 
     const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        if (messagesContainerRef.current) {
+            messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+        }
     };
 
     const fetchMessages = async () => {
@@ -432,7 +457,7 @@ const RequestChat: React.FC<RequestChatProps> = ({ requestId, currentUserId, isO
             await api.post(`/api/messages/route/${messageId}/confirm`);
             setError(null);
             // Показываем уведомление об успешном подтверждении
-            const successMessage = '✅ Маршрут успешно подтвержден!';
+            const successMessage = 'Маршрут успешно подтвержден!';
             setError(successMessage);
             // Убираем сообщение об ошибке через 3 секунды
             setTimeout(() => {
@@ -458,11 +483,21 @@ const RequestChat: React.FC<RequestChatProps> = ({ requestId, currentUserId, isO
     };
 
     if (loading) {
+        if (isEmbedded) {
+            return (
+                <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px' }}>
+                    <div style={{ textAlign: 'center' }}>
+                        <div style={{ marginBottom: '16px' }}>Загрузка...</div>
+                        Загрузка чата...
+                    </div>
+                </div>
+            );
+        }
         return (
             <div className={styles.modalOverlay}>
                 <div className={styles.modal}>
                     <div style={{ textAlign: 'center', padding: '40px' }}>
-                        <div style={{ fontSize: '24px', marginBottom: '16px' }}>⏳</div>
+                        <div style={{ marginBottom: '16px' }}>Загрузка...</div>
                         Загрузка чата...
                     </div>
                 </div>
@@ -470,28 +505,49 @@ const RequestChat: React.FC<RequestChatProps> = ({ requestId, currentUserId, isO
         );
     }
 
-    return (
-        <div className={styles.modalOverlay} onClick={(e) => {
-            if (e.target === e.currentTarget) {
-                onClose();
-            }
-        }}>
-            <div className={styles.modal} onClick={(e) => e.stopPropagation()} style={{ maxWidth: '800px', width: '95%', height: '90vh', display: 'flex', flexDirection: 'column' }}>
+    const chatContent = (
+        <div style={{ height: '100%', display: 'flex', flexDirection: 'column', padding: isEmbedded ? '20px' : '0' }}>
+            {!isEmbedded && (
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                    <h2>💬 Чат по заявке #{requestId}</h2>
-                    <button onClick={onClose} style={{ background: '#dc3545', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer' }}>
-                        ✕ Закрыть
+                    <h2 style={{ margin: 0 }}>Чат по заявке #{requestId}</h2>
+                    <button 
+                        onClick={onClose} 
+                        style={{ 
+                            background: 'transparent', 
+                            border: 'none', 
+                            fontSize: '24px', 
+                            cursor: 'pointer',
+                            color: '#333',
+                            padding: '0',
+                            width: '30px',
+                            height: '30px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            lineHeight: '1'
+                        }}
+                    >
+                                        ×
                     </button>
                 </div>
+            )}
+            
+            {isEmbedded && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', paddingBottom: '16px', borderBottom: '2px solid #f0f0f0' }}>
+                    <h2 style={{ margin: 0, fontSize: '24px' }}>Чат по заявке #{requestId}</h2>
+                </div>
+            )}
 
                 {error && (
                     <div style={{ 
-                        background: error.startsWith('✅') ? '#d4edda' : '#f8d7da', 
-                        color: error.startsWith('✅') ? '#155724' : '#721c24', 
+                        background: error.includes('успешно') ? 'linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%)' : '#f8d7da', 
+                        color: error.includes('успешно') ? '#1b5e20' : '#721c24', 
                         padding: '12px', 
                         borderRadius: '4px', 
                         marginBottom: '16px',
-                        border: error.startsWith('✅') ? '1px solid #c3e6cb' : '1px solid #f5c6cb'
+                        border: error.includes('успешно') ? '2px solid #4caf50' : '1px solid #f5c6cb',
+                        boxShadow: error.includes('успешно') ? '0 2px 8px rgba(76, 175, 80, 0.2)' : 'none',
+                        fontWeight: error.includes('успешно') ? '600' : 'normal'
                     }}>
                         {error}
                     </div>
@@ -503,7 +559,7 @@ const RequestChat: React.FC<RequestChatProps> = ({ requestId, currentUserId, isO
                         style={{ 
                             marginBottom: '16px', 
                             padding: '10px 20px', 
-                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                            background: 'linear-gradient(135deg, #4caf50 0%, #388e3c 100%)',
                             color: 'white',
                             border: 'none',
                             borderRadius: '8px',
@@ -511,115 +567,27 @@ const RequestChat: React.FC<RequestChatProps> = ({ requestId, currentUserId, isO
                             fontWeight: 'bold'
                         }}
                     >
-                        🗺️ Предложить маршрут
+                        Предложить маршрут
                     </button>
                 )}
 
                 {showRouteBuilder && (
-                    <div style={{ marginBottom: '20px', padding: '16px', background: '#f8f9fa', borderRadius: '8px' }}>
-                        <h3 style={{ marginTop: 0 }}>🗺️ Построение маршрута</h3>
-                        <p style={{ fontSize: '14px', color: '#666', marginBottom: '16px' }}>
-                            Введите адреса отправления и прибытия. Маршрут будет построен автоматически.
-                        </p>
-                        
-                        <div style={{ marginBottom: '16px' }}>
-                            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', fontSize: '14px' }}>
-                                📍 Адрес отправления:
-                            </label>
-                            <input
-                                type="text"
-                                value={startAddressInput}
-                                onChange={(e) => handleStartAddressChange(e.target.value)}
-                                placeholder="Например: Минск, ул. Ленина, 1"
-                                style={{
-                                    width: '100%',
-                                    padding: '10px',
-                                    border: '1px solid #ddd',
-                                    borderRadius: '4px',
-                                    fontSize: '14px'
-                                }}
-                            />
-                            {geocodingStart && (
-                                <p style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>Поиск адреса...</p>
-                            )}
-                        </div>
-
-                        <div style={{ marginBottom: '16px' }}>
-                            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', fontSize: '14px' }}>
-                                📍 Адрес прибытия:
-                            </label>
-                            <input
-                                type="text"
-                                value={endAddressInput}
-                                onChange={(e) => handleEndAddressChange(e.target.value)}
-                                placeholder="Например: Минск, ул. Пушкина, 10"
-                                style={{
-                                    width: '100%',
-                                    padding: '10px',
-                                    border: '1px solid #ddd',
-                                    borderRadius: '4px',
-                                    fontSize: '14px'
-                                }}
-                            />
-                            {geocodingEnd && (
-                                <p style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>Поиск адреса...</p>
-                            )}
-                        </div>
-
-                        {routeData && (routeData.startAddress || routeData.endAddress) && (
-                            <div style={{ marginBottom: '16px', padding: '12px', background: 'white', borderRadius: '4px' }}>
-                                {routeData.startAddress && (
-                                    <p style={{ margin: '4px 0', fontSize: '14px' }}>
-                                        <strong>📍 От:</strong> {routeData.startAddress}
-                                    </p>
-                                )}
-                                {routeData.endAddress && (
-                                    <p style={{ margin: '4px 0', fontSize: '14px' }}>
-                                        <strong>📍 До:</strong> {routeData.endAddress}
-                                    </p>
-                                )}
-                                {routeData.distance && (
-                                    <p style={{ margin: '8px 0 4px 0', paddingTop: '8px', borderTop: '1px solid #eee', fontSize: '14px' }}>
-                                        <strong>📏 Расстояние:</strong> {
-                                            routeData.distance >= 1000 
-                                                ? `${(routeData.distance / 1000).toFixed(2)} км`
-                                                : `${Math.round(routeData.distance)} м`
-                                        }
-                                    </p>
-                                )}
-                                {routeData.time && (
-                                    <p style={{ margin: '4px 0', fontSize: '14px' }}>
-                                        <strong>⏱️ Время в пути:</strong> {
-                                            routeData.time >= 3600
-                                                ? `${Math.floor(routeData.time / 3600)} ч ${Math.floor((routeData.time % 3600) / 60)} мин`
-                                                : `${Math.floor(routeData.time / 60)} мин`
-                                        }
-                                    </p>
-                                )}
-                            </div>
-                        )}
-
-                        <div ref={mapRef} style={{ width: '100%', height: '400px', borderRadius: '8px', marginBottom: '12px', border: '1px solid #ddd' }} />
-                        
-                        <div style={{ display: 'flex', gap: '10px' }}>
-                            <button 
-                                onClick={sendRoute}
-                                disabled={!routeData || !routeData.startAddress || !routeData.endAddress || sendingRoute}
-                                style={{ 
-                                    padding: '10px 20px', 
-                                    background: routeData && routeData.startAddress && routeData.endAddress ? '#28a745' : '#ccc',
-                                    color: 'white',
-                                    border: 'none',
-                                    borderRadius: '4px',
-                                    cursor: routeData && routeData.startAddress && routeData.endAddress ? 'pointer' : 'not-allowed',
-                                    opacity: routeData && routeData.startAddress && routeData.endAddress ? 1 : 0.6,
-                                    fontWeight: 'bold'
-                                }}
-                            >
-                                {sendingRoute ? 'Отправка...' : '✓ Отправить маршрут'}
-                            </button>
-                            <button 
-                                onClick={() => {
+                    <>
+                        <div 
+                            style={{
+                                position: 'fixed',
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                bottom: 0,
+                                background: 'rgba(0, 0, 0, 0.5)',
+                                zIndex: 1000,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                            }}
+                            onClick={(e) => {
+                                if (e.target === e.currentTarget) {
                                     setShowRouteBuilder(false);
                                     setRouteData(null);
                                     setStartAddressInput('');
@@ -630,30 +598,273 @@ const RequestChat: React.FC<RequestChatProps> = ({ requestId, currentUserId, isO
                                         clearTimeout(geocodeTimeoutRef.current);
                                         geocodeTimeoutRef.current = null;
                                     }
-                                    // Очищаем карту
                                     if (mapInstanceRef.current && window.ymaps) {
                                         mapInstanceRef.current.geoObjects.removeAll();
                                         startPlacemarkRef.current = null;
                                         endPlacemarkRef.current = null;
                                         routePolylineRef.current = null;
                                     }
-                                }}
+                                }
+                            }}
+                        >
+                            <div 
                                 style={{ 
-                                    padding: '10px 20px', 
-                                    background: '#6c757d',
-                                    color: 'white',
-                                    border: 'none',
-                                    borderRadius: '4px',
-                                    cursor: 'pointer'
+                                    position: 'relative',
+                                    padding: '20px', 
+                                    background: 'linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%)', 
+                                    borderRadius: '16px', 
+                                    width: '90%',
+                                    maxWidth: '700px',
+                                    maxHeight: '90vh',
+                                    border: '2px solid #c8e6c9',
+                                    boxShadow: '0 8px 24px rgba(76, 175, 80, 0.3)',
+                                    display: 'flex',
+                                    flexDirection: 'column'
                                 }}
+                                onClick={(e) => e.stopPropagation()}
                             >
-                                Отмена
-                            </button>
+                                <button
+                                    onClick={() => {
+                                        setShowRouteBuilder(false);
+                                        setRouteData(null);
+                                        setStartAddressInput('');
+                                        setEndAddressInput('');
+                                        setGeocodingStart(false);
+                                        setGeocodingEnd(false);
+                                        if (geocodeTimeoutRef.current) {
+                                            clearTimeout(geocodeTimeoutRef.current);
+                                            geocodeTimeoutRef.current = null;
+                                        }
+                                        if (mapInstanceRef.current && window.ymaps) {
+                                            mapInstanceRef.current.geoObjects.removeAll();
+                                            startPlacemarkRef.current = null;
+                                            endPlacemarkRef.current = null;
+                                            routePolylineRef.current = null;
+                                        }
+                                    }}
+                                    style={{
+                                        position: 'absolute',
+                                        top: '12px',
+                                        right: '12px',
+                                        background: 'transparent',
+                                        border: 'none',
+                                        fontSize: '28px',
+                                        cursor: 'pointer',
+                                        color: '#2e7d32',
+                                        padding: '0',
+                                        width: '32px',
+                                        height: '32px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        lineHeight: '1',
+                                        zIndex: 1001
+                                    }}
+                                >
+                                    ×
+                                </button>
+                                
+                                <h3 style={{ marginTop: 0, marginBottom: '8px', fontSize: '22px', color: '#2e7d32', fontWeight: 'bold', paddingRight: '40px' }}>Построение маршрута</h3>
+                                <p style={{ fontSize: '13px', color: '#388e3c', marginBottom: '12px' }}>
+                                    Введите адреса отправления и прибытия.
+                                </p>
+                                
+                                <div style={{ marginBottom: '10px' }}>
+                                    <label style={{ display: 'block', marginBottom: '4px', fontWeight: '600', fontSize: '13px', color: '#2e7d32' }}>
+                                        Адрес отправления:
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={startAddressInput}
+                                        onChange={(e) => handleStartAddressChange(e.target.value)}
+                                        placeholder="Например: Минск, ул. Ленина, 1"
+                                        style={{
+                                            width: '100%',
+                                            padding: '8px 12px',
+                                            border: '2px solid #c8e6c9',
+                                            borderRadius: '8px',
+                                            fontSize: '13px',
+                                            background: '#ffffff',
+                                            color: '#1b5e20',
+                                            transition: 'all 0.3s ease',
+                                            boxShadow: '0 2px 4px rgba(76, 175, 80, 0.08)',
+                                            boxSizing: 'border-box'
+                                        }}
+                                        onFocus={(e) => {
+                                            e.target.style.borderColor = '#4caf50';
+                                            e.target.style.boxShadow = '0 2px 8px rgba(76, 175, 80, 0.2)';
+                                        }}
+                                        onBlur={(e) => {
+                                            e.target.style.borderColor = '#c8e6c9';
+                                            e.target.style.boxShadow = '0 2px 4px rgba(76, 175, 80, 0.08)';
+                                        }}
+                                    />
+                                    {geocodingStart && (
+                                        <p style={{ fontSize: '11px', color: '#388e3c', marginTop: '3px', fontStyle: 'italic' }}>Поиск адреса...</p>
+                                    )}
+                                </div>
+
+                                <div style={{ marginBottom: '10px' }}>
+                                    <label style={{ display: 'block', marginBottom: '4px', fontWeight: '600', fontSize: '13px', color: '#2e7d32' }}>
+                                        Адрес прибытия:
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={endAddressInput}
+                                        onChange={(e) => handleEndAddressChange(e.target.value)}
+                                        placeholder="Например: Минск, ул. Пушкина, 10"
+                                        style={{
+                                            width: '100%',
+                                            padding: '8px 12px',
+                                            border: '2px solid #c8e6c9',
+                                            borderRadius: '8px',
+                                            fontSize: '13px',
+                                            background: '#ffffff',
+                                            color: '#1b5e20',
+                                            transition: 'all 0.3s ease',
+                                            boxShadow: '0 2px 4px rgba(76, 175, 80, 0.08)',
+                                            boxSizing: 'border-box'
+                                        }}
+                                        onFocus={(e) => {
+                                            e.target.style.borderColor = '#4caf50';
+                                            e.target.style.boxShadow = '0 2px 8px rgba(76, 175, 80, 0.2)';
+                                        }}
+                                        onBlur={(e) => {
+                                            e.target.style.borderColor = '#c8e6c9';
+                                            e.target.style.boxShadow = '0 2px 4px rgba(76, 175, 80, 0.08)';
+                                        }}
+                                    />
+                                    {geocodingEnd && (
+                                        <p style={{ fontSize: '11px', color: '#388e3c', marginTop: '3px', fontStyle: 'italic' }}>Поиск адреса...</p>
+                                    )}
+                                </div>
+
+                                {routeData && (routeData.distance || routeData.time) && (
+                                    <div style={{ 
+                                        marginBottom: '10px', 
+                                        padding: '10px', 
+                                        background: 'linear-gradient(135deg, #ffffff 0%, #f1f8f4 100%)', 
+                                        borderRadius: '8px',
+                                        border: '2px solid #a5d6a7',
+                                        boxShadow: '0 2px 6px rgba(76, 175, 80, 0.1)'
+                                    }}>
+                                        {routeData.distance && (
+                                            <p style={{ margin: '3px 0', fontSize: '13px', color: '#1b5e20' }}>
+                                                <strong style={{ color: '#2e7d32' }}>Расстояние:</strong> {
+                                                    routeData.distance >= 1000 
+                                                        ? `${(routeData.distance / 1000).toFixed(2)} км`
+                                                        : `${Math.round(routeData.distance)} м`
+                                                }
+                                            </p>
+                                        )}
+                                        {routeData.time && (
+                                            <p style={{ margin: '3px 0', fontSize: '13px', color: '#1b5e20' }}>
+                                                <strong style={{ color: '#2e7d32' }}>Время в пути:</strong> {
+                                                    routeData.time >= 3600
+                                                        ? `${Math.floor(routeData.time / 3600)} ч ${Math.floor((routeData.time % 3600) / 60)} мин`
+                                                        : `${Math.floor(routeData.time / 60)} мин`
+                                                }
+                                            </p>
+                                        )}
+                                    </div>
+                                )}
+
+                                <div ref={mapRef} style={{ 
+                                    width: '100%', 
+                                    height: '280px', 
+                                    borderRadius: '10px', 
+                                    marginBottom: '10px', 
+                                    border: '2px solid #a5d6a7',
+                                    boxShadow: '0 2px 8px rgba(76, 175, 80, 0.15)',
+                                    flexShrink: 0
+                                }} />
+                                
+                                <div style={{ display: 'flex', gap: '10px', flexShrink: 0 }}>
+                                    <button 
+                                        onClick={sendRoute}
+                                        disabled={!routeData || !routeData.startAddress || !routeData.endAddress || sendingRoute}
+                                        style={{ 
+                                            flex: 1,
+                                            padding: '10px 18px', 
+                                            background: routeData && routeData.startAddress && routeData.endAddress 
+                                                ? 'linear-gradient(135deg, #4caf50 0%, #388e3c 100%)' 
+                                                : '#c8e6c9',
+                                            color: routeData && routeData.startAddress && routeData.endAddress ? 'white' : '#81c784',
+                                            border: 'none',
+                                            borderRadius: '8px',
+                                            cursor: routeData && routeData.startAddress && routeData.endAddress ? 'pointer' : 'not-allowed',
+                                            opacity: routeData && routeData.startAddress && routeData.endAddress ? 1 : 0.7,
+                                            fontWeight: 'bold',
+                                            fontSize: '13px',
+                                            boxShadow: routeData && routeData.startAddress && routeData.endAddress 
+                                                ? '0 4px 12px rgba(76, 175, 80, 0.3)' 
+                                                : 'none',
+                                            transition: 'all 0.3s ease'
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            if (routeData && routeData.startAddress && routeData.endAddress) {
+                                                e.currentTarget.style.transform = 'translateY(-2px)';
+                                                e.currentTarget.style.boxShadow = '0 6px 16px rgba(76, 175, 80, 0.4)';
+                                            }
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            if (routeData && routeData.startAddress && routeData.endAddress) {
+                                                e.currentTarget.style.transform = 'translateY(0)';
+                                                e.currentTarget.style.boxShadow = '0 4px 12px rgba(76, 175, 80, 0.3)';
+                                            }
+                                        }}
+                                    >
+                                        {sendingRoute ? 'Отправка...' : 'Отправить маршрут'}
+                                    </button>
+                                    <button 
+                                        onClick={() => {
+                                            setShowRouteBuilder(false);
+                                            setRouteData(null);
+                                            setStartAddressInput('');
+                                            setEndAddressInput('');
+                                            setGeocodingStart(false);
+                                            setGeocodingEnd(false);
+                                            if (geocodeTimeoutRef.current) {
+                                                clearTimeout(geocodeTimeoutRef.current);
+                                                geocodeTimeoutRef.current = null;
+                                            }
+                                            if (mapInstanceRef.current && window.ymaps) {
+                                                mapInstanceRef.current.geoObjects.removeAll();
+                                                startPlacemarkRef.current = null;
+                                                endPlacemarkRef.current = null;
+                                                routePolylineRef.current = null;
+                                            }
+                                        }}
+                                        style={{ 
+                                            padding: '10px 18px', 
+                                            background: 'linear-gradient(135deg, #81c784 0%, #66bb6a 100%)',
+                                            color: 'white',
+                                            border: 'none',
+                                            borderRadius: '8px',
+                                            cursor: 'pointer',
+                                            fontSize: '13px',
+                                            fontWeight: '600',
+                                            boxShadow: '0 2px 8px rgba(129, 199, 132, 0.3)',
+                                            transition: 'all 0.3s ease'
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.currentTarget.style.transform = 'translateY(-2px)';
+                                            e.currentTarget.style.boxShadow = '0 4px 12px rgba(129, 199, 132, 0.4)';
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.transform = 'translateY(0)';
+                                            e.currentTarget.style.boxShadow = '0 2px 8px rgba(129, 199, 132, 0.3)';
+                                        }}
+                                    >
+                                        Отмена
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                    </>
                 )}
 
-                <div style={{ flex: 1, overflowY: 'auto', marginBottom: '16px', padding: '16px', background: '#f8f9fa', borderRadius: '8px' }}>
+                <div ref={messagesContainerRef} style={{ flex: 1, overflowY: 'auto', marginBottom: '16px', padding: '16px', background: '#f8f9fa', borderRadius: '8px' }}>
                     {messages.map((message) => {
                         const isMyMessage = message.senderId === currentUserId;
                         const routeData = message.type === 'ROUTE' ? parseRouteData(message.text) : null;
@@ -669,10 +880,11 @@ const RequestChat: React.FC<RequestChatProps> = ({ requestId, currentUserId, isO
                             >
                                 <div
                                     style={{
-                                        maxWidth: '70%',
+                                        maxWidth: message.type === 'ROUTE' ? '80%' : '70%',
+                                        width: message.type === 'ROUTE' ? '98%' : 'auto',
                                         padding: '12px 16px',
                                         borderRadius: '12px',
-                                        background: isMyMessage ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : '#ffffff',
+                                        background: isMyMessage ? 'linear-gradient(135deg, #4caf50 0%, #388e3c 100%)' : '#ffffff',
                                         color: isMyMessage ? 'white' : '#333',
                                         boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
                                     }}
@@ -685,35 +897,68 @@ const RequestChat: React.FC<RequestChatProps> = ({ requestId, currentUserId, isO
                                     {message.type === 'ROUTE' && routeData ? (
                                         <div>
                                             <div style={{ marginBottom: '12px', fontWeight: 'bold', fontSize: '16px' }}>
-                                                🗺️ Предложен маршрут:
+                                                Предложен маршрут:
                                             </div>
                                             <div style={{ fontSize: '14px', marginBottom: '12px', padding: '12px', background: 'rgba(255, 255, 255, 0.1)', borderRadius: '8px' }}>
-                                                <p style={{ margin: '4px 0' }}>
-                                                    <strong>📍 От:</strong> {routeData.startAddress}
-                                                </p>
-                                                <p style={{ margin: '4px 0' }}>
-                                                    <strong>📍 До:</strong> {routeData.endAddress}
-                                                </p>
-                                                {routeData.distance && (
-                                                    <p style={{ margin: '8px 0 4px 0', paddingTop: '8px', borderTop: '1px solid rgba(255, 255, 255, 0.2)' }}>
-                                                        <strong>📏 Расстояние:</strong> {
-                                                            routeData.distance >= 1000 
-                                                                ? `${(routeData.distance / 1000).toFixed(2)} км`
-                                                                : `${Math.round(routeData.distance)} м`
-                                                        }
+                                                {routeData.startAddress && (
+                                                    <p style={{ margin: '4px 0' }}>
+                                                        <strong>От:</strong> {routeData.startAddress}
                                                     </p>
                                                 )}
-                                                {routeData.time && (
+                                                {routeData.endAddress && (
                                                     <p style={{ margin: '4px 0' }}>
-                                                        <strong>⏱️ Время в пути:</strong> {
-                                                            routeData.time >= 3600
-                                                                ? `${Math.floor(routeData.time / 3600)} ч ${Math.floor((routeData.time % 3600) / 60)} мин`
-                                                                : `${Math.floor(routeData.time / 60)} мин`
-                                                        }
+                                                        <strong>До:</strong> {routeData.endAddress}
                                                     </p>
+                                                )}
+                                                {(routeData.distance || routeData.time) && (
+                                                    <>
+                                                        {routeData.startAddress || routeData.endAddress ? (
+                                                            <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid rgba(255, 255, 255, 0.2)' }}>
+                                                                {routeData.distance && (
+                                                                    <p style={{ margin: '4px 0' }}>
+                                                                        <strong>Расстояние:</strong> {
+                                                                            routeData.distance >= 1000 
+                                                                                ? `${(routeData.distance / 1000).toFixed(2)} км`
+                                                                                : `${Math.round(routeData.distance)} м`
+                                                                        }
+                                                                    </p>
+                                                                )}
+                                                                {routeData.time && (
+                                                                    <p style={{ margin: '4px 0' }}>
+                                                                        <strong>Время в пути:</strong> {
+                                                                            routeData.time >= 3600
+                                                                                ? `${Math.floor(routeData.time / 3600)} ч ${Math.floor((routeData.time % 3600) / 60)} мин`
+                                                                                : `${Math.floor(routeData.time / 60)} мин`
+                                                                        }
+                                                                    </p>
+                                                                )}
+                                                            </div>
+                                                        ) : (
+                                                            <>
+                                                                {routeData.distance && (
+                                                                    <p style={{ margin: '4px 0' }}>
+                                                                        <strong>Расстояние:</strong> {
+                                                                            routeData.distance >= 1000 
+                                                                                ? `${(routeData.distance / 1000).toFixed(2)} км`
+                                                                                : `${Math.round(routeData.distance)} м`
+                                                                        }
+                                                                    </p>
+                                                                )}
+                                                                {routeData.time && (
+                                                                    <p style={{ margin: '4px 0' }}>
+                                                                        <strong>Время в пути:</strong> {
+                                                                            routeData.time >= 3600
+                                                                                ? `${Math.floor(routeData.time / 3600)} ч ${Math.floor((routeData.time % 3600) / 60)} мин`
+                                                                                : `${Math.floor(routeData.time / 60)} мин`
+                                                                        }
+                                                                    </p>
+                                                                )}
+                                                            </>
+                                                        )}
+                                                    </>
                                                 )}
                                             </div>
-                                            <div style={{ marginBottom: '12px', borderRadius: '8px', overflow: 'hidden' }}>
+                                            <div style={{ marginBottom: '12px', borderRadius: '8px', overflow: 'hidden', width: '100%' }}>
                                                 <RouteMapView
                                                     startLat={routeData.startLat}
                                                     startLng={routeData.startLng}
@@ -728,18 +973,28 @@ const RequestChat: React.FC<RequestChatProps> = ({ requestId, currentUserId, isO
                                                 <button
                                                     onClick={() => confirmRoute(message.id)}
                                                     style={{
-                                                        padding: '10px 20px',
+                                                        width: '100%',
+                                                        padding: '12px 20px',
                                                         background: 'linear-gradient(135deg, #28a745 0%, #20c997 100%)',
                                                         color: 'white',
                                                         border: 'none',
-                                                        borderRadius: '4px',
+                                                        borderRadius: '8px',
                                                         cursor: 'pointer',
-                                                        fontSize: '14px',
+                                                        fontSize: '16px',
                                                         fontWeight: 'bold',
-                                                        boxShadow: '0 2px 8px rgba(40, 167, 69, 0.3)'
+                                                        boxShadow: '0 2px 8px rgba(40, 167, 69, 0.3)',
+                                                        transition: 'all 0.3s ease'
+                                                    }}
+                                                    onMouseEnter={(e) => {
+                                                        e.currentTarget.style.transform = 'translateY(-2px)';
+                                                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(40, 167, 69, 0.4)';
+                                                    }}
+                                                    onMouseLeave={(e) => {
+                                                        e.currentTarget.style.transform = 'translateY(0)';
+                                                        e.currentTarget.style.boxShadow = '0 2px 8px rgba(40, 167, 69, 0.3)';
                                                     }}
                                                 >
-                                                    ✓ Подтвердить маршрут
+                                                    Подтвердить маршрут
                                                 </button>
                                             )}
                                         </div>
@@ -775,7 +1030,7 @@ const RequestChat: React.FC<RequestChatProps> = ({ requestId, currentUserId, isO
                         disabled={!newMessage.trim()}
                         style={{
                             padding: '12px 24px',
-                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                            background: 'linear-gradient(135deg, #4caf50 0%, #388e3c 100%)',
                             color: 'white',
                             border: 'none',
                             borderRadius: '8px',
@@ -786,6 +1041,21 @@ const RequestChat: React.FC<RequestChatProps> = ({ requestId, currentUserId, isO
                         Отправить
                     </button>
                 </form>
+        </div>
+    );
+
+    if (isEmbedded) {
+        return chatContent;
+    }
+
+    return (
+        <div className={styles.modalOverlay} onClick={(e) => {
+            if (e.target === e.currentTarget) {
+                onClose();
+            }
+        }}>
+            <div className={styles.modal} onClick={(e) => e.stopPropagation()} style={{ maxWidth: '800px', width: '95%', height: '90vh', display: 'flex', flexDirection: 'column' }}>
+                {chatContent}
             </div>
         </div>
     );

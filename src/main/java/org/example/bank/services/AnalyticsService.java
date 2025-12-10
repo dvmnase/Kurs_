@@ -6,6 +6,7 @@ import org.example.bank.models.RequestStatus;
 import org.example.bank.repositories.AnalyticsRepository;
 import org.example.bank.repositories.RequestRepository;
 import org.example.bank.repositories.RouteRepository;
+import org.example.bank.repositories.CargoRepository;
 import org.example.bank.services.ExcelExportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,9 @@ public class AnalyticsService {
     private RouteRepository routeRepository;
 
     @Autowired
+    private CargoRepository cargoRepository;
+
+    @Autowired
     private ExcelExportService excelExportService;
 
     @Transactional
@@ -45,9 +49,9 @@ public class AnalyticsService {
             saveMetric("requests_" + status.name().toLowerCase(), BigDecimal.valueOf(count));
         }
 
-        // Количество маршрутов
-        long totalRoutes = routeRepository.count();
-        saveMetric("total_routes", BigDecimal.valueOf(totalRoutes));
+        // Количество грузов
+        long totalCargos = cargoRepository.count();
+        saveMetric("total_cargos", BigDecimal.valueOf(totalCargos));
     }
 
     private void saveMetric(String metric, BigDecimal value) {
@@ -84,7 +88,7 @@ public class AnalyticsService {
         Map<String, Object> report = new HashMap<>();
         
         long totalRequests = requestRepository.count();
-        long totalRoutes = routeRepository.count();
+        long totalCargos = cargoRepository.count();
         
         Map<String, Long> requestsByStatus = new HashMap<>();
         for (RequestStatus status : RequestStatus.values()) {
@@ -93,7 +97,7 @@ public class AnalyticsService {
         }
         
         report.put("totalRequests", totalRequests);
-        report.put("totalRoutes", totalRoutes);
+        report.put("totalCargos", totalCargos);
         report.put("requestsByStatus", requestsByStatus);
         
         return report;
@@ -116,8 +120,8 @@ public class AnalyticsService {
         row.createCell(1).setCellValue((Long) stats.get("totalRequests"));
         
         row = sheet.createRow(rowNum++);
-        row.createCell(0).setCellValue("Всего маршрутов");
-        row.createCell(1).setCellValue((Long) stats.get("totalRoutes"));
+        row.createCell(0).setCellValue("Всего грузов");
+        row.createCell(1).setCellValue((Long) stats.get("totalCargos"));
         
         @SuppressWarnings("unchecked")
         Map<String, Long> requestsByStatus = (Map<String, Long>) stats.get("requestsByStatus");

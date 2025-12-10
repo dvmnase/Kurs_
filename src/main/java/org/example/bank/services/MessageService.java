@@ -181,10 +181,7 @@ public class MessageService {
             throw new RuntimeException("Unauthorized: User is not part of this request");
         }
 
-        // Чат доступен только для ACCEPTED заявок
-        if (request.getStatus() != RequestStatus.ACCEPTED && request.getStatus() != RequestStatus.IN_PROGRESS) {
-            throw new RuntimeException("Chat is only available for ACCEPTED or IN_PROGRESS requests");
-        }
+        // Убираем проверку статуса - показываем сообщения для всех заявок с перевозчиком
 
         List<Message> messages = messageRepository.findMessagesByRequestId(requestId);
         return messages.stream()

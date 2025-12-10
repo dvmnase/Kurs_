@@ -3,8 +3,10 @@ import { useRouter } from 'next/router';
 import { authService } from '../../services/authService';
 import api from '../../services/api';
 import Layout from '../../components/Layout';
+import ChatBot from '../../components/ChatBot';
 import RequestChat from '../../components/RequestChat';
 import styles from '../../styles/client/ClientHome.module.sass';
+import chatStyles from '../../styles/client/Chats.module.sass';
 
 interface Request {
     id: number;
@@ -14,11 +16,36 @@ interface Request {
         name: string;
     };
     carrierName?: string;
+    carrierId?: number;
     lastMessage?: {
         text: string;
         createdAt: string;
     };
 }
+
+const getStatusText = (status: string): string => {
+    const statusMap: { [key: string]: string } = {
+        'NEW': 'Новая',
+        'PENDING': 'Ожидает',
+        'ACCEPTED': 'Принята',
+        'DECLINED': 'Отклонена',
+        'CANCELLED': 'Отменена',
+        'IN_PROGRESS': 'В процессе'
+    };
+    return statusMap[status] || status;
+};
+
+const getStatusColor = (status: string): string => {
+    const colorMap: { [key: string]: string } = {
+        'NEW': '#66bb6a',
+        'PENDING': '#ffc107',
+        'ACCEPTED': '#4caf50',
+        'DECLINED': '#f44336',
+        'CANCELLED': '#9e9e9e',
+        'IN_PROGRESS': '#81c784'
+    };
+    return colorMap[status] || '#333';
+};
 
 const OwnerChatsPage = () => {
     const router = useRouter();
@@ -60,9 +87,9 @@ const OwnerChatsPage = () => {
             const response = await api.get('/api/owner/requests');
             const allRequests = response.data;
             
-            // Фильтруем только заявки со статусом ACCEPTED или IN_PROGRESS
+            // Показываем все заявки с перевозчиком (не фильтруем по статусу)
             const chatRequests = allRequests.filter((req: Request) => 
-                req.status === 'ACCEPTED' || req.status === 'IN_PROGRESS'
+                req.carrierId != null
             );
 
             // Получаем последние сообщения для каждой заявки
@@ -76,7 +103,7 @@ const OwnerChatsPage = () => {
                             return {
                                 ...req,
                                 lastMessage: {
-                                    text: lastMessage.type === 'ROUTE' ? '🗺️ Маршрут' : lastMessage.text,
+                                    text: lastMessage.type === 'ROUTE' ? 'Маршрут' : lastMessage.text,
                                     createdAt: lastMessage.createdAt
                                 }
                             };
@@ -108,7 +135,6 @@ const OwnerChatsPage = () => {
             { title: 'Мои грузы', url: '/owner/cargo' },
             { title: 'Заявки', url: '/owner/requests' },
             { title: 'Чаты', url: '/owner/chats' },
-            { title: 'Маршруты', url: '/owner/routes' },
             { title: 'Настройки', url: '/owner/settings' },
         ],
     };
@@ -117,81 +143,107 @@ const OwnerChatsPage = () => {
         <Layout title="Чаты" navigationPaths={navigation} showLogout onLogout={() => { authService.logout(); router.push('/'); }}>
             <div className={styles.container}>
                 <div className={styles.pageHeader}>
-                    <h1>💬 Чаты</h1>
+                    <h1>Чаты</h1>
                     <p style={{ color: '#666', marginTop: '8px' }}>Общение с перевозчиками по заявкам</p>
                 </div>
                 {error && <div className={styles.error}>{error}</div>}
 
                 {loading ? (
                     <div style={{ textAlign: 'center', padding: '60px 20px', fontSize: '18px', color: '#666' }}>
-                        <div style={{ marginBottom: '16px' }}>⏳</div>
+                        <div style={{ marginBottom: '16px' }}>Загрузка...</div>
                         Загрузка чатов...
                     </div>
-                ) : requests.length === 0 ? (
-                    <div style={{ textAlign: 'center', padding: '60px 20px', background: 'white', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)' }}>
-                        <div style={{ fontSize: '48px', marginBottom: '16px' }}>💬</div>
-                        <h3 style={{ color: '#333', marginBottom: '8px' }}>Нет активных чатов</h3>
-                        <p style={{ color: '#666' }}>Чаты появятся, когда перевозчик примет вашу заявку</p>
-                    </div>
                 ) : (
-                    <div className={styles.list}>
-                        {requests.map((request) => (
-                            <div key={request.id} className={styles.item} style={{ cursor: 'pointer' }} onClick={() => {
-                                setChatRequestId(request.id);
-                                setShowChat(true);
-                            }}>
-                                <h3>Заявка #{request.id}</h3>
-                                <p><strong>Груз:</strong> {request.cargo?.name}</p>
-                                {request.carrierName && <p><strong>Перевозчик:</strong> {request.carrierName}</p>}
-                                <p><strong>Статус:</strong> {request.status === 'ACCEPTED' ? '✅ Принята' : request.status === 'IN_PROGRESS' ? '🚚 В процессе' : request.status}</p>
-                                {request.lastMessage && (
-                                    <div style={{ marginTop: '12px', padding: '8px', background: '#f8f9fa', borderRadius: '4px' }}>
-                                        <p style={{ fontSize: '14px', color: '#666', margin: 0 }}>
-                                            <strong>Последнее сообщение:</strong> {request.lastMessage.text.length > 50 
-                                                ? request.lastMessage.text.substring(0, 50) + '...' 
-                                                : request.lastMessage.text}
-                                        </p>
-                                        <p style={{ fontSize: '12px', color: '#999', margin: '4px 0 0 0' }}>
-                                            {new Date(request.lastMessage.createdAt).toLocaleString('ru-RU')}
-                                        </p>
-                                    </div>
-                                )}
-                                <button 
-                                    style={{ 
-                                        marginTop: '12px',
-                                        padding: '10px 20px',
-                                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                                        color: 'white',
-                                        border: 'none',
-                                        borderRadius: '8px',
-                                        cursor: 'pointer',
-                                        fontWeight: 'bold'
-                                    }}
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        setChatRequestId(request.id);
-                                        setShowChat(true);
-                                    }}
-                                >
-                                    💬 Открыть чат
-                                </button>
+                    <div className={chatStyles.chatsContainer}>
+                        {/* Левая панель со списком чатов */}
+                        <div className={chatStyles.chatsList}>
+                            <div className={chatStyles.chatsListHeader}>
+                                <h2>Чаты</h2>
+                                <p>{requests.length} {requests.length === 1 ? 'чат' : 'чатов'}</p>
                             </div>
-                        ))}
+                            <div className={chatStyles.chatsListContent}>
+                                {requests.length === 0 ? (
+                                    <div className={chatStyles.emptyChats}>
+                                        <div className={chatStyles.emptyIcon}></div>
+                                        <h3>Нет активных чатов</h3>
+                                        <p>Чаты появятся, когда перевозчик примет вашу заявку</p>
+                                    </div>
+                                ) : (
+                                    requests.map((request) => (
+                                        <div
+                                            key={request.id}
+                                            className={`${chatStyles.chatItem} ${chatRequestId === request.id ? chatStyles.active : ''}`}
+                                            onClick={() => {
+                                                setChatRequestId(request.id);
+                                                setShowChat(true);
+                                            }}
+                                        >
+                                            <div className={chatStyles.chatItemHeader}>
+                                                <h3>Заявка #{request.id}</h3>
+                                                <span
+                                                    className={chatStyles.chatStatus}
+                                                    style={{
+                                                        background: getStatusColor(request.status) + '20',
+                                                        color: getStatusColor(request.status)
+                                                    }}
+                                                >
+                                                    {getStatusText(request.status)}
+                                                </span>
+                                            </div>
+                                            <div className={chatStyles.chatItemInfo}>
+                                                <p><strong>Груз:</strong> {request.cargo?.name}</p>
+                                                {request.carrierName && (
+                                                    <p><strong>Перевозчик:</strong> {request.carrierName}</p>
+                                                )}
+                                            </div>
+                                            {request.lastMessage && (
+                                                <div className={chatStyles.chatItemLastMessage}>
+                                                    <p className={chatStyles.lastMessageText}>
+                                                        {request.lastMessage.text.length > 40
+                                                            ? request.lastMessage.text.substring(0, 40) + '...'
+                                                            : request.lastMessage.text}
+                                                    </p>
+                                                    <p className={chatStyles.lastMessageTime}>
+                                                        {new Date(request.lastMessage.createdAt).toLocaleString('ru-RU', {
+                                                            day: '2-digit',
+                                                            month: '2-digit',
+                                                            hour: '2-digit',
+                                                            minute: '2-digit'
+                                                        })}
+                                                    </p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Правая панель с чатом */}
+                        <div className={chatStyles.chatView}>
+                            {showChat && chatRequestId && currentUserId > 0 ? (
+                                <RequestChat
+                                    requestId={chatRequestId}
+                                    currentUserId={currentUserId}
+                                    isOwner={true}
+                                    onClose={() => {
+                                        setShowChat(false);
+                                        setChatRequestId(null);
+                                        fetchChats();
+                                    }}
+                                    isEmbedded={true}
+                                />
+                            ) : (
+                                <div className={chatStyles.chatViewEmpty}>
+                                    <div className={chatStyles.emptyIcon}></div>
+                                    <h3>Выберите чат</h3>
+                                    <p>Выберите чат из списка слева, чтобы начать общение</p>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 )}
-
-                {showChat && chatRequestId && currentUserId > 0 && (
-                    <RequestChat
-                        requestId={chatRequestId}
-                        currentUserId={currentUserId}
-                        isOwner={true}
-                        onClose={() => {
-                            setShowChat(false);
-                            setChatRequestId(null);
-                            fetchChats(); // Обновляем список после закрытия чата
-                        }}
-                    />
-                )}
+                <ChatBot />
             </div>
         </Layout>
     );

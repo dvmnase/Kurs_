@@ -332,9 +332,36 @@ const OwnerRoutesPage = () => {
                 <button onClick={() => setShowCreateModal(true)}>Создать маршрут</button>
                 
                 {showCreateModal && (
-                    <div className={styles.modal}>
+                    <div className={styles.modalOverlay} onClick={(e) => {
+                        if (e.target === e.currentTarget) {
+                            setShowCreateModal(false);
+                        }
+                    }}>
+                        <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
                         <form onSubmit={handleCreateRoute}>
-                            <h2>Создать маршрут</h2>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                                <h2 style={{ margin: 0 }}>Создать маршрут</h2>
+                                <button 
+                                    type="button"
+                                    onClick={() => setShowCreateModal(false)}
+                                    style={{ 
+                                        background: 'transparent', 
+                                        border: 'none', 
+                                        fontSize: '24px', 
+                                        cursor: 'pointer',
+                                        color: '#333',
+                                        padding: '0',
+                                        width: '30px',
+                                        height: '30px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        lineHeight: '1'
+                                    }}
+                                >
+                                    ×
+                                </button>
+                            </div>
                             <select
                                 value={formData.cargoId}
                                 onChange={(e) => setFormData({ ...formData, cargoId: e.target.value })}
@@ -427,12 +454,39 @@ const OwnerRoutesPage = () => {
                                 <button type="button" onClick={() => setShowCreateModal(false)}>Отмена</button>
                             </div>
                         </form>
+                        </div>
                     </div>
                 )}
 
                 {showMap && selectedRoute && (
-                    <div className={styles.modal}>
-                        <h2>Маршрут #{selectedRoute.id}</h2>
+                    <div className={styles.modalOverlay} onClick={(e) => {
+                        if (e.target === e.currentTarget) {
+                            setShowMap(false);
+                        }
+                    }}>
+                        <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                            <h2 style={{ margin: 0 }}>Маршрут #{selectedRoute.id}</h2>
+                            <button 
+                                onClick={() => setShowMap(false)}
+                                style={{ 
+                                    background: 'transparent', 
+                                    border: 'none', 
+                                    fontSize: '24px', 
+                                    cursor: 'pointer',
+                                    color: '#333',
+                                    padding: '0',
+                                    width: '30px',
+                                    height: '30px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    lineHeight: '1'
+                                }}
+                            >
+                                ✕
+                            </button>
+                        </div>
                         <RouteMapView
                             startLat={selectedRoute.startLat}
                             startLng={selectedRoute.startLng}
@@ -441,7 +495,7 @@ const OwnerRoutesPage = () => {
                             startAddress={selectedRoute.startAddress}
                             endAddress={selectedRoute.endAddress}
                         />
-                        <button onClick={() => setShowMap(false)}>Закрыть</button>
+                        </div>
                     </div>
                 )}
 

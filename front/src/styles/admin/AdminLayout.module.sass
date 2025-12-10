@@ -9,6 +9,7 @@
 .header
     background: $neutrals8
     border-bottom: 2px solid $yellow
+    z-index: 20
     padding: 16px 0
     +dark
         background: $neutrals2
@@ -59,6 +60,27 @@
 
     &:hover
         background: darken($yellow, 10)
+
+.banner
+    position: absolute
+    top: -60px
+    width: 50%
+    display: flex
+    justify-content: center
+    align-items: center
+    background: transparent
+    padding: 0
+    margin: 0
+    z-index: 10
+    pointer-events: none
+
+.bannerImage
+    width: 100%
+    height: auto
+    display: block
+    object-fit: cover
+    max-height: 200px
+    pointer-events: none
 
 .main
     max-width: 1200px

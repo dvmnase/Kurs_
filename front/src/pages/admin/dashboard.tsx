@@ -265,13 +265,39 @@ const AdminDashboard = () => {
         }
     };
 
+    const getStatusLabel = (status: string): string => {
+        const statusMap: { [key: string]: string } = {
+            'NEW': 'Новая',
+            'PENDING': 'Ожидает',
+            'ACCEPTED': 'Принята',
+            'DECLINED': 'Отклонена',
+            'CANCELLED': 'Отменена',
+            'IN_PROGRESS': 'В процессе'
+        };
+        return statusMap[status] || status;
+    };
+
+    const getMetricLabel = (metric: string): string => {
+        const metricMap: { [key: string]: string } = {
+            'total_requests': 'Всего заявок',
+            'total_cargos': 'Всего грузов',
+            'requests_new': 'Заявки: Новая',
+            'requests_pending': 'Заявки: Ожидает',
+            'requests_accepted': 'Заявки: Принята',
+            'requests_declined': 'Заявки: Отклонена',
+            'requests_cancelled': 'Заявки: Отменена',
+            'requests_in_progress': 'Заявки: В процессе'
+        };
+        return metricMap[metric] || metric.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    };
+
     const getInsights = () => {
         if (!report) return [];
         
         const insights = [];
         const requestsByStatus = report.requestsByStatus || {};
         const totalRequests = report.totalRequests || 0;
-        const totalRoutes = report.totalRoutes || 0;
+        const totalCargos = report.totalCargos || 0;
         
         if (totalRequests > 0) {
             const acceptedRate = ((requestsByStatus.ACCEPTED || 0) / totalRequests * 100).toFixed(1);
@@ -283,13 +309,13 @@ const AdminDashboard = () => {
             });
         }
         
-        if (totalRoutes > 0 && totalRequests > 0) {
-            const routeToRequestRatio = (totalRoutes / totalRequests).toFixed(2);
+        if (totalCargos > 0 && totalRequests > 0) {
+            const cargoToRequestRatio = (totalCargos / totalRequests).toFixed(2);
             insights.push({
                 type: 'info',
-                title: 'Соотношение маршрутов к заявкам',
-                value: routeToRequestRatio,
-                description: `На каждую заявку приходится ${routeToRequestRatio} маршрутов`
+                title: 'Соотношение грузов к заявкам',
+                value: cargoToRequestRatio,
+                description: `На каждую заявку приходится ${cargoToRequestRatio} грузов`
             });
         }
         
@@ -310,7 +336,7 @@ const AdminDashboard = () => {
             case 'analytics':
                 return (
                     <div>
-                        <h2>Аналитика заявок и маршрутов</h2>
+                        <h2>Аналитика заявок и грузов</h2>
                         {error && <div className={styles.error}>{error}</div>}
                         <div style={{ marginBottom: '20px', display: 'flex', gap: '10px' }}>
                             <button 
@@ -357,9 +383,9 @@ const AdminDashboard = () => {
                                                 </div>
                                                 <div style={{ padding: '15px', background: 'white', borderRadius: '5px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
                                                     <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#28a745' }}>
-                                                        {report.totalRoutes}
+                                                        {report.totalCargos}
                                                     </div>
-                                                    <div style={{ color: '#666' }}>Всего маршрутов</div>
+                                                    <div style={{ color: '#666' }}>Всего грузов</div>
                                                 </div>
                                             </div>
                                             
@@ -370,7 +396,7 @@ const AdminDashboard = () => {
                                                         <div style={{ flex: '1', minWidth: '300px' }}>
                                                             <SimpleChart 
                                                                 data={Object.entries(report.requestsByStatus).map(([label, value]: [string, any]) => ({
-                                                                    label,
+                                                                    label: getStatusLabel(label),
                                                                     value
                                                                 }))}
                                                             />
@@ -378,7 +404,7 @@ const AdminDashboard = () => {
                                                         <div>
                                                             <PieChart 
                                                                 data={Object.entries(report.requestsByStatus).map(([label, value]: [string, any]) => ({
-                                                                    label,
+                                                                    label: getStatusLabel(label),
                                                                     value
                                                                 }))}
                                                             />
@@ -435,7 +461,7 @@ const AdminDashboard = () => {
                                                 }}
                                             >
                                                 <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
-                                                    {item.metric.replace('_', ' ').toUpperCase()}
+                                                    {getMetricLabel(item.metric)}
                                                 </div>
                                                 <div style={{ fontSize: '20px', color: '#007bff' }}>
                                                     {item.value?.toString()}
@@ -584,7 +610,7 @@ const AdminDashboard = () => {
                         className={cn(styles.tab, { [styles.active]: activeTab === 'analytics' })}
                         onClick={() => setActiveTab('analytics')}
                     >
-                        Аналитика заявок и маршрутов
+                        Аналитика заявок и грузов
                     </button>
                     <button
                         className={cn(styles.tab, { [styles.active]: activeTab === 'users' })}

@@ -361,7 +361,7 @@ const OwnerCargoPage = () => {
         menu: [
             { title: 'Мои грузы', url: '/owner/cargo' },
             { title: 'Заявки', url: '/owner/requests' },
-            { title: 'Маршруты', url: '/owner/routes' },
+            { title: 'Чаты', url: '/owner/chats' },
             { title: 'Настройки', url: '/owner/settings' },
         ],
     };
@@ -395,13 +395,25 @@ const OwnerCargoPage = () => {
                         type="number"
                         placeholder="Мин. вес"
                         value={minWeight}
-                        onChange={(e) => setMinWeight(e.target.value)}
+                        min="0"
+                        onChange={(e) => {
+                            const value = e.target.value;
+                            if (value === '' || parseFloat(value) >= 0) {
+                                setMinWeight(value);
+                            }
+                        }}
                     />
                     <input
                         type="number"
                         placeholder="Макс. вес"
                         value={maxWeight}
-                        onChange={(e) => setMaxWeight(e.target.value)}
+                        min="0"
+                        onChange={(e) => {
+                            const value = e.target.value;
+                            if (value === '' || parseFloat(value) >= 0) {
+                                setMaxWeight(value);
+                            }
+                        }}
                     />
                 </div>
 
@@ -442,98 +454,387 @@ const OwnerCargoPage = () => {
                         }
                     }}>
                         <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-                            <form onSubmit={handleCreateCargo}>
-                                <h2>📦 Создать груз</h2>
-                            <input
-                                type="text"
-                                placeholder="Название"
-                                value={formData.name}
-                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                required
-                            />
-                            <textarea
-                                placeholder="Описание"
-                                value={formData.description}
-                                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                            />
-                            <input
-                                type="number"
-                                placeholder="Вес (кг)"
-                                value={formData.weight}
-                                onChange={(e) => setFormData({ ...formData, weight: e.target.value })}
-                            />
-                            <div>
-                                <label>📍 Адрес (автоматически определит координаты)</label>
-                                <input
-                                    type="text"
-                                    placeholder="Введите адрес..."
-                                    value={formData.address}
-                                    onChange={(e) => handleAddressChange(e.target.value)}
-                                />
-                                {geocodingLoading && <div style={{ fontSize: '13px', color: '#007bff', marginTop: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                    <span>⏳</span> Определение координат...
-                                </div>}
-                            </div>
-                            <div>
-                                <label>🌐 Координаты (автоматически определит адрес)</label>
-                                <div style={{ display: 'flex', gap: '10px' }}>
-                                    <input
-                                        type="number"
-                                        step="any"
-                                        placeholder="Широта"
-                                        value={formData.latitude}
-                                        onChange={(e) => handleCoordinatesChange(e.target.value, formData.longitude)}
-                                    />
-                                    <input
-                                        type="number"
-                                        step="any"
-                                        placeholder="Долгота"
-                                        value={formData.longitude}
-                                        onChange={(e) => handleCoordinatesChange(formData.latitude, e.target.value)}
-                                    />
-                                </div>
-                                <button type="button" onClick={handleGetLocation} style={{ marginTop: '10px', padding: '10px 16px', background: 'linear-gradient(135deg, #17a2b8 0%, #138496 100%)', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '14px', fontWeight: '600', boxShadow: '0 2px 8px rgba(23, 162, 184, 0.3)', transition: 'all 0.3s ease' }}>
-                                    📍 Определить текущее местоположение
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px', paddingBottom: '16px', borderBottom: '4px solid #4caf50' }}>
+                                <h2 style={{ margin: 0, fontSize: '32px', fontWeight: 700, color: '#1b5e20', letterSpacing: '-0.5px', lineHeight: '1.3' }}>Создать груз</h2>
+                                <button 
+                                    type="button"
+                                    onClick={() => {
+                                        // Очищаем таймауты
+                                        if (addressTimeoutRef.current) {
+                                            clearTimeout(addressTimeoutRef.current);
+                                            addressTimeoutRef.current = null;
+                                        }
+                                        if (coordsTimeoutRef.current) {
+                                            clearTimeout(coordsTimeoutRef.current);
+                                            coordsTimeoutRef.current = null;
+                                        }
+                                        // Очищаем данные формы
+                                        setFormData({ name: '', description: '', weight: '', latitude: '', longitude: '', address: '' });
+                                        setShowCreateModal(false);
+                                    }}
+                                    style={{ 
+                                        background: 'transparent', 
+                                        border: 'none', 
+                                        fontSize: '24px', 
+                                        cursor: 'pointer',
+                                        color: '#333',
+                                        padding: '0',
+                                        width: '30px',
+                                        height: '30px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        lineHeight: '1'
+                                    }}
+                                >
+                                    ×
                                 </button>
-                                {geocodingLoading && <div style={{ fontSize: '13px', color: '#007bff', marginTop: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                    <span>⏳</span> Определение адреса...
-                                </div>}
                             </div>
-                            <div style={{ marginTop: '15px' }}>
-                                <MapView
-                                    latitude={formData.latitude || undefined}
-                                    longitude={formData.longitude || undefined}
-                                    address={formData.address || undefined}
-                                    height="300px"
-                                    onCoordinatesChange={(lat, lng) => {
-                                        handleCoordinatesChange(lat.toString(), lng.toString());
-                                    }}
-                                    onAddressChange={(address) => {
-                                        setFormData(prev => ({
-                                            ...prev,
-                                            address: address
-                                        }));
-                                    }}
-                                />
+                            <div style={{
+                                background: '#e8f5e9',
+                                padding: '24px',
+                                borderRadius: '14px',
+                                boxShadow: '0 4px 12px rgba(76, 175, 80, 0.12)',
+                                border: '1px solid #c8e6c9'
+                            }}>
+                                <form onSubmit={handleCreateCargo}>
+                                    <div style={{ marginBottom: '20px' }}>
+                                        <label style={{ fontWeight: 600, color: '#2e7d32', display: 'block', marginBottom: '8px', fontSize: '15px' }}>
+                                            Название груза (обязательное поле)
+                                        </label>
+                                        <input
+                                            type="text"
+                                            placeholder="Введите название груза..."
+                                            value={formData.name}
+                                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                            required
+                                            style={{
+                                                width: '100%',
+                                                padding: '14px 16px',
+                                                borderRadius: '10px',
+                                                border: '2px solid #a5d6a7',
+                                                background: 'white',
+                                                fontSize: '15px',
+                                                color: '#1b5e20',
+                                                transition: 'all 0.3s ease',
+                                                outline: 'none'
+                                            }}
+                                            onFocus={(e) => {
+                                                const target = e.currentTarget;
+                                                target.style.borderColor = '#4caf50';
+                                                target.style.boxShadow = '0 0 0 3px rgba(76, 175, 80, 0.1)';
+                                            }}
+                                            onBlur={(e) => {
+                                                const target = e.currentTarget;
+                                                target.style.borderColor = '#a5d6a7';
+                                                target.style.boxShadow = 'none';
+                                            }}
+                                        />
+                                    </div>
+                                    <div style={{ marginBottom: '20px' }}>
+                                        <label style={{ fontWeight: 600, color: '#2e7d32', display: 'block', marginBottom: '8px', fontSize: '15px' }}>
+                                            Описание груза
+                                        </label>
+                                        <textarea
+                                            placeholder="Введите описание груза..."
+                                            value={formData.description}
+                                            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                            style={{
+                                                width: '100%',
+                                                padding: '14px 16px',
+                                                minHeight: '120px',
+                                                borderRadius: '10px',
+                                                border: '2px solid #a5d6a7',
+                                                background: 'white',
+                                                resize: 'vertical',
+                                                fontSize: '15px',
+                                                color: '#1b5e20',
+                                                fontFamily: 'inherit',
+                                                lineHeight: '1.6',
+                                                transition: 'all 0.3s ease',
+                                                outline: 'none'
+                                            }}
+                                            onFocus={(e) => {
+                                                const target = e.currentTarget;
+                                                target.style.borderColor = '#4caf50';
+                                                target.style.boxShadow = '0 0 0 3px rgba(76, 175, 80, 0.1)';
+                                            }}
+                                            onBlur={(e) => {
+                                                const target = e.currentTarget;
+                                                target.style.borderColor = '#a5d6a7';
+                                                target.style.boxShadow = 'none';
+                                            }}
+                                        />
+                                    </div>
+                                    <div style={{ marginBottom: '20px' }}>
+                                        <label style={{ fontWeight: 600, color: '#2e7d32', display: 'block', marginBottom: '8px', fontSize: '15px' }}>
+                                            Вес груза (кг)
+                                        </label>
+                                        <input
+                                            type="number"
+                                            placeholder="Введите вес в килограммах..."
+                                            value={formData.weight}
+                                            onChange={(e) => setFormData({ ...formData, weight: e.target.value })}
+                                            style={{
+                                                width: '100%',
+                                                padding: '14px 16px',
+                                                borderRadius: '10px',
+                                                border: '2px solid #a5d6a7',
+                                                background: 'white',
+                                                fontSize: '15px',
+                                                color: '#1b5e20',
+                                                transition: 'all 0.3s ease',
+                                                outline: 'none'
+                                            }}
+                                            onFocus={(e) => {
+                                                const target = e.currentTarget;
+                                                target.style.borderColor = '#4caf50';
+                                                target.style.boxShadow = '0 0 0 3px rgba(76, 175, 80, 0.1)';
+                                            }}
+                                            onBlur={(e) => {
+                                                const target = e.currentTarget;
+                                                target.style.borderColor = '#a5d6a7';
+                                                target.style.boxShadow = 'none';
+                                            }}
+                                        />
+                                    </div>
+                                    <div style={{ marginBottom: '20px' }}>
+                                        <label style={{ fontWeight: 600, color: '#2e7d32', display: 'block', marginBottom: '8px', fontSize: '15px' }}>
+                                            Адрес (автоматически определит координаты)
+                                        </label>
+                                        <input
+                                            type="text"
+                                            placeholder="Введите адрес..."
+                                            value={formData.address}
+                                            onChange={(e) => handleAddressChange(e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '14px 16px',
+                                                borderRadius: '10px',
+                                                border: '2px solid #a5d6a7',
+                                                background: 'white',
+                                                fontSize: '15px',
+                                                color: '#1b5e20',
+                                                transition: 'all 0.3s ease',
+                                                outline: 'none'
+                                            }}
+                                            onFocus={(e) => {
+                                                const target = e.currentTarget;
+                                                target.style.borderColor = '#4caf50';
+                                                target.style.boxShadow = '0 0 0 3px rgba(76, 175, 80, 0.1)';
+                                            }}
+                                            onBlur={(e) => {
+                                                const target = e.currentTarget;
+                                                target.style.borderColor = '#a5d6a7';
+                                                target.style.boxShadow = 'none';
+                                            }}
+                                        />
+                                        {geocodingLoading && <div style={{ fontSize: '14px', color: '#388e3c', marginTop: '10px', paddingLeft: '4px', lineHeight: '1.5', fontStyle: 'italic' }}>
+                                            Определение координат...
+                                        </div>}
+                                    </div>
+                                    <div style={{ marginBottom: '20px' }}>
+                                        <label style={{ fontWeight: 600, color: '#2e7d32', display: 'block', marginBottom: '8px', fontSize: '15px' }}>
+                                            Координаты (автоматически определит адрес)
+                                        </label>
+                                        <div style={{ display: 'flex', gap: '12px', marginBottom: '12px' }}>
+                                            <input
+                                                type="number"
+                                                step="any"
+                                                placeholder="Широта"
+                                                value={formData.latitude}
+                                                onChange={(e) => handleCoordinatesChange(e.target.value, formData.longitude)}
+                                                style={{
+                                                    flex: 1,
+                                                    padding: '14px 16px',
+                                                    borderRadius: '10px',
+                                                    border: '2px solid #a5d6a7',
+                                                    background: 'white',
+                                                    fontSize: '15px',
+                                                    color: '#1b5e20',
+                                                    transition: 'all 0.3s ease',
+                                                    outline: 'none'
+                                                }}
+                                                onFocus={(e) => {
+                                                    e.target.style.borderColor = '#4caf50';
+                                                    e.target.style.boxShadow = '0 0 0 3px rgba(76, 175, 80, 0.1)';
+                                                }}
+                                                onBlur={(e) => {
+                                                    e.target.style.borderColor = '#a5d6a7';
+                                                    e.target.style.boxShadow = 'none';
+                                                }}
+                                            />
+                                            <input
+                                                type="number"
+                                                step="any"
+                                                placeholder="Долгота"
+                                                value={formData.longitude}
+                                                onChange={(e) => handleCoordinatesChange(formData.latitude, e.target.value)}
+                                                style={{
+                                                    flex: 1,
+                                                    padding: '14px 16px',
+                                                    borderRadius: '10px',
+                                                    border: '2px solid #a5d6a7',
+                                                    background: 'white',
+                                                    fontSize: '15px',
+                                                    color: '#1b5e20',
+                                                    transition: 'all 0.3s ease',
+                                                    outline: 'none'
+                                                }}
+                                                onFocus={(e) => {
+                                                    e.target.style.borderColor = '#4caf50';
+                                                    e.target.style.boxShadow = '0 0 0 3px rgba(76, 175, 80, 0.1)';
+                                                }}
+                                                onBlur={(e) => {
+                                                    e.target.style.borderColor = '#a5d6a7';
+                                                    e.target.style.boxShadow = 'none';
+                                                }}
+                                            />
+                                        </div>
+                                        <button 
+                                            type="button" 
+                                            onClick={handleGetLocation} 
+                                            style={{ 
+                                                marginTop: '8px', 
+                                                padding: '14px 24px', 
+                                                background: 'linear-gradient(135deg, #66bb6a 0%, #4caf50 100%)', 
+                                                color: 'white', 
+                                                border: 'none', 
+                                                borderRadius: '10px', 
+                                                cursor: 'pointer', 
+                                                fontSize: '15px', 
+                                                fontWeight: '600', 
+                                                boxShadow: '0 2px 8px rgba(76, 175, 80, 0.3)', 
+                                                transition: 'all 0.3s ease', 
+                                                width: '100%',
+                                                textAlign: 'center',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center'
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                const target = e.currentTarget as HTMLButtonElement;
+                                                target.style.transform = 'translateY(-2px)';
+                                                target.style.boxShadow = '0 4px 12px rgba(76, 175, 80, 0.4)';
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                const target = e.currentTarget as HTMLButtonElement;
+                                                target.style.transform = 'translateY(0)';
+                                                target.style.boxShadow = '0 2px 8px rgba(76, 175, 80, 0.3)';
+                                            }}
+                                        >
+                                            Определить текущее местоположение
+                                        </button>
+                                        {geocodingLoading && <div style={{ fontSize: '14px', color: '#388e3c', marginTop: '10px', paddingLeft: '4px', lineHeight: '1.5', fontStyle: 'italic' }}>
+                                            Определение адреса...
+                                        </div>}
+                                    </div>
+                                    <div style={{ marginTop: '24px', marginBottom: '20px' }}>
+                                        <label style={{ fontWeight: 600, color: '#2e7d32', marginBottom: '12px', display: 'block', fontSize: '15px' }}>
+                                            Карта местоположения
+                                        </label>
+                                        <div style={{ borderRadius: '14px', overflow: 'hidden', boxShadow: '0 4px 12px rgba(76, 175, 80, 0.15)', border: '2px solid #c8e6c9' }}>
+                                            <MapView
+                                                latitude={formData.latitude || undefined}
+                                                longitude={formData.longitude || undefined}
+                                                address={formData.address || undefined}
+                                                height="300px"
+                                                onCoordinatesChange={(lat, lng) => {
+                                                    handleCoordinatesChange(lat.toString(), lng.toString());
+                                                }}
+                                                onAddressChange={(address) => {
+                                                    setFormData(prev => ({
+                                                        ...prev,
+                                                        address: address
+                                                    }));
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div style={{
+                                        display: 'flex',
+                                        gap: '12px',
+                                        marginTop: '28px',
+                                        paddingTop: '20px',
+                                        borderTop: '2px solid #c8e6c9'
+                                    }}>
+                                        <button
+                                            type="submit"
+                                            style={{
+                                                flex: 1,
+                                                padding: '14px 0',
+                                                background: '#66bb6a',
+                                                color: 'white',
+                                                fontWeight: 600,
+                                                border: 'none',
+                                                borderRadius: '10px',
+                                                cursor: 'pointer',
+                                                transition: 'all 0.3s ease',
+                                                fontSize: '16px',
+                                                boxShadow: '0 2px 8px rgba(102, 187, 106, 0.3)'
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                const target = e.currentTarget as HTMLButtonElement;
+                                                target.style.background = '#4caf50';
+                                                target.style.transform = 'translateY(-2px)';
+                                                target.style.boxShadow = '0 4px 12px rgba(102, 187, 106, 0.4)';
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                const target = e.currentTarget as HTMLButtonElement;
+                                                target.style.background = '#66bb6a';
+                                                target.style.transform = 'translateY(0)';
+                                                target.style.boxShadow = '0 2px 8px rgba(102, 187, 106, 0.3)';
+                                            }}
+                                        >
+                                            Создать
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                // Очищаем таймауты
+                                                if (addressTimeoutRef.current) {
+                                                    clearTimeout(addressTimeoutRef.current);
+                                                    addressTimeoutRef.current = null;
+                                                }
+                                                if (coordsTimeoutRef.current) {
+                                                    clearTimeout(coordsTimeoutRef.current);
+                                                    coordsTimeoutRef.current = null;
+                                                }
+                                                // Очищаем данные формы
+                                                setFormData({ name: '', description: '', weight: '', latitude: '', longitude: '', address: '' });
+                                                setShowCreateModal(false);
+                                            }}
+                                            style={{
+                                                flex: 1,
+                                                padding: '14px 0',
+                                                background: '#a5d6a7',
+                                                color: '#1b5e20',
+                                                fontWeight: 600,
+                                                border: 'none',
+                                                borderRadius: '10px',
+                                                cursor: 'pointer',
+                                                transition: 'all 0.3s ease',
+                                                fontSize: '16px',
+                                                boxShadow: '0 2px 8px rgba(165, 214, 167, 0.3)'
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                const target = e.currentTarget as HTMLButtonElement;
+                                                target.style.background = '#81c784';
+                                                target.style.transform = 'translateY(-2px)';
+                                                target.style.boxShadow = '0 4px 12px rgba(165, 214, 167, 0.4)';
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                const target = e.currentTarget as HTMLButtonElement;
+                                                target.style.background = '#a5d6a7';
+                                                target.style.transform = 'translateY(0)';
+                                                target.style.boxShadow = '0 2px 8px rgba(165, 214, 167, 0.3)';
+                                            }}
+                                        >
+                                            Отмена
+                                        </button>
+                                    </div>
+                                </form>
                             </div>
-                            <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
-                                <button type="submit">Создать</button>
-                                <button type="button" onClick={() => {
-                                    // Очищаем таймауты
-                                    if (addressTimeoutRef.current) {
-                                        clearTimeout(addressTimeoutRef.current);
-                                        addressTimeoutRef.current = null;
-                                    }
-                                    if (coordsTimeoutRef.current) {
-                                        clearTimeout(coordsTimeoutRef.current);
-                                        coordsTimeoutRef.current = null;
-                                    }
-                                    // Очищаем данные формы
-                                    setFormData({ name: '', description: '', weight: '', latitude: '', longitude: '', address: '' });
-                                    setShowCreateModal(false);
-                                }}>Отмена</button>
-                            </div>
-                        </form>
                         </div>
                     </div>
                 )}
@@ -557,99 +858,389 @@ const OwnerCargoPage = () => {
                         }
                     }}>
                         <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-                            <form onSubmit={handleUpdateCargo}>
-                                <h2>✏️ Редактировать груз: {editingCargo.name}</h2>
-                            <input
-                                type="text"
-                                placeholder="Название"
-                                value={formData.name}
-                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                required
-                            />
-                            <textarea
-                                placeholder="Описание"
-                                value={formData.description}
-                                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                            />
-                            <input
-                                type="number"
-                                placeholder="Вес (кг)"
-                                value={formData.weight}
-                                onChange={(e) => setFormData({ ...formData, weight: e.target.value })}
-                            />
-                            <div>
-                                <label>📍 Адрес</label>
-                                <input
-                                    type="text"
-                                    placeholder="Введите адрес..."
-                                    value={formData.address}
-                                    onChange={(e) => handleAddressChange(e.target.value)}
-                                />
-                                {geocodingLoading && <div style={{ fontSize: '13px', color: '#007bff', marginTop: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                    <span>⏳</span> Определение координат...
-                                </div>}
-                            </div>
-                            <div>
-                                <label>🌐 Координаты</label>
-                                <div style={{ display: 'flex', gap: '10px' }}>
-                                    <input
-                                        type="number"
-                                        step="any"
-                                        placeholder="Широта"
-                                        value={formData.latitude}
-                                        onChange={(e) => handleCoordinatesChange(e.target.value, formData.longitude)}
-                                    />
-                                    <input
-                                        type="number"
-                                        step="any"
-                                        placeholder="Долгота"
-                                        value={formData.longitude}
-                                        onChange={(e) => handleCoordinatesChange(formData.latitude, e.target.value)}
-                                    />
-                                </div>
-                                <button type="button" onClick={handleGetLocation} style={{ marginTop: '10px', padding: '10px 16px', background: 'linear-gradient(135deg, #17a2b8 0%, #138496 100%)', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '14px', fontWeight: '600', boxShadow: '0 2px 8px rgba(23, 162, 184, 0.3)', transition: 'all 0.3s ease' }}>
-                                    📍 Определить текущее местоположение
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px', paddingBottom: '16px', borderBottom: '4px solid #4caf50' }}>
+                                <h2 style={{ margin: 0, fontSize: '32px', fontWeight: 700, color: '#1b5e20', letterSpacing: '-0.5px', lineHeight: '1.3' }}>Редактировать груз: {editingCargo.name}</h2>
+                                <button 
+                                    type="button"
+                                    onClick={() => {
+                                        // Очищаем таймауты
+                                        if (addressTimeoutRef.current) {
+                                            clearTimeout(addressTimeoutRef.current);
+                                            addressTimeoutRef.current = null;
+                                        }
+                                        if (coordsTimeoutRef.current) {
+                                            clearTimeout(coordsTimeoutRef.current);
+                                            coordsTimeoutRef.current = null;
+                                        }
+                                        // Очищаем данные формы
+                                        setFormData({ name: '', description: '', weight: '', latitude: '', longitude: '', address: '' });
+                                        setShowEditModal(false);
+                                        setEditingCargo(null);
+                                    }}
+                                    style={{ 
+                                        background: 'transparent', 
+                                        border: 'none', 
+                                        fontSize: '24px', 
+                                        cursor: 'pointer',
+                                        color: '#333',
+                                        padding: '0',
+                                        width: '30px',
+                                        height: '30px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        lineHeight: '1'
+                                    }}
+                                >
+                                    ×
                                 </button>
-                                {geocodingLoading && <div style={{ fontSize: '13px', color: '#007bff', marginTop: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                    <span>⏳</span> Определение адреса...
-                                </div>}
                             </div>
-                            <div style={{ marginTop: '15px' }}>
-                                <MapView
-                                    latitude={formData.latitude || undefined}
-                                    longitude={formData.longitude || undefined}
-                                    address={formData.address || undefined}
-                                    height="300px"
-                                    onCoordinatesChange={(lat, lng) => {
-                                        handleCoordinatesChange(lat.toString(), lng.toString());
-                                    }}
-                                    onAddressChange={(address) => {
-                                        setFormData(prev => ({
-                                            ...prev,
-                                            address: address
-                                        }));
-                                    }}
-                                />
+                            <div style={{
+                                background: '#e8f5e9',
+                                padding: '24px',
+                                borderRadius: '14px',
+                                boxShadow: '0 4px 12px rgba(76, 175, 80, 0.12)',
+                                border: '1px solid #c8e6c9'
+                            }}>
+                                <form onSubmit={handleUpdateCargo}>
+                                    <div style={{ marginBottom: '20px' }}>
+                                        <label style={{ fontWeight: 600, color: '#2e7d32', display: 'block', marginBottom: '8px', fontSize: '15px' }}>
+                                            Название груза (обязательное поле)
+                                        </label>
+                                        <input
+                                            type="text"
+                                            placeholder="Введите название груза..."
+                                            value={formData.name}
+                                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                            required
+                                            style={{
+                                                width: '100%',
+                                                padding: '14px 16px',
+                                                borderRadius: '10px',
+                                                border: '2px solid #a5d6a7',
+                                                background: 'white',
+                                                fontSize: '15px',
+                                                color: '#1b5e20',
+                                                transition: 'all 0.3s ease',
+                                                outline: 'none'
+                                            }}
+                                            onFocus={(e) => {
+                                                const target = e.currentTarget;
+                                                target.style.borderColor = '#4caf50';
+                                                target.style.boxShadow = '0 0 0 3px rgba(76, 175, 80, 0.1)';
+                                            }}
+                                            onBlur={(e) => {
+                                                const target = e.currentTarget;
+                                                target.style.borderColor = '#a5d6a7';
+                                                target.style.boxShadow = 'none';
+                                            }}
+                                        />
+                                    </div>
+                                    <div style={{ marginBottom: '20px' }}>
+                                        <label style={{ fontWeight: 600, color: '#2e7d32', display: 'block', marginBottom: '8px', fontSize: '15px' }}>
+                                            Описание груза
+                                        </label>
+                                        <textarea
+                                            placeholder="Введите описание груза..."
+                                            value={formData.description}
+                                            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                            style={{
+                                                width: '100%',
+                                                padding: '14px 16px',
+                                                minHeight: '120px',
+                                                borderRadius: '10px',
+                                                border: '2px solid #a5d6a7',
+                                                background: 'white',
+                                                resize: 'vertical',
+                                                fontSize: '15px',
+                                                color: '#1b5e20',
+                                                fontFamily: 'inherit',
+                                                lineHeight: '1.6',
+                                                transition: 'all 0.3s ease',
+                                                outline: 'none'
+                                            }}
+                                            onFocus={(e) => {
+                                                const target = e.currentTarget;
+                                                target.style.borderColor = '#4caf50';
+                                                target.style.boxShadow = '0 0 0 3px rgba(76, 175, 80, 0.1)';
+                                            }}
+                                            onBlur={(e) => {
+                                                const target = e.currentTarget;
+                                                target.style.borderColor = '#a5d6a7';
+                                                target.style.boxShadow = 'none';
+                                            }}
+                                        />
+                                    </div>
+                                    <div style={{ marginBottom: '20px' }}>
+                                        <label style={{ fontWeight: 600, color: '#2e7d32', display: 'block', marginBottom: '8px', fontSize: '15px' }}>
+                                            Вес груза (кг)
+                                        </label>
+                                        <input
+                                            type="number"
+                                            placeholder="Введите вес в килограммах..."
+                                            value={formData.weight}
+                                            onChange={(e) => setFormData({ ...formData, weight: e.target.value })}
+                                            style={{
+                                                width: '100%',
+                                                padding: '14px 16px',
+                                                borderRadius: '10px',
+                                                border: '2px solid #a5d6a7',
+                                                background: 'white',
+                                                fontSize: '15px',
+                                                color: '#1b5e20',
+                                                transition: 'all 0.3s ease',
+                                                outline: 'none'
+                                            }}
+                                            onFocus={(e) => {
+                                                const target = e.currentTarget;
+                                                target.style.borderColor = '#4caf50';
+                                                target.style.boxShadow = '0 0 0 3px rgba(76, 175, 80, 0.1)';
+                                            }}
+                                            onBlur={(e) => {
+                                                const target = e.currentTarget;
+                                                target.style.borderColor = '#a5d6a7';
+                                                target.style.boxShadow = 'none';
+                                            }}
+                                        />
+                                    </div>
+                                    <div style={{ marginBottom: '20px' }}>
+                                        <label style={{ fontWeight: 600, color: '#2e7d32', display: 'block', marginBottom: '8px', fontSize: '15px' }}>
+                                            Адрес (автоматически определит координаты)
+                                        </label>
+                                        <input
+                                            type="text"
+                                            placeholder="Введите адрес..."
+                                            value={formData.address}
+                                            onChange={(e) => handleAddressChange(e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '14px 16px',
+                                                borderRadius: '10px',
+                                                border: '2px solid #a5d6a7',
+                                                background: 'white',
+                                                fontSize: '15px',
+                                                color: '#1b5e20',
+                                                transition: 'all 0.3s ease',
+                                                outline: 'none'
+                                            }}
+                                            onFocus={(e) => {
+                                                const target = e.currentTarget;
+                                                target.style.borderColor = '#4caf50';
+                                                target.style.boxShadow = '0 0 0 3px rgba(76, 175, 80, 0.1)';
+                                            }}
+                                            onBlur={(e) => {
+                                                const target = e.currentTarget;
+                                                target.style.borderColor = '#a5d6a7';
+                                                target.style.boxShadow = 'none';
+                                            }}
+                                        />
+                                        {geocodingLoading && <div style={{ fontSize: '14px', color: '#388e3c', marginTop: '10px', paddingLeft: '4px', lineHeight: '1.5', fontStyle: 'italic' }}>
+                                            Определение координат...
+                                        </div>}
+                                    </div>
+                                    <div style={{ marginBottom: '20px' }}>
+                                        <label style={{ fontWeight: 600, color: '#2e7d32', display: 'block', marginBottom: '8px', fontSize: '15px' }}>
+                                            Координаты (автоматически определит адрес)
+                                        </label>
+                                        <div style={{ display: 'flex', gap: '12px', marginBottom: '12px' }}>
+                                            <input
+                                                type="number"
+                                                step="any"
+                                                placeholder="Широта"
+                                                value={formData.latitude}
+                                                onChange={(e) => handleCoordinatesChange(e.target.value, formData.longitude)}
+                                                style={{
+                                                    flex: 1,
+                                                    padding: '14px 16px',
+                                                    borderRadius: '10px',
+                                                    border: '2px solid #a5d6a7',
+                                                    background: 'white',
+                                                    fontSize: '15px',
+                                                    color: '#1b5e20',
+                                                    transition: 'all 0.3s ease',
+                                                    outline: 'none'
+                                                }}
+                                                onFocus={(e) => {
+                                                    e.target.style.borderColor = '#4caf50';
+                                                    e.target.style.boxShadow = '0 0 0 3px rgba(76, 175, 80, 0.1)';
+                                                }}
+                                                onBlur={(e) => {
+                                                    e.target.style.borderColor = '#a5d6a7';
+                                                    e.target.style.boxShadow = 'none';
+                                                }}
+                                            />
+                                            <input
+                                                type="number"
+                                                step="any"
+                                                placeholder="Долгота"
+                                                value={formData.longitude}
+                                                onChange={(e) => handleCoordinatesChange(formData.latitude, e.target.value)}
+                                                style={{
+                                                    flex: 1,
+                                                    padding: '14px 16px',
+                                                    borderRadius: '10px',
+                                                    border: '2px solid #a5d6a7',
+                                                    background: 'white',
+                                                    fontSize: '15px',
+                                                    color: '#1b5e20',
+                                                    transition: 'all 0.3s ease',
+                                                    outline: 'none'
+                                                }}
+                                                onFocus={(e) => {
+                                                    e.target.style.borderColor = '#4caf50';
+                                                    e.target.style.boxShadow = '0 0 0 3px rgba(76, 175, 80, 0.1)';
+                                                }}
+                                                onBlur={(e) => {
+                                                    e.target.style.borderColor = '#a5d6a7';
+                                                    e.target.style.boxShadow = 'none';
+                                                }}
+                                            />
+                                        </div>
+                                        <button 
+                                            type="button" 
+                                            onClick={handleGetLocation} 
+                                            style={{ 
+                                                marginTop: '8px', 
+                                                padding: '14px 24px', 
+                                                background: 'linear-gradient(135deg, #66bb6a 0%, #4caf50 100%)', 
+                                                color: 'white', 
+                                                border: 'none', 
+                                                borderRadius: '10px', 
+                                                cursor: 'pointer', 
+                                                fontSize: '15px', 
+                                                fontWeight: '600', 
+                                                boxShadow: '0 2px 8px rgba(76, 175, 80, 0.3)', 
+                                                transition: 'all 0.3s ease', 
+                                                width: '100%',
+                                                textAlign: 'center',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center'
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                const target = e.currentTarget as HTMLButtonElement;
+                                                target.style.transform = 'translateY(-2px)';
+                                                target.style.boxShadow = '0 4px 12px rgba(76, 175, 80, 0.4)';
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                const target = e.currentTarget as HTMLButtonElement;
+                                                target.style.transform = 'translateY(0)';
+                                                target.style.boxShadow = '0 2px 8px rgba(76, 175, 80, 0.3)';
+                                            }}
+                                        >
+                                            Определить текущее местоположение
+                                        </button>
+                                        {geocodingLoading && <div style={{ fontSize: '14px', color: '#388e3c', marginTop: '10px', paddingLeft: '4px', lineHeight: '1.5', fontStyle: 'italic' }}>
+                                            Определение адреса...
+                                        </div>}
+                                    </div>
+                                    <div style={{ marginTop: '24px', marginBottom: '20px' }}>
+                                        <label style={{ fontWeight: 600, color: '#2e7d32', marginBottom: '12px', display: 'block', fontSize: '15px' }}>
+                                            Карта местоположения
+                                        </label>
+                                        <div style={{ borderRadius: '14px', overflow: 'hidden', boxShadow: '0 4px 12px rgba(76, 175, 80, 0.15)', border: '2px solid #c8e6c9' }}>
+                                            <MapView
+                                                latitude={formData.latitude || undefined}
+                                                longitude={formData.longitude || undefined}
+                                                address={formData.address || undefined}
+                                                height="300px"
+                                                onCoordinatesChange={(lat, lng) => {
+                                                    handleCoordinatesChange(lat.toString(), lng.toString());
+                                                }}
+                                                onAddressChange={(address) => {
+                                                    setFormData(prev => ({
+                                                        ...prev,
+                                                        address: address
+                                                    }));
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div style={{
+                                        display: 'flex',
+                                        gap: '12px',
+                                        marginTop: '28px',
+                                        paddingTop: '20px',
+                                        borderTop: '2px solid #c8e6c9'
+                                    }}>
+                                        <button
+                                            type="submit"
+                                            style={{
+                                                flex: 1,
+                                                padding: '14px 0',
+                                                background: '#66bb6a',
+                                                color: 'white',
+                                                fontWeight: 600,
+                                                border: 'none',
+                                                borderRadius: '10px',
+                                                cursor: 'pointer',
+                                                transition: 'all 0.3s ease',
+                                                fontSize: '16px',
+                                                boxShadow: '0 2px 8px rgba(102, 187, 106, 0.3)'
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                const target = e.currentTarget as HTMLButtonElement;
+                                                target.style.background = '#4caf50';
+                                                target.style.transform = 'translateY(-2px)';
+                                                target.style.boxShadow = '0 4px 12px rgba(102, 187, 106, 0.4)';
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                const target = e.currentTarget as HTMLButtonElement;
+                                                target.style.background = '#66bb6a';
+                                                target.style.transform = 'translateY(0)';
+                                                target.style.boxShadow = '0 2px 8px rgba(102, 187, 106, 0.3)';
+                                            }}
+                                        >
+                                            Сохранить
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                // Очищаем таймауты
+                                                if (addressTimeoutRef.current) {
+                                                    clearTimeout(addressTimeoutRef.current);
+                                                    addressTimeoutRef.current = null;
+                                                }
+                                                if (coordsTimeoutRef.current) {
+                                                    clearTimeout(coordsTimeoutRef.current);
+                                                    coordsTimeoutRef.current = null;
+                                                }
+                                                // Очищаем данные формы
+                                                setFormData({ name: '', description: '', weight: '', latitude: '', longitude: '', address: '' });
+                                                setShowEditModal(false);
+                                                setEditingCargo(null);
+                                            }}
+                                            style={{
+                                                flex: 1,
+                                                padding: '14px 0',
+                                                background: '#a5d6a7',
+                                                color: '#1b5e20',
+                                                fontWeight: 600,
+                                                border: 'none',
+                                                borderRadius: '10px',
+                                                cursor: 'pointer',
+                                                transition: 'all 0.3s ease',
+                                                fontSize: '16px',
+                                                boxShadow: '0 2px 8px rgba(165, 214, 167, 0.3)'
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                const target = e.currentTarget as HTMLButtonElement;
+                                                target.style.background = '#81c784';
+                                                target.style.transform = 'translateY(-2px)';
+                                                target.style.boxShadow = '0 4px 12px rgba(165, 214, 167, 0.4)';
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                const target = e.currentTarget as HTMLButtonElement;
+                                                target.style.background = '#a5d6a7';
+                                                target.style.transform = 'translateY(0)';
+                                                target.style.boxShadow = '0 2px 8px rgba(165, 214, 167, 0.3)';
+                                            }}
+                                        >
+                                            Отмена
+                                        </button>
+                                    </div>
+                                </form>
                             </div>
-                            <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
-                                <button type="submit">Сохранить</button>
-                                <button type="button" onClick={() => {
-                                    // Очищаем таймауты
-                                    if (addressTimeoutRef.current) {
-                                        clearTimeout(addressTimeoutRef.current);
-                                        addressTimeoutRef.current = null;
-                                    }
-                                    if (coordsTimeoutRef.current) {
-                                        clearTimeout(coordsTimeoutRef.current);
-                                        coordsTimeoutRef.current = null;
-                                    }
-                                    // Очищаем данные формы
-                                    setFormData({ name: '', description: '', weight: '', latitude: '', longitude: '', address: '' });
-                                    setShowEditModal(false);
-                                    setEditingCargo(null);
-                                }}>Отмена</button>
-                            </div>
-                        </form>
                         </div>
                     </div>
                 )}
@@ -661,15 +1252,33 @@ const OwnerCargoPage = () => {
                         }
                     }}>
                         <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-                            <h2>🗺️ Местоположение груза: {selectedCargo.name}</h2>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                                <h2 style={{ margin: 0 }}>Местоположение груза: {selectedCargo.name}</h2>
+                                <button 
+                                    onClick={() => setShowMap(false)}
+                                    style={{ 
+                                        background: 'transparent', 
+                                        border: 'none', 
+                                        fontSize: '24px', 
+                                        cursor: 'pointer',
+                                        color: '#333',
+                                        padding: '0',
+                                        width: '30px',
+                                        height: '30px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        lineHeight: '1'
+                                    }}
+                                >
+                                    ✕
+                                </button>
+                            </div>
                             <MapView
                                 latitude={selectedCargo.location.latitude}
                                 longitude={selectedCargo.location.longitude}
                                 address={selectedCargo.location.address}
                             />
-                            <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
-                                <button onClick={() => setShowMap(false)} style={{ flex: 1 }}>Закрыть</button>
-                            </div>
                         </div>
                     </div>
                 )}
@@ -681,7 +1290,28 @@ const OwnerCargoPage = () => {
                         }
                     }}>
                         <div className={styles.modal} onClick={(e) => e.stopPropagation()} style={{ maxWidth: '900px', width: '95%' }}>
-                            <h2>Все грузы на карте</h2>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                                <h2 style={{ margin: 0 }}>Все грузы на карте</h2>
+                                <button 
+                                    onClick={() => setShowAllCargosMap(false)}
+                                    style={{ 
+                                        background: 'transparent', 
+                                        border: 'none', 
+                                        fontSize: '24px', 
+                                        cursor: 'pointer',
+                                        color: '#333',
+                                        padding: '0',
+                                        width: '30px',
+                                        height: '30px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        lineHeight: '1'
+                                    }}
+                                >
+                                    ✕
+                                </button>
+                            </div>
                             <MultiMapView
                                 cargos={cargos
                                     .filter(cargo => cargo.location)
@@ -694,21 +1324,17 @@ const OwnerCargoPage = () => {
                                     }))}
                                 height="600px"
                             />
-                            <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
-                                <button onClick={() => setShowAllCargosMap(false)} style={{ flex: 1 }}>Закрыть</button>
-                            </div>
                         </div>
                     </div>
                 )}
 
                 {loading ? (
                     <div style={{ textAlign: 'center', padding: '60px 20px', fontSize: '18px', color: '#666' }}>
-                        <div style={{ marginBottom: '16px' }}>⏳</div>
+                        <div style={{ marginBottom: '16px' }}>Загрузка...</div>
                         Загрузка грузов...
                     </div>
                 ) : cargos.length === 0 ? (
                     <div style={{ textAlign: 'center', padding: '60px 20px', background: 'white', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)' }}>
-                        <div style={{ fontSize: '48px', marginBottom: '16px' }}>📦</div>
                         <h3 style={{ color: '#333', marginBottom: '8px' }}>Нет грузов</h3>
                         <p style={{ color: '#666', marginBottom: '24px' }}>Создайте свой первый груз, нажав кнопку "Создать груз"</p>
                     </div>
@@ -721,17 +1347,17 @@ const OwnerCargoPage = () => {
                                 {cargo.weight && <p>Вес: {cargo.weight} кг</p>}
                                 {cargo.location && (
                                     <div className={styles.locationInfo}>
-                                        <p><strong>📍 Адрес:</strong> {cargo.location.address}</p>
-                                        <p><strong>🌐 Координаты:</strong> {cargo.location.latitude.toFixed(7)}, {cargo.location.longitude.toFixed(7)}</p>
+                                        <p><strong>Адрес:</strong> {cargo.location.address}</p>
+                                        <p><strong>Координаты:</strong> {cargo.location.latitude.toFixed(7)}, {cargo.location.longitude.toFixed(7)}</p>
                                     </div>
                                 )}
                                 <div className={styles.buttonGroup}>
                                     {cargo.location && (
-                                        <button onClick={() => handleViewOnMap(cargo)}>🗺️ На карте</button>
+                                        <button onClick={() => handleViewOnMap(cargo)}>На карте</button>
                                     )}
-                                    <button onClick={() => handleEditCargo(cargo)}>✏️ Редактировать</button>
+                                    <button onClick={() => handleEditCargo(cargo)} style={{ textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Редактировать</button>
                                     <button onClick={() => handleDeleteCargo(cargo.id)} style={{ background: 'linear-gradient(135deg, #dc3545 0%, #c82333 100%)', boxShadow: '0 2px 8px rgba(220, 53, 69, 0.2)' }}>
-                                        🗑️ Удалить
+                                        Удалить
                                     </button>
                                 </div>
                             </div>

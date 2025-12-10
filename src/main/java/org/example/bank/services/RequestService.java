@@ -40,6 +40,9 @@ public class RequestService {
     @Autowired
     private RouteRepository routeRepository;
 
+    @Autowired
+    private org.example.bank.repositories.ReviewRepository reviewRepository;
+
     @Transactional
     public RequestDTO createRequest(Long ownerId, CreateRequestDTO dto) {
         Owner owner = ownerRepository.findById(ownerId)
@@ -64,7 +67,8 @@ public class RequestService {
             Carrier carrier = carrierRepository.findById(dto.getCarrierId())
                     .orElseThrow(() -> new RuntimeException("Carrier not found"));
             request.setCarrier(carrier);
-            request.setStatus(RequestStatus.PENDING);
+            // Если перевозчик выбран при создании, заявка автоматически считается ACCEPTED
+            request.setStatus(RequestStatus.ACCEPTED);
         }
 
         request = requestRepository.save(request);
@@ -225,6 +229,15 @@ public class RequestService {
         
         // Проверяем наличие подтвержденного маршрута для этой заявки
         dto.setHasRoute(request.getConfirmedRoute() != null);
+        
+        // Проверяем наличие отзыва для перевозчика этой заявки
+        if (request.getCarrier() != null) {
+            boolean hasReview = reviewRepository.existsByOwnerIdAndCarrierId(
+                request.getOwner().getId(), 
+                request.getCarrier().getId()
+            );
+            dto.setHasReview(hasReview);
+        }
         
         return dto;
     }

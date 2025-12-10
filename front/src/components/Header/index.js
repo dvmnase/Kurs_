@@ -132,15 +132,8 @@ const Header = ({ navigation, showLogout, onLogout }) => {
             <Theme className="theme-big" />
           </div>
           {authService.isAuthenticated() && (
-            <AppLink
-              aria-label="search"
-              aria-hidden="true"
-              className={cn('button-small', styles.button)}
-              href={`/client/search`}
-            >
-              <Icon name="search" size="20" />
-              Поиск
-            </AppLink>
+            <span className="opacity-50 cursor-not-allowed">
+          </span>
           )}
           {showLogout ? (
             <button

@@ -27,6 +27,13 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                     </button>
                 </div>
             </header>
+            <div className={styles.banner}>
+                <img 
+                    src="/images/girlyanda.png" 
+                    alt="Гирлянда" 
+                    className={styles.bannerImage}
+                />
+            </div>
             <main className={styles.main}>
                 {children}
             </main>

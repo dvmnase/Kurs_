@@ -1,0 +1,164 @@
+@import ../helpers
+
+.chatsContainer
+    display: flex
+    gap: 20px
+    height: calc(100vh - 200px)
+    min-height: 600px
+    +m
+        flex-direction: column
+        height: auto
+        min-height: auto
+
+.chatsList
+    width: 350px
+    background: white
+    border-radius: 12px
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08)
+    display: flex
+    flex-direction: column
+    overflow: hidden
+    +m
+        width: 100%
+        height: 400px
+
+    .chatsListHeader
+        padding: 20px
+        border-bottom: 2px solid #f0f0f0
+        background: linear-gradient(135deg, #ffc107 0%, #ffb300 100%)
+        color: #1a1a1a
+
+        h2
+            margin: 0
+            font-size: 24px
+            font-weight: 700
+            color: #1a1a1a
+
+        p
+            margin: 8px 0 0 0
+            font-size: 14px
+            color: #333
+
+    .chatsListContent
+        flex: 1
+        overflow-y: auto
+        padding: 10px
+
+        &::-webkit-scrollbar
+            width: 6px
+
+        &::-webkit-scrollbar-track
+            background: #f1f1f1
+
+        &::-webkit-scrollbar-thumb
+            background: #888
+            border-radius: 3px
+
+            &:hover
+                background: #555
+
+    .chatItem
+        padding: 16px
+        margin-bottom: 10px
+        background: #f8f9fa
+        border-radius: 8px
+        cursor: pointer
+        transition: all 0.3s ease
+        border: 2px solid transparent
+
+        &:hover
+            background: #e9ecef
+            transform: translateX(4px)
+
+        &.active
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%)
+            border-color: #667eea
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2)
+
+        .chatItemHeader
+            display: flex
+            justify-content: space-between
+            align-items: center
+            margin-bottom: 8px
+
+            h3
+                margin: 0
+                font-size: 16px
+                font-weight: 600
+                color: #1a1f36
+
+            .chatStatus
+                padding: 4px 8px
+                border-radius: 4px
+                font-size: 12px
+                font-weight: 600
+
+        .chatItemInfo
+            font-size: 14px
+            color: #666
+            margin-bottom: 4px
+
+            strong
+                color: #333
+
+        .chatItemLastMessage
+            margin-top: 8px
+            padding: 8px
+            background: white
+            border-radius: 4px
+            font-size: 13px
+            color: #666
+
+            .lastMessageText
+                margin: 0 0 4px 0
+                overflow: hidden
+                text-overflow: ellipsis
+                white-space: nowrap
+
+            .lastMessageTime
+                margin: 0
+                font-size: 11px
+                color: #999
+
+    .emptyChats
+        text-align: center
+        padding: 60px 20px
+        color: #999
+
+        .emptyIcon
+            font-size: 48px
+            margin-bottom: 16px
+
+.chatView
+    flex: 1
+    background: white
+    border-radius: 12px
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08)
+    display: flex
+    flex-direction: column
+    overflow: hidden
+    +m
+        height: 600px
+
+    .chatViewEmpty
+        flex: 1
+        display: flex
+        flex-direction: column
+        align-items: center
+        justify-content: center
+        padding: 40px
+        color: #999
+        text-align: center
+
+        .emptyIcon
+            font-size: 64px
+            margin-bottom: 20px
+
+        h3
+            margin: 0 0 8px 0
+            color: #333
+
+        p
+            margin: 0
+            color: #666
+

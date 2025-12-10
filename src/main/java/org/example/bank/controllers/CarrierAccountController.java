@@ -14,8 +14,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/owner/account")
-public class OwnerAccountController {
+@RequestMapping("/api/carrier/account")
+public class CarrierAccountController {
 
     @Autowired
     private UserAccountService userAccountService;
@@ -66,7 +66,4 @@ public class OwnerAccountController {
         return ResponseEntity.ok().build();
     }
 }
-
-
-
 

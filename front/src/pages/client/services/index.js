@@ -123,6 +123,33 @@ export default function ServicesPage() {
                     </div>
                 </div>
 
+                <div className={styles.promoBlock}>
+                    <div className={styles.promoContent}>
+                        <div className={styles.promoText}>
+                            <h2>HeatTruck - Ваш надежный партнер в грузоперевозках</h2>
+                            <p>
+                                Мы предлагаем профессиональные услуги по перевозке грузов любого типа и объема. 
+                                Наша команда гарантирует безопасность, своевременность и качество доставки. 
+                                С нами ваши грузы в надежных руках!
+                            </p>
+                            <p>
+                                Более 10 лет опыта в сфере логистики и грузоперевозок. 
+                                Современный автопарк, квалифицированные водители и индивидуальный подход к каждому клиенту.
+                            </p>
+                        </div>
+                        <div className={styles.promoVideo}>
+                            <iframe
+                                src="https://www.youtube.com/embed/cyJGnV-vrdo?modestbranding=1&rel=0&showinfo=0"
+                                title="HeatTruck Video"
+                                frameBorder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                                className={styles.video}
+                            ></iframe>
+                        </div>
+                    </div>
+                </div>
+
                 <div className={styles.servicesGrid}>
                     {filteredServices.map((service) => (
                         <div key={service.id} onClick={() => router.push({

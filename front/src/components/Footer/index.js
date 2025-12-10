@@ -14,59 +14,56 @@ const Footers = ({ navigation }) => {
       <div className={cn('container', styles.container)}>
         <div className={styles.row}>
           <div className={styles.col}>
-            <div className={styles.logo}>
-              <Image
-                className={styles.pic}
-                src="/images/logo.png"
-                width={120}
-                height={40}
-                alt="Quantum Bank"
-              />
-            </div>
+          
             <div className={styles.info}>
-              Quantum Bank - Ваш надежный финансовый партнер. Мы предлагаем инновационные банковские решения для современного бизнеса.
-            </div>
-            <div className={styles.contacts}>
-              <p>Телефон: +375 (29) 123-45-67</p>
-              <p>Email: info@quantumbank.by</p>
-              <p>Адрес: г. Минск, ул. Банковская, 1</p>
+            HeatTruck — ваш надежный партнёр в сфере грузоперевозок.
+            Мы предоставляем профессиональные услуги по доставке грузов любого типа и объёма. Наша команда обеспечивает полную безопасность на каждом этапе транспортировки и строгий контроль сроков. Мы работаем быстро, аккуратно и ответственно, чтобы ваш груз всегда прибывал вовремя и в идеальном состоянии.</div>
+            <img
+              src="/images/girlyanda-footer.png"
+              alt="Banner"
+              className={styles.bannerImage}
+            />
+            <div className={styles.videoContainer}>
+              <iframe
+                src="https://www.youtube.com/embed/cyJGnV-vrdo?modestbranding=1&rel=0&showinfo=0&controls=1"
+                title="HeatTruck Video"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className={styles.video}
+              ></iframe>
             </div>
           </div>
           <div className={styles.col}>
-            <h3 className={styles.category}>Банковские услуги</h3>
-            <AppLink href="/services#accounts">
-              <p className={styles.text}>Открытие счетов</p>
-            </AppLink>
-            <AppLink href="/services#loans">
-              <p className={styles.text}>Кредиты</p>
-            </AppLink>
-            <AppLink href="/services#cards">
-              <p className={styles.text}>Банковские карты</p>
-            </AppLink>
-            <AppLink href="/services#investments">
-              <p className={styles.text}>Инвестиции</p>
-            </AppLink>
-          </div>
-          <div className={styles.col}>
-            <h3 className={styles.category}>Информация</h3>
-            <AppLink href="/about">
-              <p className={styles.text}>О банке</p>
-            </AppLink>
-            <AppLink href="/news">
-              <p className={styles.text}>Новости</p>
-            </AppLink>
-            <AppLink href="/career">
-              <p className={styles.text}>Карьера</p>
-            </AppLink>
-            <AppLink href="/contacts">
-              <p className={styles.text}>Контакты</p>
-            </AppLink>
-            <SocialMedia className={styles.social} />
+            <div className={styles.navSection}>
+              <h3 className={styles.category}>Услуги</h3>
+              <nav className={styles.navLinks}>
+                <AppLink href="/owner/cargo">
+                  <p className={styles.text}>Мои грузы</p>
+                </AppLink>
+                <AppLink href="/owner/requests">
+                  <p className={styles.text}>Заявки</p>
+                </AppLink>
+                <AppLink href="/owner/chats">
+                  <p className={styles.text}>Чаты</p>
+                </AppLink>
+                <AppLink href="/owner/settings">
+                  <p className={styles.text}>Настройки</p>
+                </AppLink>
+              </nav>
+              <div className={styles.contacts}>
+                <h3 className={styles.category}>Контакты</h3>
+                <p>Телефон: +375 (29) 555-77-88</p>
+                <p>Email: info@heattruck.by</p>
+                <p>Адрес: г. Минск, пр-т Независимости, 95, офис 312</p>
+              </div>
+              <SocialMedia className={styles.social} />
+            </div>
           </div>
         </div>
         <div className={styles.foot}>
           <div className={styles.copyright}>
-            © 2024 Quantum Bank. Все права защищены.
+            © 2025 HeatTruck. Все права защищены.
           </div>
           <div className={styles.note}>
             <AppLink href="/privacy">

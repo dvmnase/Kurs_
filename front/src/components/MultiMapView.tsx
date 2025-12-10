@@ -92,8 +92,8 @@ const MultiMapView: React.FC<MultiMapViewProps> = ({ cargos, height = '600px' })
                         balloonContent: `
                             <div style="padding: 10px;">
                                 <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: 600;">${cargo.name}</h3>
-                                ${cargo.address ? `<p style="margin: 4px 0; color: #666; font-size: 14px;">📍 ${cargo.address}</p>` : ''}
-                                <p style="margin: 4px 0; color: #999; font-size: 12px;">🌐 ${cargo.latitude.toFixed(6)}, ${cargo.longitude.toFixed(6)}</p>
+                                ${cargo.address ? `<p style="margin: 4px 0; color: #666; font-size: 14px;">${cargo.address}</p>` : ''}
+                                <p style="margin: 4px 0; color: #999; font-size: 12px;">${cargo.latitude.toFixed(6)}, ${cargo.longitude.toFixed(6)}</p>
                             </div>
                         `,
                         iconCaption: `${index + 1}. ${cargo.name}`,

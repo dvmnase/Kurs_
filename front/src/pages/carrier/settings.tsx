@@ -16,11 +16,42 @@ const CarrierSettingsPage = () => {
     const handleUpdateUsername = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await api.put('/api/owner/account/username', null, {
+            setError(null);
+            const response = await api.put('/api/carrier/account/username', null, {
                 params: { username }
             });
+            
+            // Получаем новый токен из ответа
+            const newToken = response.data.token;
+            const newUsername = response.data.username;
+            
+            if (newToken) {
+                // Обновляем токен в localStorage
+                localStorage.setItem('token', newToken);
+                
+                // Обновляем данные пользователя
+                const currentUser = authService.getUser();
+                if (currentUser) {
+                    const updatedUser = {
+                        ...currentUser,
+                        username: newUsername
+                    };
+                    localStorage.setItem('user', JSON.stringify(updatedUser));
+                }
+                
+                // Обновляем заголовок авторизации для всех последующих запросов
+                api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
+            }
+            
             setSuccess('Имя пользователя обновлено');
             setUsername('');
+            
+            // Обновляем страницу через небольшую задержку, чтобы данные успели сохраниться
+            setTimeout(() => {
+                if (typeof window !== 'undefined') {
+                    window.location.reload();
+                }
+            }, 1000);
         } catch (err: any) {
             setError(err.response?.data || 'Ошибка при обновлении имени пользователя');
         }
@@ -33,12 +64,23 @@ const CarrierSettingsPage = () => {
             return;
         }
         try {
-            await api.put('/api/owner/account/password', null, {
+            setError(null);
+            await api.put('/api/carrier/account/password', null, {
                 params: { password }
             });
+            
+            // Пароль обновлен в БД, но токен остается валидным
+            // Данные пользователя не нужно обновлять, так как пароль не хранится в localStorage
             setSuccess('Пароль обновлен');
             setPassword('');
             setConfirmPassword('');
+            
+            // Обновляем страницу через небольшую задержку, чтобы данные успели сохраниться
+            setTimeout(() => {
+                if (typeof window !== 'undefined') {
+                    window.location.reload();
+                }
+            }, 1000);
         } catch (err: any) {
             setError(err.response?.data || 'Ошибка при обновлении пароля');
         }
