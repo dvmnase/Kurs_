@@ -9,6 +9,8 @@ interface RouteMapViewProps {
     startAddress?: string;
     endAddress?: string;
     height?: string;
+    onStartCoordinatesChange?: (lat: number, lng: number) => void;
+    onEndCoordinatesChange?: (lat: number, lng: number) => void;
 }
 
 declare global {
@@ -24,7 +26,9 @@ const RouteMapView: React.FC<RouteMapViewProps> = ({
     endLng, 
     startAddress, 
     endAddress,
-    height = '400px' 
+    height = '400px',
+    onStartCoordinatesChange,
+    onEndCoordinatesChange
 }) => {
     const mapRef = useRef<HTMLDivElement>(null);
     const mapInstanceRef = useRef<any>(null);
@@ -51,6 +55,19 @@ const RouteMapView: React.FC<RouteMapViewProps> = ({
                     center: [53.9, 27.5667],
                     zoom: 10,
                     controls: ['zoomControl', 'fullscreenControl', 'routeButtonControl']
+                });
+
+                // Добавляем обработчик клика на карту (для установки меток)
+                map.events.add('click', (e: any) => {
+                    const coords = e.get('coords');
+                    if (coords && (onStartCoordinatesChange || onEndCoordinatesChange)) {
+                        // Если нет начальной точки, устанавливаем её, иначе конечную
+                        if (!startPlacemarkRef.current && onStartCoordinatesChange) {
+                            onStartCoordinatesChange(coords[0], coords[1]);
+                        } else if (!endPlacemarkRef.current && onEndCoordinatesChange) {
+                            onEndCoordinatesChange(coords[0], coords[1]);
+                        }
+                    }
                 });
 
                 mapInstanceRef.current = map;
@@ -80,8 +97,25 @@ const RouteMapView: React.FC<RouteMapViewProps> = ({
 
             const updateStartMarker = (coords: [number, number]) => {
                 const placemark = new window.ymaps.Placemark(coords, {
-                    balloonContent: startAddress || 'Точка отправления'
+                    balloonContent: startAddress || 'Точка отправления',
+                    draggable: true
                 });
+
+                // Добавляем обработчики для метки отправления
+                placemark.events.add('dragend', () => {
+                    const newCoords = placemark.geometry.getCoordinates();
+                    if (newCoords && onStartCoordinatesChange) {
+                        onStartCoordinatesChange(newCoords[0], newCoords[1]);
+                    }
+                });
+
+                placemark.events.add('click', () => {
+                    const newCoords = placemark.geometry.getCoordinates();
+                    if (newCoords && onStartCoordinatesChange) {
+                        onStartCoordinatesChange(newCoords[0], newCoords[1]);
+                    }
+                });
+
                 mapInstanceRef.current.geoObjects.add(placemark);
                 startPlacemarkRef.current = placemark;
                 return coords;
@@ -89,8 +123,25 @@ const RouteMapView: React.FC<RouteMapViewProps> = ({
 
             const updateEndMarker = (coords: [number, number]) => {
                 const placemark = new window.ymaps.Placemark(coords, {
-                    balloonContent: endAddress || 'Точка назначения'
+                    balloonContent: endAddress || 'Точка назначения',
+                    draggable: true
                 });
+
+                // Добавляем обработчики для метки назначения
+                placemark.events.add('dragend', () => {
+                    const newCoords = placemark.geometry.getCoordinates();
+                    if (newCoords && onEndCoordinatesChange) {
+                        onEndCoordinatesChange(newCoords[0], newCoords[1]);
+                    }
+                });
+
+                placemark.events.add('click', () => {
+                    const newCoords = placemark.geometry.getCoordinates();
+                    if (newCoords && onEndCoordinatesChange) {
+                        onEndCoordinatesChange(newCoords[0], newCoords[1]);
+                    }
+                });
+
                 mapInstanceRef.current.geoObjects.add(placemark);
                 endPlacemarkRef.current = placemark;
                 return coords;
@@ -108,6 +159,10 @@ const RouteMapView: React.FC<RouteMapViewProps> = ({
                         const coords = firstGeoObject.geometry.getCoordinates();
                         if (coords[0] >= 51.0 && coords[0] <= 56.0 && coords[1] >= 23.0 && coords[1] <= 33.0) {
                             updateStartMarker(coords);
+                            // Вызываем callback с координатами
+                            if (onStartCoordinatesChange) {
+                                onStartCoordinatesChange(coords[0], coords[1]);
+                            }
                         }
                     }
                 }).catch(() => {});
@@ -125,6 +180,10 @@ const RouteMapView: React.FC<RouteMapViewProps> = ({
                         const coords = firstGeoObject.geometry.getCoordinates();
                         if (coords[0] >= 51.0 && coords[0] <= 56.0 && coords[1] >= 23.0 && coords[1] <= 33.0) {
                             updateEndMarker(coords);
+                            // Вызываем callback с координатами
+                            if (onEndCoordinatesChange) {
+                                onEndCoordinatesChange(coords[0], coords[1]);
+                            }
                         }
                     }
                 }).catch(() => {});

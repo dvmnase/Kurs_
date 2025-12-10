@@ -6,6 +6,7 @@ interface MapViewProps {
     longitude?: number | string;
     address?: string;
     height?: string;
+    onCoordinatesChange?: (lat: number, lng: number) => void;
 }
 
 declare global {
@@ -14,7 +15,7 @@ declare global {
     }
 }
 
-const MapView: React.FC<MapViewProps> = ({ latitude, longitude, address, height = '400px' }) => {
+const MapView: React.FC<MapViewProps> = ({ latitude, longitude, address, height = '400px', onCoordinatesChange }) => {
     const mapRef = useRef<HTMLDivElement>(null);
     const mapInstanceRef = useRef<any>(null);
     const placemarkRef = useRef<any>(null);
@@ -53,6 +54,14 @@ const MapView: React.FC<MapViewProps> = ({ latitude, longitude, address, height 
                     controls: ['zoomControl', 'fullscreenControl']
                 });
 
+                // Добавляем обработчик клика на карту
+                map.events.add('click', (e: any) => {
+                    const coords = e.get('coords');
+                    if (coords && onCoordinatesChange) {
+                        onCoordinatesChange(coords[0], coords[1]);
+                    }
+                });
+
                 mapInstanceRef.current = map;
                 
                 // Создаем метку
@@ -79,7 +88,24 @@ const MapView: React.FC<MapViewProps> = ({ latitude, longitude, address, height 
 
                 // Создаем новую метку
                 const placemark = new window.ymaps.Placemark(center, {
-                    balloonContent: address || `${center[0]}, ${center[1]}`
+                    balloonContent: address || `${center[0]}, ${center[1]}`,
+                    draggable: true
+                });
+
+                // Добавляем обработчик перетаскивания метки
+                placemark.events.add('dragend', () => {
+                    const coords = placemark.geometry.getCoordinates();
+                    if (coords && onCoordinatesChange) {
+                        onCoordinatesChange(coords[0], coords[1]);
+                    }
+                });
+
+                // Добавляем обработчик клика на метку
+                placemark.events.add('click', () => {
+                    const coords = placemark.geometry.getCoordinates();
+                    if (coords && onCoordinatesChange) {
+                        onCoordinatesChange(coords[0], coords[1]);
+                    }
                 });
 
                 mapInstanceRef.current.geoObjects.add(placemark);
@@ -106,12 +132,34 @@ const MapView: React.FC<MapViewProps> = ({ latitude, longitude, address, height 
 
                             // Создаем новую метку
                             const placemark = new window.ymaps.Placemark(coords, {
-                                balloonContent: address
+                                balloonContent: address,
+                                draggable: true
+                            });
+
+                            // Добавляем обработчик перетаскивания метки
+                            placemark.events.add('dragend', () => {
+                                const coords = placemark.geometry.getCoordinates();
+                                if (coords && onCoordinatesChange) {
+                                    onCoordinatesChange(coords[0], coords[1]);
+                                }
+                            });
+
+                            // Добавляем обработчик клика на метку
+                            placemark.events.add('click', () => {
+                                const coords = placemark.geometry.getCoordinates();
+                                if (coords && onCoordinatesChange) {
+                                    onCoordinatesChange(coords[0], coords[1]);
+                                }
                             });
 
                             mapInstanceRef.current.geoObjects.add(placemark);
                             mapInstanceRef.current.setCenter(coords, 15);
                             placemarkRef.current = placemark;
+                            
+                            // Вызываем callback с координатами
+                            if (onCoordinatesChange) {
+                                onCoordinatesChange(coords[0], coords[1]);
+                            }
                         }
                     }
                 }).catch((err: any) => {

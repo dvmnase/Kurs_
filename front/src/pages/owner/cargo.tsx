@@ -456,6 +456,9 @@ const OwnerCargoPage = () => {
                                     longitude={formData.longitude || undefined}
                                     address={formData.address || undefined}
                                     height="300px"
+                                    onCoordinatesChange={(lat, lng) => {
+                                        handleCoordinatesChange(lat.toString(), lng.toString());
+                                    }}
                                 />
                             </div>
                             <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
@@ -527,6 +530,9 @@ const OwnerCargoPage = () => {
                                     longitude={formData.longitude || undefined}
                                     address={formData.address || undefined}
                                     height="300px"
+                                    onCoordinatesChange={(lat, lng) => {
+                                        handleCoordinatesChange(lat.toString(), lng.toString());
+                                    }}
                                 />
                             </div>
                             <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>

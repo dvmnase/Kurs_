@@ -414,6 +414,12 @@ const OwnerRoutesPage = () => {
                                     startAddress={formData.startAddress || undefined}
                                     endAddress={formData.endAddress || undefined}
                                     height="300px"
+                                    onStartCoordinatesChange={(lat, lng) => {
+                                        handleCoordinatesChange(lat.toString(), lng.toString(), 'start');
+                                    }}
+                                    onEndCoordinatesChange={(lat, lng) => {
+                                        handleCoordinatesChange(lat.toString(), lng.toString(), 'end');
+                                    }}
                                 />
                             </div>
                             <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
