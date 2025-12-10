@@ -7,6 +7,7 @@ interface MapViewProps {
     address?: string;
     height?: string;
     onCoordinatesChange?: (lat: number, lng: number) => void;
+    onAddressChange?: (address: string) => void;
 }
 
 declare global {
@@ -15,10 +16,11 @@ declare global {
     }
 }
 
-const MapView: React.FC<MapViewProps> = ({ latitude, longitude, address, height = '400px', onCoordinatesChange }) => {
+const MapView: React.FC<MapViewProps> = ({ latitude, longitude, address, height = '400px', onCoordinatesChange, onAddressChange }) => {
     const mapRef = useRef<HTMLDivElement>(null);
     const mapInstanceRef = useRef<any>(null);
     const placemarkRef = useRef<any>(null);
+    const geocodeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
         if (!mapRef.current) return;
@@ -57,8 +59,24 @@ const MapView: React.FC<MapViewProps> = ({ latitude, longitude, address, height 
                 // Добавляем обработчик клика на карту
                 map.events.add('click', (e: any) => {
                     const coords = e.get('coords');
-                    if (coords && onCoordinatesChange) {
-                        onCoordinatesChange(coords[0], coords[1]);
+                    if (coords) {
+                        if (onCoordinatesChange) {
+                            onCoordinatesChange(coords[0], coords[1]);
+                        }
+                        // Выполняем обратный геокодинг для получения адреса
+                        if (onAddressChange) {
+                            window.ymaps.geocode(coords).then((res: any) => {
+                                const firstGeoObject = res.geoObjects.get(0);
+                                if (firstGeoObject) {
+                                    const addressText = firstGeoObject.getAddressLine();
+                                    if (addressText) {
+                                        onAddressChange(addressText);
+                                    }
+                                }
+                            }).catch((err: any) => {
+                                console.error('Reverse geocoding error:', err);
+                            });
+                        }
                     }
                 });
 
@@ -95,16 +113,48 @@ const MapView: React.FC<MapViewProps> = ({ latitude, longitude, address, height 
                 // Добавляем обработчик перетаскивания метки
                 placemark.events.add('dragend', () => {
                     const coords = placemark.geometry.getCoordinates();
-                    if (coords && onCoordinatesChange) {
-                        onCoordinatesChange(coords[0], coords[1]);
+                    if (coords) {
+                        if (onCoordinatesChange) {
+                            onCoordinatesChange(coords[0], coords[1]);
+                        }
+                        // Выполняем обратный геокодинг для получения адреса
+                        if (onAddressChange) {
+                            window.ymaps.geocode(coords).then((res: any) => {
+                                const firstGeoObject = res.geoObjects.get(0);
+                                if (firstGeoObject) {
+                                    const addressText = firstGeoObject.getAddressLine();
+                                    if (addressText) {
+                                        onAddressChange(addressText);
+                                    }
+                                }
+                            }).catch((err: any) => {
+                                console.error('Reverse geocoding error:', err);
+                            });
+                        }
                     }
                 });
 
                 // Добавляем обработчик клика на метку
                 placemark.events.add('click', () => {
                     const coords = placemark.geometry.getCoordinates();
-                    if (coords && onCoordinatesChange) {
-                        onCoordinatesChange(coords[0], coords[1]);
+                    if (coords) {
+                        if (onCoordinatesChange) {
+                            onCoordinatesChange(coords[0], coords[1]);
+                        }
+                        // Выполняем обратный геокодинг для получения адреса
+                        if (onAddressChange) {
+                            window.ymaps.geocode(coords).then((res: any) => {
+                                const firstGeoObject = res.geoObjects.get(0);
+                                if (firstGeoObject) {
+                                    const addressText = firstGeoObject.getAddressLine();
+                                    if (addressText) {
+                                        onAddressChange(addressText);
+                                    }
+                                }
+                            }).catch((err: any) => {
+                                console.error('Reverse geocoding error:', err);
+                            });
+                        }
                     }
                 });
 
@@ -112,65 +162,108 @@ const MapView: React.FC<MapViewProps> = ({ latitude, longitude, address, height 
                 mapInstanceRef.current.setCenter(center, 15);
                 placemarkRef.current = placemark;
             } 
-            // Если есть адрес, но нет координат - геокодируем через Yandex Maps API
-            else if (address && address.trim().length > 0) {
-                window.ymaps.geocode(address, {
-                    results: 1
-                }).then((res: any) => {
+            // Если есть адрес, но нет координат - геокодируем через Yandex Maps API с debounce
+            else if (address && address.trim().length > 3) {
+                // Очищаем предыдущий таймаут
+                if (geocodeTimeoutRef.current) {
+                    clearTimeout(geocodeTimeoutRef.current);
+                }
+                
+                // Debounce для геокодинга адреса (800мс после окончания ввода)
+                geocodeTimeoutRef.current = setTimeout(() => {
+                    window.ymaps.geocode(address, {
+                        results: 1
+                    }).then((res: any) => {
                     const firstGeoObject = res.geoObjects.get(0);
                     if (firstGeoObject) {
                         const coords = firstGeoObject.geometry.getCoordinates();
                         
-                        // Проверяем, что координаты в Беларуси
-                        if (coords[0] >= 51.0 && coords[0] <= 56.0 && 
-                            coords[1] >= 23.0 && coords[1] <= 33.0) {
-                            
-                            // Удаляем старую метку
-                            if (placemarkRef.current) {
-                                mapInstanceRef.current.geoObjects.remove(placemarkRef.current);
-                            }
+                        // Удаляем старую метку
+                        if (placemarkRef.current) {
+                            mapInstanceRef.current.geoObjects.remove(placemarkRef.current);
+                        }
 
-                            // Создаем новую метку
-                            const placemark = new window.ymaps.Placemark(coords, {
-                                balloonContent: address,
-                                draggable: true
-                            });
+                        // Получаем адрес из результата геокодинга
+                        const foundAddress = firstGeoObject.getAddressLine();
 
-                            // Добавляем обработчик перетаскивания метки
-                            placemark.events.add('dragend', () => {
-                                const coords = placemark.geometry.getCoordinates();
-                                if (coords && onCoordinatesChange) {
+                        // Создаем новую метку
+                        const placemark = new window.ymaps.Placemark(coords, {
+                            balloonContent: foundAddress || address,
+                            draggable: true
+                        });
+
+                        // Добавляем обработчик перетаскивания метки
+                        placemark.events.add('dragend', () => {
+                            const coords = placemark.geometry.getCoordinates();
+                            if (coords) {
+                                if (onCoordinatesChange) {
                                     onCoordinatesChange(coords[0], coords[1]);
                                 }
-                            });
+                                // Выполняем обратный геокодинг для получения адреса
+                                if (onAddressChange) {
+                                    window.ymaps.geocode(coords).then((res: any) => {
+                                        const firstGeoObject = res.geoObjects.get(0);
+                                        if (firstGeoObject) {
+                                            const addressText = firstGeoObject.getAddressLine();
+                                            if (addressText) {
+                                                onAddressChange(addressText);
+                                            }
+                                        }
+                                    }).catch((err: any) => {
+                                        console.error('Reverse geocoding error:', err);
+                                    });
+                                }
+                            }
+                        });
 
-                            // Добавляем обработчик клика на метку
-                            placemark.events.add('click', () => {
-                                const coords = placemark.geometry.getCoordinates();
-                                if (coords && onCoordinatesChange) {
+                        // Добавляем обработчик клика на метку
+                        placemark.events.add('click', () => {
+                            const coords = placemark.geometry.getCoordinates();
+                            if (coords) {
+                                if (onCoordinatesChange) {
                                     onCoordinatesChange(coords[0], coords[1]);
                                 }
-                            });
-
-                            mapInstanceRef.current.geoObjects.add(placemark);
-                            mapInstanceRef.current.setCenter(coords, 15);
-                            placemarkRef.current = placemark;
-                            
-                            // Вызываем callback с координатами
-                            if (onCoordinatesChange) {
-                                onCoordinatesChange(coords[0], coords[1]);
+                                // Выполняем обратный геокодинг для получения адреса
+                                if (onAddressChange) {
+                                    window.ymaps.geocode(coords).then((res: any) => {
+                                        const firstGeoObject = res.geoObjects.get(0);
+                                        if (firstGeoObject) {
+                                            const addressText = firstGeoObject.getAddressLine();
+                                            if (addressText) {
+                                                onAddressChange(addressText);
+                                            }
+                                        }
+                                    }).catch((err: any) => {
+                                        console.error('Reverse geocoding error:', err);
+                                    });
+                                }
                             }
+                        });
+
+                        mapInstanceRef.current.geoObjects.add(placemark);
+                        mapInstanceRef.current.setCenter(coords, 15);
+                        placemarkRef.current = placemark;
+                        
+                        // Вызываем callback с координатами (только координаты, адрес не меняем)
+                        if (onCoordinatesChange) {
+                            onCoordinatesChange(coords[0], coords[1]);
                         }
                     }
-                }).catch((err: any) => {
-                    console.error('Yandex geocoding error:', err);
-                });
+                    }).catch((err: any) => {
+                        console.error('Yandex geocoding error:', err);
+                    });
+                }, 800);
             }
         };
 
         initMap();
 
         return () => {
+            // Очищаем таймаут при размонтировании
+            if (geocodeTimeoutRef.current) {
+                clearTimeout(geocodeTimeoutRef.current);
+                geocodeTimeoutRef.current = null;
+            }
             if (mapInstanceRef.current) {
                 mapInstanceRef.current.destroy();
                 mapInstanceRef.current = null;

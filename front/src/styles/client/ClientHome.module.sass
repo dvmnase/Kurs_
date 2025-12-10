@@ -1,54 +1,138 @@
 @import ../helpers
 
 .container
-    padding: 40px 0
-    max-width: 1200px
+    padding: 40px 20px
+    max-width: 1400px
     margin: 0 auto
+    background: #f5f7fa
+    min-height: calc(100vh - 80px)
     +m
-        padding: 24px 0
+        padding: 24px 12px
+
+    h1
+        font-size: 36px
+        font-weight: 700
+        color: #1a1f36
+        margin-bottom: 8px
+        +m
+            font-size: 28px
+
+    .pageHeader
+        background: white
+        padding: 30px
+        border-radius: 12px
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08)
+        margin-bottom: 30px
+
+.modalOverlay
+    position: fixed
+    top: 0
+    left: 0
+    right: 0
+    bottom: 0
+    background: rgba(0, 0, 0, 0.5)
+    z-index: 999
+    display: flex
+    align-items: center
+    justify-content: center
+    animation: fadeIn 0.3s ease-out
+
+    @keyframes fadeIn
+        from
+            opacity: 0
+        to
+            opacity: 1
 
 .modal
-    position: fixed
-    top: 50%
-    left: 50%
-    transform: translate(-50%, -50%)
+    position: relative
     background: white
-    padding: 30px
-    border-radius: 10px
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3)
+    padding: 40px
+    border-radius: 16px
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15)
     z-index: 1000
-    max-width: 500px
+    max-width: 700px
     width: 90%
     max-height: 90vh
     overflow-y: auto
+    animation: modalFadeIn 0.3s ease-out
+
+    @keyframes modalFadeIn
+        from
+            opacity: 0
+            transform: scale(0.95)
+        to
+            opacity: 1
+            transform: scale(1)
+
+    h2
+        margin-top: 0
+        margin-bottom: 24px
+        font-size: 28px
+        font-weight: 700
+        color: #1a1f36
+        border-bottom: 3px solid #007bff
+        padding-bottom: 12px
 
     form
         display: flex
         flex-direction: column
-        gap: 15px
+        gap: 20px
+
+        label
+            font-weight: 600
+            color: #333
+            margin-bottom: 8px
+            font-size: 14px
+            display: block
 
         input, textarea, select
-            padding: 10px
-            border: 1px solid #ddd
-            border-radius: 5px
-            font-size: 14px
+            padding: 12px 16px
+            border: 2px solid #e0e0e0
+            border-radius: 8px
+            font-size: 15px
+            transition: all 0.3s ease
+            font-family: inherit
+            width: 100%
+            box-sizing: border-box
+
+            &:focus
+                outline: none
+                border-color: #007bff
+                box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1)
+
+            &::placeholder
+                color: #999
+
+        textarea
+            min-height: 100px
+            resize: vertical
+            font-family: inherit
 
         button
-            padding: 10px 20px
-            background: #007bff
+            padding: 12px 24px
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%)
             color: white
             border: none
-            border-radius: 5px
+            border-radius: 8px
             cursor: pointer
+            font-size: 16px
+            font-weight: 600
+            transition: all 0.3s ease
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3)
 
             &:hover
-                background: #0056b3
+                transform: translateY(-2px)
+                box-shadow: 0 6px 16px rgba(0, 123, 255, 0.4)
+
+            &:active
+                transform: translateY(0)
 
             &[type="button"]
-                background: #6c757d
+                background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%)
+                box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3)
 
                 &:hover
-                    background: #5a6268
+                    box-shadow: 0 6px 16px rgba(108, 117, 125, 0.4)
 
 .error
     background: #f8d7da
@@ -66,60 +150,160 @@
 
 .filters
     display: flex
-    gap: 10px
-    margin-bottom: 20px
+    gap: 12px
+    margin-bottom: 30px
     flex-wrap: wrap
+    padding: 20px
+    background: white
+    border-radius: 12px
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08)
 
     input, select
-        padding: 8px
-        border: 1px solid #ddd
-        border-radius: 5px
+        padding: 10px 14px
+        border: 2px solid #e0e0e0
+        border-radius: 8px
+        font-size: 14px
+        transition: all 0.3s ease
+        min-width: 150px
+
+        &:focus
+            outline: none
+            border-color: #007bff
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1)
 
 .actions
     display: flex
-    gap: 10px
-    margin-bottom: 20px
+    gap: 12px
+    margin-bottom: 30px
+    flex-wrap: wrap
 
     button
-        padding: 10px 20px
-        background: #007bff
+        padding: 12px 24px
+        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%)
         color: white
         border: none
-        border-radius: 5px
+        border-radius: 8px
         cursor: pointer
+        font-size: 15px
+        font-weight: 600
+        transition: all 0.3s ease
+        box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3)
+        display: flex
+        align-items: center
+        gap: 8px
 
         &:hover
-            background: #0056b3
+            transform: translateY(-2px)
+            box-shadow: 0 6px 16px rgba(0, 123, 255, 0.4)
+
+        &:active
+            transform: translateY(0)
+
+        &:nth-child(2)
+            background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%)
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3)
+
+            &:hover
+                box-shadow: 0 6px 16px rgba(40, 167, 69, 0.4)
 
 .list
     display: grid
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr))
-    gap: 20px
-    margin-top: 20px
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr))
+    gap: 24px
+    margin-top: 30px
 
 .item
     background: white
-    padding: 20px
-    border-radius: 8px
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1)
-    border: 1px solid #ddd
+    padding: 24px
+    border-radius: 12px
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08)
+    border: 1px solid #e8e8e8
+    transition: all 0.3s ease
+    position: relative
+    overflow: hidden
+
+    &::before
+        content: ''
+        position: absolute
+        top: 0
+        left: 0
+        right: 0
+        height: 4px
+        background: linear-gradient(90deg, #007bff 0%, #0056b3 100%)
+
+    &:hover
+        transform: translateY(-4px)
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12)
+        border-color: #007bff
 
     h3
         margin-top: 0
-        color: #333
+        margin-bottom: 12px
+        color: #1a1f36
+        font-size: 22px
+        font-weight: 700
+
+    p
+        color: #666
+        line-height: 1.6
+        margin-bottom: 8px
+        font-size: 14px
+
+        &:last-of-type
+            margin-bottom: 16px
+
+    .locationInfo
+        background: #f8f9fa
+        padding: 12px
+        border-radius: 8px
+        margin-top: 16px
+        margin-bottom: 16px
+
+        p
+            margin: 4px 0
+            font-size: 13px
+            color: #555
+
+    .buttonGroup
+        display: flex
+        gap: 8px
+        flex-wrap: wrap
+        margin-top: 16px
 
     button
-        margin-top: 10px
-        margin-right: 10px
-        padding: 8px 16px
-        background: #007bff
+        padding: 10px 18px
+        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%)
         color: white
         border: none
-        border-radius: 5px
+        border-radius: 8px
         cursor: pointer
+        font-size: 14px
+        font-weight: 600
+        transition: all 0.3s ease
+        box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2)
+        flex: 1
+        min-width: 120px
 
         &:hover
-            background: #0056b3
+            transform: translateY(-2px)
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3)
+
+        &:active
+            transform: translateY(0)
+
+        &:nth-child(2)
+            background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%)
+            box-shadow: 0 2px 8px rgba(40, 167, 69, 0.2)
+
+            &:hover
+                box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3)
+
+        &:nth-child(3)
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%)
+            box-shadow: 0 2px 8px rgba(23, 162, 184, 0.2)
+
+            &:hover
+                box-shadow: 0 4px 12px rgba(23, 162, 184, 0.3)
 
 .settingsSection
     margin-bottom: 30px

@@ -5,7 +5,7 @@ declare global {
     }
 }
 
-const YANDEX_MAPS_API_KEY = 'a655f0a5-79e0-4e06-a383-c723656c9b57';
+const YANDEX_MAPS_API_KEY = '70d701ca-5be5-40b4-9518-15fd4b80f208';
 
 // Загрузка Яндекс Карт API 2.1
 export const loadYandexMaps = async (): Promise<any> => {

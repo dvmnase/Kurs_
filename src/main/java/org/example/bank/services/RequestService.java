@@ -111,6 +111,24 @@ public class RequestService {
         if (dto.getStatus() != null) {
             request.setStatus(dto.getStatus());
         }
+        if (dto.getCarrierId() != null) {
+            if (dto.getCarrierId() == -1) {
+                // Если передано -1, удаляем перевозчика
+                request.setCarrier(null);
+                if (request.getStatus() == RequestStatus.PENDING || request.getStatus() == RequestStatus.ACCEPTED) {
+                    request.setStatus(RequestStatus.NEW);
+                }
+            } else {
+                Carrier carrier = carrierRepository.findById(dto.getCarrierId())
+                        .orElseThrow(() -> new RuntimeException("Carrier not found"));
+                request.setCarrier(carrier);
+                // Если перевозчик назначен, меняем статус на PENDING
+                if (request.getStatus() == RequestStatus.NEW) {
+                    request.setStatus(RequestStatus.PENDING);
+                }
+            }
+        }
+        // Если carrierId не передан (null), оставляем текущего перевозчика без изменений
         request.setUpdatedAt(new java.sql.Timestamp(System.currentTimeMillis()));
 
         request = requestRepository.save(request);
@@ -143,6 +161,27 @@ public class RequestService {
         }
 
         request.setStatus(RequestStatus.DECLINED);
+        request.setUpdatedAt(new java.sql.Timestamp(System.currentTimeMillis()));
+
+        request = requestRepository.save(request);
+        return convertToDTO(request);
+    }
+
+    @Transactional
+    public RequestDTO updateRequestStatus(Long id, Long carrierId, RequestStatus status) {
+        Request request = requestRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Request not found"));
+
+        if (request.getCarrier() == null || !request.getCarrier().getId().equals(carrierId)) {
+            throw new RuntimeException("Unauthorized: Only assigned carrier can update status");
+        }
+
+        // Проверяем, что статус может быть изменен перевозчиком
+        if (status != RequestStatus.ACCEPTED && status != RequestStatus.IN_PROGRESS && status != RequestStatus.DECLINED) {
+            throw new RuntimeException("Invalid status for carrier");
+        }
+
+        request.setStatus(status);
         request.setUpdatedAt(new java.sql.Timestamp(System.currentTimeMillis()));
 
         request = requestRepository.save(request);

@@ -55,5 +55,14 @@ public class CarrierRequestController {
         Long carrierId = getCarrierId(authentication);
         return ResponseEntity.ok(requestService.declineRequest(id, carrierId));
     }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<RequestDTO> updateRequestStatus(
+            @PathVariable Long id,
+            @RequestBody org.example.bank.dto.UpdateRequestStatusDTO dto,
+            Authentication authentication) {
+        Long carrierId = getCarrierId(authentication);
+        return ResponseEntity.ok(requestService.updateRequestStatus(id, carrierId, dto.getStatus()));
+    }
 }
 

@@ -9,6 +9,7 @@ public class UpdateRequestDTO {
     private Date deliveryDate;
     private String comment;
     private RequestStatus status;
+    private Long carrierId;
 
     public Date getPickupDate() {
         return pickupDate;
@@ -40,6 +41,14 @@ public class UpdateRequestDTO {
 
     public void setStatus(RequestStatus status) {
         this.status = status;
+    }
+
+    public Long getCarrierId() {
+        return carrierId;
+    }
+
+    public void setCarrierId(Long carrierId) {
+        this.carrierId = carrierId;
     }
 }
 

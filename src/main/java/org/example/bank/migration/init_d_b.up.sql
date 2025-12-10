@@ -95,7 +95,7 @@ CREATE TABLE IF NOT EXISTS requests (
                                         owner_id BIGINT NOT NULL,
                                         carrier_id BIGINT,
                                         status VARCHAR(20) NOT NULL DEFAULT 'NEW'
-    CHECK (status IN ('NEW', 'PENDING', 'ACCEPTED', 'DECLINED', 'CANCELLED')),
+    CHECK (status IN ('NEW', 'PENDING', 'ACCEPTED', 'DECLINED', 'CANCELLED', 'IN_PROGRESS')),
     pickup_date DATE,
     delivery_date DATE,
     comment TEXT,
@@ -140,4 +140,17 @@ CREATE TABLE IF NOT EXISTS analytics (
                                          metric VARCHAR(255) NOT NULL,
     value DECIMAL(20,2),
     calculated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+CREATE TABLE IF NOT EXISTS messages (
+                                        id BIGSERIAL PRIMARY KEY,
+                                        request_id BIGINT NOT NULL,
+                                        sender_id BIGINT NOT NULL,
+                                        receiver_id BIGINT NOT NULL,
+                                        text TEXT,
+                                        type VARCHAR(20) NOT NULL CHECK (type IN ('TEXT', 'ROUTE', 'SYSTEM')),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (request_id) REFERENCES requests(id) ON DELETE CASCADE,
+    FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE
     );

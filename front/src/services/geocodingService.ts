@@ -24,23 +24,22 @@ export const geocodingService = {
                 return null;
             }
             
-            // Проверяем, что координаты валидны и находятся в разумных пределах для Беларуси
+            // Проверяем, что координаты валидны (любая страна)
             if (response.data && response.data.latitude && response.data.longitude) {
                 const lat = parseFloat(response.data.latitude);
                 const lng = parseFloat(response.data.longitude);
                 
-                // Проверяем, что координаты находятся в пределах Беларуси (примерно)
-                // Широта: 51.0 - 56.0, Долгота: 23.0 - 33.0
+                // Проверяем, что координаты валидны (в пределах глобальных границ)
                 if (!isNaN(lat) && !isNaN(lng) && 
-                    lat >= 51.0 && lat <= 56.0 && 
-                    lng >= 23.0 && lng <= 33.0) {
+                    lat >= -90 && lat <= 90 && 
+                    lng >= -180 && lng <= 180) {
                     return {
                         latitude: lat,
                         longitude: lng,
                         address: response.data.address || address
                     };
                 } else {
-                    console.warn('Geocoding: Coordinates outside Belarus bounds:', lat, lng);
+                    console.warn('Geocoding: Invalid coordinates:', lat, lng);
                     return null;
                 }
             }

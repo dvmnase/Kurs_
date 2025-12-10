@@ -6,6 +6,7 @@ import Layout from '../../components/Layout';
 import ChatBot from '../../components/ChatBot';
 import { geocodingService } from '../../services/geocodingService';
 import MapView from '../../components/MapView';
+import MultiMapView from '../../components/MultiMapView';
 import styles from '../../styles/client/ClientHome.module.sass';
 
 interface Cargo {
@@ -31,6 +32,7 @@ const OwnerCargoPage = () => {
     const [editingCargo, setEditingCargo] = useState<Cargo | null>(null);
     const [showMap, setShowMap] = useState(false);
     const [selectedCargo, setSelectedCargo] = useState<Cargo | null>(null);
+    const [showAllCargosMap, setShowAllCargosMap] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [sortBy, setSortBy] = useState('createdAt');
     const [sortOrder, setSortOrder] = useState('desc');
@@ -82,56 +84,24 @@ const OwnerCargoPage = () => {
         }
     };
 
-    const handleAddressChange = async (address: string) => {
-        // Сразу обновляем адрес в форме и очищаем координаты
+    const handleAddressChange = (address: string) => {
+        // Только обновляем адрес в форме - никакого автозаполнения
+        // MapView сам выполнит геокодинг через Yandex Maps API и обновит координаты
         setFormData(prev => ({ 
             ...prev, 
             address,
-            latitude: '',  // Очищаем координаты при вводе адреса
-            longitude: ''  // Очищаем координаты при вводе адреса
+            // Очищаем координаты при изменении адреса, чтобы MapView мог их обновить
+            latitude: '',
+            longitude: ''
         }));
-        
-        // Очищаем предыдущий таймаут
-        if (addressTimeoutRef.current) {
-            clearTimeout(addressTimeoutRef.current);
-        }
-        
-        // Ждем 300мс после окончания ввода для быстрого отклика
-        addressTimeoutRef.current = setTimeout(async () => {
-            if (address && address.trim().length > 3) {
-                setGeocodingLoading(true);
-                try {
-                    const result = await geocodingService.geocodeAddress(address);
-                    if (result) {
-                        // Обновляем и адрес, и координаты
-                        setFormData(prev => ({
-                            ...prev,
-                            address: result.address,
-                            latitude: result.latitude.toString(),
-                            longitude: result.longitude.toString()
-                        }));
-                        // Очищаем ошибку, если координаты найдены
-                        setError(null);
-                    }
-                    // Если не удалось найти координаты, просто не обновляем их
-                    // Пользователь может продолжить ввод или ввести координаты вручную
-                } catch (err) {
-                    console.error('Ошибка геокодинга:', err);
-                    // Не показываем ошибку пользователю, просто не обновляем координаты
-                } finally {
-                    setGeocodingLoading(false);
-                }
-            }
-        }, 300);
     };
 
     const handleCoordinatesChange = async (lat: string, lng: string) => {
-        // Сразу обновляем координаты в форме и очищаем адрес
+        // Сразу обновляем координаты в форме
         setFormData(prev => ({ 
             ...prev, 
             latitude: lat, 
-            longitude: lng,
-            address: ''  // Очищаем адрес при вводе координат
+            longitude: lng
         }));
         
         // Очищаем предыдущий таймаут
@@ -139,7 +109,7 @@ const OwnerCargoPage = () => {
             clearTimeout(coordsTimeoutRef.current);
         }
         
-        // Ждем 300мс после окончания ввода для быстрого отклика
+        // Ждем 500мс после окончания ввода для обратного геокодинга
         coordsTimeoutRef.current = setTimeout(async () => {
             if (lat && lng) {
                 const latNum = parseFloat(lat);
@@ -149,26 +119,23 @@ const OwnerCargoPage = () => {
                     try {
                         const address = await geocodingService.reverseGeocode(latNum, lngNum);
                         if (address) {
-                            // Обновляем и координаты, и адрес
+                            // При вводе координат всегда обновляем адрес
                             setFormData(prev => ({
                                 ...prev,
                                 latitude: lat,
                                 longitude: lng,
                                 address: address
                             }));
-                        } else {
-                            // Если не удалось найти адрес, показываем ошибку
-                            setError('Не удалось определить адрес по координатам.');
                         }
                     } catch (err) {
                         console.error('Ошибка обратного геокодинга:', err);
-                        setError('Ошибка при определении адреса. Попробуйте ввести адрес вручную.');
+                        // Не показываем ошибку, просто не обновляем адрес
                     } finally {
                         setGeocodingLoading(false);
                     }
                 }
             }
-        }, 300);
+        }, 500);
     };
 
     const handleCreateCargo = async (e: React.FormEvent) => {
@@ -237,6 +204,26 @@ const OwnerCargoPage = () => {
             address: cargo.location?.address || ''
         });
         setShowEditModal(true);
+    };
+
+    const handleDeleteCargo = async (id: number) => {
+        if (!confirm('Вы уверены, что хотите удалить этот груз? Это действие нельзя отменить.')) {
+            return;
+        }
+        try {
+            setError(null);
+            await api.delete(`/api/owner/cargo/${id}`);
+            fetchCargos();
+        } catch (err: any) {
+            const errorMessage = err.response?.data;
+            if (typeof errorMessage === 'string') {
+                setError(errorMessage);
+            } else if (errorMessage && typeof errorMessage === 'object') {
+                setError(errorMessage.message || errorMessage.error || 'Ошибка при удалении груза');
+            } else {
+                setError('Ошибка при удалении груза');
+            }
+        }
     };
 
     const handleUpdateCargo = async (e: React.FormEvent) => {
@@ -319,30 +306,55 @@ const OwnerCargoPage = () => {
     };
 
     const handleGetLocation = () => {
-        if (navigator.geolocation) {
-            setGeocodingLoading(true);
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    handleCoordinatesChange(
-                        position.coords.latitude.toString(),
-                        position.coords.longitude.toString()
-                    );
-                    setGeocodingLoading(false);
-                },
-                (error) => {
-                    console.error('Ошибка получения местоположения:', error);
-                    setError('Не удалось определить ваше местоположение. Пожалуйста, введите координаты вручную.');
-                    setGeocodingLoading(false);
-                },
-                {
-                    enableHighAccuracy: true,
-                    timeout: 10000,
-                    maximumAge: 0
-                }
-            );
-        } else {
-            setError('Ваш браузер не поддерживает определение местоположения.');
+        if (!navigator.geolocation) {
+            setError('Ваш браузер не поддерживает определение местоположения. Пожалуйста, введите координаты вручную или кликните на карте.');
+            return;
         }
+
+        setGeocodingLoading(true);
+        setError(null); // Очищаем предыдущие ошибки
+
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                handleCoordinatesChange(
+                    position.coords.latitude.toString(),
+                    position.coords.longitude.toString()
+                );
+                setGeocodingLoading(false);
+            },
+            (error) => {
+                console.error('Ошибка получения местоположения:', error);
+                setGeocodingLoading(false);
+                
+                let errorMessage = 'Не удалось определить ваше местоположение. ';
+                
+                switch (error.code) {
+                    case error.PERMISSION_DENIED:
+                        errorMessage += 'Доступ к геолокации запрещен. ';
+                        errorMessage += 'Пожалуйста, разрешите доступ к местоположению в настройках браузера или введите координаты вручную. ';
+                        errorMessage += 'Вы также можете кликнуть на карте, чтобы указать местоположение.';
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        errorMessage += 'Местоположение недоступно. ';
+                        errorMessage += 'Пожалуйста, введите координаты вручную или кликните на карте.';
+                        break;
+                    case error.TIMEOUT:
+                        errorMessage += 'Превышено время ожидания. ';
+                        errorMessage += 'Пожалуйста, попробуйте еще раз или введите координаты вручную.';
+                        break;
+                    default:
+                        errorMessage += 'Пожалуйста, введите координаты вручную или кликните на карте.';
+                        break;
+                }
+                
+                setError(errorMessage);
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 15000, // Увеличиваем таймаут до 15 секунд
+                maximumAge: 60000 // Разрешаем использовать кэшированные данные до 1 минуты
+            }
+        );
     };
 
     const navigation = {
@@ -355,9 +367,12 @@ const OwnerCargoPage = () => {
     };
 
     return (
-        <Layout navigationPaths={navigation} showLogout onLogout={() => { authService.logout(); router.push('/'); }}>
+        <Layout title="Мои грузы" navigationPaths={navigation} showLogout onLogout={() => { authService.logout(); router.push('/'); }}>
             <div className={styles.container}>
-                <h1>Управление грузами</h1>
+                <div className={styles.pageHeader}>
+                    <h1>Управление грузами</h1>
+                    <p style={{ color: '#666', marginTop: '8px' }}>Создавайте и управляйте своими грузами</p>
+                </div>
                 {error && <div className={styles.error}>{error}</div>}
                 
                 <div className={styles.filters}>
@@ -391,14 +406,44 @@ const OwnerCargoPage = () => {
                 </div>
 
                 <div className={styles.actions}>
-                    <button onClick={() => setShowCreateModal(true)}>Создать груз</button>
+                    <button onClick={() => {
+                        // Очищаем таймауты
+                        if (addressTimeoutRef.current) {
+                            clearTimeout(addressTimeoutRef.current);
+                            addressTimeoutRef.current = null;
+                        }
+                        if (coordsTimeoutRef.current) {
+                            clearTimeout(coordsTimeoutRef.current);
+                            coordsTimeoutRef.current = null;
+                        }
+                        // Очищаем данные формы
+                        setFormData({ name: '', description: '', weight: '', latitude: '', longitude: '', address: '' });
+                        setShowCreateModal(true);
+                    }}>Создать груз</button>
                     <button onClick={handleExportExcel}>Экспорт в Excel</button>
+                    <button onClick={() => setShowAllCargosMap(true)}>Просмотреть все грузы на карте</button>
                 </div>
                 
                 {showCreateModal && (
-                    <div className={styles.modal}>
-                        <form onSubmit={handleCreateCargo}>
-                            <h2>Создать груз</h2>
+                    <div className={styles.modalOverlay} onClick={(e) => {
+                        if (e.target === e.currentTarget) {
+                            // Очищаем таймауты
+                            if (addressTimeoutRef.current) {
+                                clearTimeout(addressTimeoutRef.current);
+                                addressTimeoutRef.current = null;
+                            }
+                            if (coordsTimeoutRef.current) {
+                                clearTimeout(coordsTimeoutRef.current);
+                                coordsTimeoutRef.current = null;
+                            }
+                            // Очищаем данные формы
+                            setFormData({ name: '', description: '', weight: '', latitude: '', longitude: '', address: '' });
+                            setShowCreateModal(false);
+                        }
+                    }}>
+                        <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+                            <form onSubmit={handleCreateCargo}>
+                                <h2>📦 Создать груз</h2>
                             <input
                                 type="text"
                                 placeholder="Название"
@@ -418,17 +463,19 @@ const OwnerCargoPage = () => {
                                 onChange={(e) => setFormData({ ...formData, weight: e.target.value })}
                             />
                             <div>
-                                <label>Адрес (автоматически определит координаты):</label>
+                                <label>📍 Адрес (автоматически определит координаты)</label>
                                 <input
                                     type="text"
                                     placeholder="Введите адрес..."
                                     value={formData.address}
                                     onChange={(e) => handleAddressChange(e.target.value)}
                                 />
-                                {geocodingLoading && <div style={{ fontSize: '12px', color: '#666' }}>Определение координат...</div>}
+                                {geocodingLoading && <div style={{ fontSize: '13px', color: '#007bff', marginTop: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                    <span>⏳</span> Определение координат...
+                                </div>}
                             </div>
                             <div>
-                                <label>Координаты (автоматически определит адрес):</label>
+                                <label>🌐 Координаты (автоматически определит адрес)</label>
                                 <div style={{ display: 'flex', gap: '10px' }}>
                                     <input
                                         type="number"
@@ -445,10 +492,12 @@ const OwnerCargoPage = () => {
                                         onChange={(e) => handleCoordinatesChange(formData.latitude, e.target.value)}
                                     />
                                 </div>
-                                <button type="button" onClick={handleGetLocation} style={{ marginTop: '5px' }}>
-                                    Определить текущее местоположение
+                                <button type="button" onClick={handleGetLocation} style={{ marginTop: '10px', padding: '10px 16px', background: 'linear-gradient(135deg, #17a2b8 0%, #138496 100%)', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '14px', fontWeight: '600', boxShadow: '0 2px 8px rgba(23, 162, 184, 0.3)', transition: 'all 0.3s ease' }}>
+                                    📍 Определить текущее местоположение
                                 </button>
-                                {geocodingLoading && <div style={{ fontSize: '12px', color: '#666' }}>Определение адреса...</div>}
+                                {geocodingLoading && <div style={{ fontSize: '13px', color: '#007bff', marginTop: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                    <span>⏳</span> Определение адреса...
+                                </div>}
                             </div>
                             <div style={{ marginTop: '15px' }}>
                                 <MapView
@@ -459,20 +508,57 @@ const OwnerCargoPage = () => {
                                     onCoordinatesChange={(lat, lng) => {
                                         handleCoordinatesChange(lat.toString(), lng.toString());
                                     }}
+                                    onAddressChange={(address) => {
+                                        setFormData(prev => ({
+                                            ...prev,
+                                            address: address
+                                        }));
+                                    }}
                                 />
                             </div>
                             <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
                                 <button type="submit">Создать</button>
-                                <button type="button" onClick={() => setShowCreateModal(false)}>Отмена</button>
+                                <button type="button" onClick={() => {
+                                    // Очищаем таймауты
+                                    if (addressTimeoutRef.current) {
+                                        clearTimeout(addressTimeoutRef.current);
+                                        addressTimeoutRef.current = null;
+                                    }
+                                    if (coordsTimeoutRef.current) {
+                                        clearTimeout(coordsTimeoutRef.current);
+                                        coordsTimeoutRef.current = null;
+                                    }
+                                    // Очищаем данные формы
+                                    setFormData({ name: '', description: '', weight: '', latitude: '', longitude: '', address: '' });
+                                    setShowCreateModal(false);
+                                }}>Отмена</button>
                             </div>
                         </form>
+                        </div>
                     </div>
                 )}
 
                 {showEditModal && editingCargo && (
-                    <div className={styles.modal}>
-                        <form onSubmit={handleUpdateCargo}>
-                            <h2>Редактировать груз: {editingCargo.name}</h2>
+                    <div className={styles.modalOverlay} onClick={(e) => {
+                        if (e.target === e.currentTarget) {
+                            // Очищаем таймауты
+                            if (addressTimeoutRef.current) {
+                                clearTimeout(addressTimeoutRef.current);
+                                addressTimeoutRef.current = null;
+                            }
+                            if (coordsTimeoutRef.current) {
+                                clearTimeout(coordsTimeoutRef.current);
+                                coordsTimeoutRef.current = null;
+                            }
+                            // Очищаем данные формы
+                            setFormData({ name: '', description: '', weight: '', latitude: '', longitude: '', address: '' });
+                            setShowEditModal(false);
+                            setEditingCargo(null);
+                        }
+                    }}>
+                        <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+                            <form onSubmit={handleUpdateCargo}>
+                                <h2>✏️ Редактировать груз: {editingCargo.name}</h2>
                             <input
                                 type="text"
                                 placeholder="Название"
@@ -492,17 +578,19 @@ const OwnerCargoPage = () => {
                                 onChange={(e) => setFormData({ ...formData, weight: e.target.value })}
                             />
                             <div>
-                                <label>Адрес:</label>
+                                <label>📍 Адрес</label>
                                 <input
                                     type="text"
                                     placeholder="Введите адрес..."
                                     value={formData.address}
                                     onChange={(e) => handleAddressChange(e.target.value)}
                                 />
-                                {geocodingLoading && <div style={{ fontSize: '12px', color: '#666' }}>Определение координат...</div>}
+                                {geocodingLoading && <div style={{ fontSize: '13px', color: '#007bff', marginTop: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                    <span>⏳</span> Определение координат...
+                                </div>}
                             </div>
                             <div>
-                                <label>Координаты:</label>
+                                <label>🌐 Координаты</label>
                                 <div style={{ display: 'flex', gap: '10px' }}>
                                     <input
                                         type="number"
@@ -519,10 +607,12 @@ const OwnerCargoPage = () => {
                                         onChange={(e) => handleCoordinatesChange(formData.latitude, e.target.value)}
                                     />
                                 </div>
-                                <button type="button" onClick={handleGetLocation} style={{ marginTop: '5px' }}>
-                                    Определить текущее местоположение
+                                <button type="button" onClick={handleGetLocation} style={{ marginTop: '10px', padding: '10px 16px', background: 'linear-gradient(135deg, #17a2b8 0%, #138496 100%)', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '14px', fontWeight: '600', boxShadow: '0 2px 8px rgba(23, 162, 184, 0.3)', transition: 'all 0.3s ease' }}>
+                                    📍 Определить текущее местоположение
                                 </button>
-                                {geocodingLoading && <div style={{ fontSize: '12px', color: '#666' }}>Определение адреса...</div>}
+                                {geocodingLoading && <div style={{ fontSize: '13px', color: '#007bff', marginTop: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                    <span>⏳</span> Определение адреса...
+                                </div>}
                             </div>
                             <div style={{ marginTop: '15px' }}>
                                 <MapView
@@ -532,34 +622,96 @@ const OwnerCargoPage = () => {
                                     height="300px"
                                     onCoordinatesChange={(lat, lng) => {
                                         handleCoordinatesChange(lat.toString(), lng.toString());
+                                    }}
+                                    onAddressChange={(address) => {
+                                        setFormData(prev => ({
+                                            ...prev,
+                                            address: address
+                                        }));
                                     }}
                                 />
                             </div>
                             <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
                                 <button type="submit">Сохранить</button>
                                 <button type="button" onClick={() => {
+                                    // Очищаем таймауты
+                                    if (addressTimeoutRef.current) {
+                                        clearTimeout(addressTimeoutRef.current);
+                                        addressTimeoutRef.current = null;
+                                    }
+                                    if (coordsTimeoutRef.current) {
+                                        clearTimeout(coordsTimeoutRef.current);
+                                        coordsTimeoutRef.current = null;
+                                    }
+                                    // Очищаем данные формы
+                                    setFormData({ name: '', description: '', weight: '', latitude: '', longitude: '', address: '' });
                                     setShowEditModal(false);
                                     setEditingCargo(null);
                                 }}>Отмена</button>
                             </div>
                         </form>
+                        </div>
                     </div>
                 )}
 
                 {showMap && selectedCargo && selectedCargo.location && (
-                    <div className={styles.modal}>
-                        <h2>Местоположение груза: {selectedCargo.name}</h2>
-                        <MapView
-                            latitude={selectedCargo.location.latitude}
-                            longitude={selectedCargo.location.longitude}
-                            address={selectedCargo.location.address}
-                        />
-                        <button onClick={() => setShowMap(false)}>Закрыть</button>
+                    <div className={styles.modalOverlay} onClick={(e) => {
+                        if (e.target === e.currentTarget) {
+                            setShowMap(false);
+                        }
+                    }}>
+                        <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+                            <h2>🗺️ Местоположение груза: {selectedCargo.name}</h2>
+                            <MapView
+                                latitude={selectedCargo.location.latitude}
+                                longitude={selectedCargo.location.longitude}
+                                address={selectedCargo.location.address}
+                            />
+                            <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+                                <button onClick={() => setShowMap(false)} style={{ flex: 1 }}>Закрыть</button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {showAllCargosMap && (
+                    <div className={styles.modalOverlay} onClick={(e) => {
+                        if (e.target === e.currentTarget) {
+                            setShowAllCargosMap(false);
+                        }
+                    }}>
+                        <div className={styles.modal} onClick={(e) => e.stopPropagation()} style={{ maxWidth: '900px', width: '95%' }}>
+                            <h2>Все грузы на карте</h2>
+                            <MultiMapView
+                                cargos={cargos
+                                    .filter(cargo => cargo.location)
+                                    .map(cargo => ({
+                                        id: cargo.id,
+                                        name: cargo.name,
+                                        latitude: cargo.location!.latitude,
+                                        longitude: cargo.location!.longitude,
+                                        address: cargo.location!.address
+                                    }))}
+                                height="600px"
+                            />
+                            <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+                                <button onClick={() => setShowAllCargosMap(false)} style={{ flex: 1 }}>Закрыть</button>
+                            </div>
+                        </div>
                     </div>
                 )}
 
                 {loading ? (
-                    <div>Загрузка...</div>
+                    <div style={{ textAlign: 'center', padding: '60px 20px', fontSize: '18px', color: '#666' }}>
+                        <div style={{ marginBottom: '16px' }}>⏳</div>
+                        Загрузка грузов...
+                    </div>
+                ) : cargos.length === 0 ? (
+                    <div style={{ textAlign: 'center', padding: '60px 20px', background: 'white', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)' }}>
+                        <div style={{ fontSize: '48px', marginBottom: '16px' }}>📦</div>
+                        <h3 style={{ color: '#333', marginBottom: '8px' }}>Нет грузов</h3>
+                        <p style={{ color: '#666', marginBottom: '24px' }}>Создайте свой первый груз, нажав кнопку "Создать груз"</p>
+                    </div>
                 ) : (
                     <div className={styles.list}>
                         {cargos.map((cargo) => (
@@ -568,13 +720,20 @@ const OwnerCargoPage = () => {
                                 <p>{cargo.description}</p>
                                 {cargo.weight && <p>Вес: {cargo.weight} кг</p>}
                                 {cargo.location && (
-                                    <div>
-                                        <p>Адрес: {cargo.location.address}</p>
-                                        <p>Координаты: {cargo.location.latitude.toFixed(7)}, {cargo.location.longitude.toFixed(7)}</p>
-                                        <button onClick={() => handleViewOnMap(cargo)}>Показать на карте</button>
+                                    <div className={styles.locationInfo}>
+                                        <p><strong>📍 Адрес:</strong> {cargo.location.address}</p>
+                                        <p><strong>🌐 Координаты:</strong> {cargo.location.latitude.toFixed(7)}, {cargo.location.longitude.toFixed(7)}</p>
                                     </div>
                                 )}
-                                <button onClick={() => handleEditCargo(cargo)}>Редактировать</button>
+                                <div className={styles.buttonGroup}>
+                                    {cargo.location && (
+                                        <button onClick={() => handleViewOnMap(cargo)}>🗺️ На карте</button>
+                                    )}
+                                    <button onClick={() => handleEditCargo(cargo)}>✏️ Редактировать</button>
+                                    <button onClick={() => handleDeleteCargo(cargo.id)} style={{ background: 'linear-gradient(135deg, #dc3545 0%, #c82333 100%)', boxShadow: '0 2px 8px rgba(220, 53, 69, 0.2)' }}>
+                                        🗑️ Удалить
+                                    </button>
+                                </div>
                             </div>
                         ))}
                     </div>
