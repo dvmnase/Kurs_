@@ -14,3 +14,5 @@ public interface CargoLocationRepository extends JpaRepository<CargoLocation, Lo
 }
 
 
+
+

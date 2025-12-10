@@ -12,3 +12,5 @@ public interface OwnerRepository extends JpaRepository<Owner, Long> {
 }
 
 
+
+

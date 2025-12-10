@@ -83,45 +83,63 @@ const OwnerCargoPage = () => {
     };
 
     const handleAddressChange = async (address: string) => {
-        setFormData({ ...formData, address });
+        // Сразу обновляем адрес в форме и очищаем координаты
+        setFormData(prev => ({ 
+            ...prev, 
+            address,
+            latitude: '',  // Очищаем координаты при вводе адреса
+            longitude: ''  // Очищаем координаты при вводе адреса
+        }));
         
         // Очищаем предыдущий таймаут
         if (addressTimeoutRef.current) {
             clearTimeout(addressTimeoutRef.current);
         }
         
-        // Ждем 1 секунду после окончания ввода
+        // Ждем 300мс после окончания ввода для быстрого отклика
         addressTimeoutRef.current = setTimeout(async () => {
-            if (address && address.length > 5) {
+            if (address && address.trim().length > 3) {
                 setGeocodingLoading(true);
                 try {
                     const result = await geocodingService.geocodeAddress(address);
                     if (result) {
-                        setFormData({
-                            ...formData,
+                        // Обновляем и адрес, и координаты
+                        setFormData(prev => ({
+                            ...prev,
                             address: result.address,
                             latitude: result.latitude.toString(),
                             longitude: result.longitude.toString()
-                        });
+                        }));
+                        // Очищаем ошибку, если координаты найдены
+                        setError(null);
                     }
+                    // Если не удалось найти координаты, просто не обновляем их
+                    // Пользователь может продолжить ввод или ввести координаты вручную
                 } catch (err) {
                     console.error('Ошибка геокодинга:', err);
+                    // Не показываем ошибку пользователю, просто не обновляем координаты
                 } finally {
                     setGeocodingLoading(false);
                 }
             }
-        }, 1000);
+        }, 300);
     };
 
     const handleCoordinatesChange = async (lat: string, lng: string) => {
-        setFormData({ ...formData, latitude: lat, longitude: lng });
+        // Сразу обновляем координаты в форме и очищаем адрес
+        setFormData(prev => ({ 
+            ...prev, 
+            latitude: lat, 
+            longitude: lng,
+            address: ''  // Очищаем адрес при вводе координат
+        }));
         
         // Очищаем предыдущий таймаут
         if (coordsTimeoutRef.current) {
             clearTimeout(coordsTimeoutRef.current);
         }
         
-        // Ждем 1 секунду после окончания ввода
+        // Ждем 300мс после окончания ввода для быстрого отклика
         coordsTimeoutRef.current = setTimeout(async () => {
             if (lat && lng) {
                 const latNum = parseFloat(lat);
@@ -131,29 +149,67 @@ const OwnerCargoPage = () => {
                     try {
                         const address = await geocodingService.reverseGeocode(latNum, lngNum);
                         if (address) {
-                            setFormData({ ...formData, latitude: lat, longitude: lng, address });
+                            // Обновляем и координаты, и адрес
+                            setFormData(prev => ({
+                                ...prev,
+                                latitude: lat,
+                                longitude: lng,
+                                address: address
+                            }));
+                        } else {
+                            // Если не удалось найти адрес, показываем ошибку
+                            setError('Не удалось определить адрес по координатам.');
                         }
                     } catch (err) {
                         console.error('Ошибка обратного геокодинга:', err);
+                        setError('Ошибка при определении адреса. Попробуйте ввести адрес вручную.');
                     } finally {
                         setGeocodingLoading(false);
                     }
                 }
             }
-        }, 1000);
+        }, 300);
     };
 
     const handleCreateCargo = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
             setError(null);
+            
+            // Если указан адрес, но координаты не определены, пытаемся определить их
+            let finalLatitude = formData.latitude;
+            let finalLongitude = formData.longitude;
+            let finalAddress = formData.address;
+            
+            if (formData.address && formData.address.trim().length > 5 && (!formData.latitude || !formData.longitude)) {
+                setGeocodingLoading(true);
+                try {
+                    const result = await geocodingService.geocodeAddress(formData.address);
+                    if (result) {
+                        finalLatitude = result.latitude.toString();
+                        finalLongitude = result.longitude.toString();
+                        finalAddress = result.address;
+                    } else {
+                        setError('Не удалось определить координаты по адресу. Пожалуйста, введите координаты вручную.');
+                        setGeocodingLoading(false);
+                        return;
+                    }
+                } catch (err) {
+                    setError('Ошибка при определении координат. Пожалуйста, введите координаты вручную.');
+                    setGeocodingLoading(false);
+                    return;
+                } finally {
+                    setGeocodingLoading(false);
+                }
+            }
+            
             await api.post('/api/owner/cargo', {
                 name: formData.name,
                 description: formData.description,
                 weight: formData.weight ? parseFloat(formData.weight) : null,
-                latitude: formData.latitude ? parseFloat(formData.latitude) : null,
-                longitude: formData.longitude ? parseFloat(formData.longitude) : null,
-                address: formData.address
+                latitude: finalLatitude ? parseFloat(finalLatitude) : null,
+                longitude: finalLongitude ? parseFloat(finalLongitude) : null,
+                address: finalAddress
             });
             setShowCreateModal(false);
             setFormData({ name: '', description: '', weight: '', latitude: '', longitude: '', address: '' });
@@ -188,13 +244,41 @@ const OwnerCargoPage = () => {
         if (!editingCargo) return;
         try {
             setError(null);
+            
+            // Если указан адрес, но координаты не определены, пытаемся определить их
+            let finalLatitude = formData.latitude;
+            let finalLongitude = formData.longitude;
+            let finalAddress = formData.address;
+            
+            if (formData.address && formData.address.trim().length > 5 && (!formData.latitude || !formData.longitude)) {
+                setGeocodingLoading(true);
+                try {
+                    const result = await geocodingService.geocodeAddress(formData.address);
+                    if (result) {
+                        finalLatitude = result.latitude.toString();
+                        finalLongitude = result.longitude.toString();
+                        finalAddress = result.address;
+                    } else {
+                        setError('Не удалось определить координаты по адресу. Пожалуйста, введите координаты вручную.');
+                        setGeocodingLoading(false);
+                        return;
+                    }
+                } catch (err) {
+                    setError('Ошибка при определении координат. Пожалуйста, введите координаты вручную.');
+                    setGeocodingLoading(false);
+                    return;
+                } finally {
+                    setGeocodingLoading(false);
+                }
+            }
+            
             await api.put(`/api/owner/cargo/${editingCargo.id}`, {
                 name: formData.name,
                 description: formData.description,
                 weight: formData.weight ? parseFloat(formData.weight) : null,
-                latitude: formData.latitude ? parseFloat(formData.latitude) : null,
-                longitude: formData.longitude ? parseFloat(formData.longitude) : null,
-                address: formData.address
+                latitude: finalLatitude ? parseFloat(finalLatitude) : null,
+                longitude: finalLongitude ? parseFloat(finalLongitude) : null,
+                address: finalAddress
             });
             setShowEditModal(false);
             setEditingCargo(null);
@@ -236,12 +320,28 @@ const OwnerCargoPage = () => {
 
     const handleGetLocation = () => {
         if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition((position) => {
-                handleCoordinatesChange(
-                    position.coords.latitude.toString(),
-                    position.coords.longitude.toString()
-                );
-            });
+            setGeocodingLoading(true);
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    handleCoordinatesChange(
+                        position.coords.latitude.toString(),
+                        position.coords.longitude.toString()
+                    );
+                    setGeocodingLoading(false);
+                },
+                (error) => {
+                    console.error('Ошибка получения местоположения:', error);
+                    setError('Не удалось определить ваше местоположение. Пожалуйста, введите координаты вручную.');
+                    setGeocodingLoading(false);
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                }
+            );
+        } else {
+            setError('Ваш браузер не поддерживает определение местоположения.');
         }
     };
 
@@ -350,16 +450,14 @@ const OwnerCargoPage = () => {
                                 </button>
                                 {geocodingLoading && <div style={{ fontSize: '12px', color: '#666' }}>Определение адреса...</div>}
                             </div>
-                            {(formData.latitude && formData.longitude) && (
-                                <div style={{ marginTop: '15px' }}>
-                                    <MapView
-                                        latitude={parseFloat(formData.latitude)}
-                                        longitude={parseFloat(formData.longitude)}
-                                        address={formData.address}
-                                        height="300px"
-                                    />
-                                </div>
-                            )}
+                            <div style={{ marginTop: '15px' }}>
+                                <MapView
+                                    latitude={formData.latitude || undefined}
+                                    longitude={formData.longitude || undefined}
+                                    address={formData.address || undefined}
+                                    height="300px"
+                                />
+                            </div>
                             <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
                                 <button type="submit">Создать</button>
                                 <button type="button" onClick={() => setShowCreateModal(false)}>Отмена</button>
@@ -423,16 +521,14 @@ const OwnerCargoPage = () => {
                                 </button>
                                 {geocodingLoading && <div style={{ fontSize: '12px', color: '#666' }}>Определение адреса...</div>}
                             </div>
-                            {(formData.latitude && formData.longitude) && (
-                                <div style={{ marginTop: '15px' }}>
-                                    <MapView
-                                        latitude={parseFloat(formData.latitude)}
-                                        longitude={parseFloat(formData.longitude)}
-                                        address={formData.address}
-                                        height="300px"
-                                    />
-                                </div>
-                            )}
+                            <div style={{ marginTop: '15px' }}>
+                                <MapView
+                                    latitude={formData.latitude || undefined}
+                                    longitude={formData.longitude || undefined}
+                                    address={formData.address || undefined}
+                                    height="300px"
+                                />
+                            </div>
                             <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
                                 <button type="submit">Сохранить</button>
                                 <button type="button" onClick={() => {

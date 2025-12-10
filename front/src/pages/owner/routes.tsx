@@ -87,10 +87,21 @@ const OwnerRoutesPage = () => {
     };
 
     const handleAddressChange = async (address: string, type: 'start' | 'end') => {
+        // Сразу обновляем адрес в форме и очищаем координаты
         if (type === 'start') {
-            setFormData({ ...formData, startAddress: address });
+            setFormData(prev => ({ 
+                ...prev, 
+                startAddress: address,
+                startLat: '',  // Очищаем координаты при вводе адреса
+                startLng: ''   // Очищаем координаты при вводе адреса
+            }));
         } else {
-            setFormData({ ...formData, endAddress: address });
+            setFormData(prev => ({ 
+                ...prev, 
+                endAddress: address,
+                endLat: '',  // Очищаем координаты при вводе адреса
+                endLng: ''   // Очищаем координаты при вводе адреса
+            }));
         }
         
         const timeoutRef = type === 'start' ? startAddressTimeoutRef : endAddressTimeoutRef;
@@ -99,50 +110,67 @@ const OwnerRoutesPage = () => {
         }
         
         timeoutRef.current = setTimeout(async () => {
-            if (address && address.length > 5) {
+            if (address && address.trim().length > 3) {
                 if (type === 'start') {
-                    setGeocodingLoading({ ...geocodingLoading, start: true });
+                    setGeocodingLoading(prev => ({ ...prev, start: true }));
                 } else {
-                    setGeocodingLoading({ ...geocodingLoading, end: true });
+                    setGeocodingLoading(prev => ({ ...prev, end: true }));
                 }
                 
                 try {
                     const result = await geocodingService.geocodeAddress(address);
                     if (result) {
                         if (type === 'start') {
-                            setFormData({
-                                ...formData,
+                            // Обновляем и адрес, и координаты для начальной точки
+                            setFormData(prev => ({
+                                ...prev,
                                 startAddress: result.address,
                                 startLat: result.latitude.toString(),
                                 startLng: result.longitude.toString()
-                            });
+                            }));
                         } else {
-                            setFormData({
-                                ...formData,
+                            // Обновляем и адрес, и координаты для конечной точки
+                            setFormData(prev => ({
+                                ...prev,
                                 endAddress: result.address,
                                 endLat: result.latitude.toString(),
                                 endLng: result.longitude.toString()
-                            });
+                            }));
                         }
+                        // Очищаем ошибку, если координаты найдены
+                        setError(null);
                     }
+                    // Если не удалось найти координаты, просто не обновляем их
                 } catch (err) {
                     console.error('Ошибка геокодинга:', err);
+                    // Не показываем ошибку пользователю
                 } finally {
                     if (type === 'start') {
-                        setGeocodingLoading({ ...geocodingLoading, start: false });
+                        setGeocodingLoading(prev => ({ ...prev, start: false }));
                     } else {
-                        setGeocodingLoading({ ...geocodingLoading, end: false });
+                        setGeocodingLoading(prev => ({ ...prev, end: false }));
                     }
                 }
             }
-        }, 1000);
+        }, 300);
     };
 
     const handleCoordinatesChange = async (lat: string, lng: string, type: 'start' | 'end') => {
+        // Сразу обновляем координаты в форме и очищаем адрес
         if (type === 'start') {
-            setFormData({ ...formData, startLat: lat, startLng: lng });
+            setFormData(prev => ({ 
+                ...prev, 
+                startLat: lat, 
+                startLng: lng,
+                startAddress: ''  // Очищаем адрес при вводе координат
+            }));
         } else {
-            setFormData({ ...formData, endLat: lat, endLng: lng });
+            setFormData(prev => ({ 
+                ...prev, 
+                endLat: lat, 
+                endLng: lng,
+                endAddress: ''  // Очищаем адрес при вводе координат
+            }));
         }
         
         const timeoutRef = type === 'start' ? startCoordsTimeoutRef : endCoordsTimeoutRef;
@@ -156,46 +184,116 @@ const OwnerRoutesPage = () => {
                 const lngNum = parseFloat(lng);
                 if (!isNaN(latNum) && !isNaN(lngNum) && latNum >= -90 && latNum <= 90 && lngNum >= -180 && lngNum <= 180) {
                     if (type === 'start') {
-                        setGeocodingLoading({ ...geocodingLoading, start: true });
+                        setGeocodingLoading(prev => ({ ...prev, start: true }));
                     } else {
-                        setGeocodingLoading({ ...geocodingLoading, end: true });
+                        setGeocodingLoading(prev => ({ ...prev, end: true }));
                     }
                     
                     try {
                         const address = await geocodingService.reverseGeocode(latNum, lngNum);
                         if (address) {
                             if (type === 'start') {
-                                setFormData({ ...formData, startLat: lat, startLng: lng, startAddress: address });
+                                // Обновляем и координаты, и адрес для начальной точки
+                                setFormData(prev => ({
+                                    ...prev,
+                                    startLat: lat,
+                                    startLng: lng,
+                                    startAddress: address
+                                }));
                             } else {
-                                setFormData({ ...formData, endLat: lat, endLng: lng, endAddress: address });
+                                // Обновляем и координаты, и адрес для конечной точки
+                                setFormData(prev => ({
+                                    ...prev,
+                                    endLat: lat,
+                                    endLng: lng,
+                                    endAddress: address
+                                }));
                             }
+                        } else {
+                            setError(`Не удалось определить адрес для ${type === 'start' ? 'координат отправления' : 'координат назначения'}.`);
                         }
                     } catch (err) {
                         console.error('Ошибка обратного геокодинга:', err);
+                        setError(`Ошибка при определении адреса для ${type === 'start' ? 'координат отправления' : 'координат назначения'}. Попробуйте ввести адрес вручную.`);
                     } finally {
                         if (type === 'start') {
-                            setGeocodingLoading({ ...geocodingLoading, start: false });
+                            setGeocodingLoading(prev => ({ ...prev, start: false }));
                         } else {
-                            setGeocodingLoading({ ...geocodingLoading, end: false });
+                            setGeocodingLoading(prev => ({ ...prev, end: false }));
                         }
                     }
                 }
             }
-        }, 1000);
+        }, 300);
     };
 
     const handleCreateRoute = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
             setError(null);
+            
+            // Если указан адрес отправления, но координаты не определены, пытаемся определить их
+            let finalStartLat = formData.startLat;
+            let finalStartLng = formData.startLng;
+            let finalStartAddress = formData.startAddress;
+            
+            if (formData.startAddress && formData.startAddress.trim().length > 5 && (!formData.startLat || !formData.startLng)) {
+                setGeocodingLoading(prev => ({ ...prev, start: true }));
+                try {
+                    const result = await geocodingService.geocodeAddress(formData.startAddress);
+                    if (result) {
+                        finalStartLat = result.latitude.toString();
+                        finalStartLng = result.longitude.toString();
+                        finalStartAddress = result.address;
+                    } else {
+                        setError('Не удалось определить координаты для адреса отправления. Пожалуйста, введите координаты вручную.');
+                        setGeocodingLoading(prev => ({ ...prev, start: false }));
+                        return;
+                    }
+                } catch (err) {
+                    setError('Ошибка при определении координат отправления. Пожалуйста, введите координаты вручную.');
+                    setGeocodingLoading(prev => ({ ...prev, start: false }));
+                    return;
+                } finally {
+                    setGeocodingLoading(prev => ({ ...prev, start: false }));
+                }
+            }
+            
+            // Если указан адрес назначения, но координаты не определены, пытаемся определить их
+            let finalEndLat = formData.endLat;
+            let finalEndLng = formData.endLng;
+            let finalEndAddress = formData.endAddress;
+            
+            if (formData.endAddress && formData.endAddress.trim().length > 5 && (!formData.endLat || !formData.endLng)) {
+                setGeocodingLoading(prev => ({ ...prev, end: true }));
+                try {
+                    const result = await geocodingService.geocodeAddress(formData.endAddress);
+                    if (result) {
+                        finalEndLat = result.latitude.toString();
+                        finalEndLng = result.longitude.toString();
+                        finalEndAddress = result.address;
+                    } else {
+                        setError('Не удалось определить координаты для адреса назначения. Пожалуйста, введите координаты вручную.');
+                        setGeocodingLoading(prev => ({ ...prev, end: false }));
+                        return;
+                    }
+                } catch (err) {
+                    setError('Ошибка при определении координат назначения. Пожалуйста, введите координаты вручную.');
+                    setGeocodingLoading(prev => ({ ...prev, end: false }));
+                    return;
+                } finally {
+                    setGeocodingLoading(prev => ({ ...prev, end: false }));
+                }
+            }
+            
             await api.post('/api/owner/routes', {
                 cargoId: parseInt(formData.cargoId),
-                startAddress: formData.startAddress,
-                endAddress: formData.endAddress,
-                startLat: formData.startLat ? parseFloat(formData.startLat) : null,
-                startLng: formData.startLng ? parseFloat(formData.startLng) : null,
-                endLat: formData.endLat ? parseFloat(formData.endLat) : null,
-                endLng: formData.endLng ? parseFloat(formData.endLng) : null
+                startAddress: finalStartAddress,
+                endAddress: finalEndAddress,
+                startLat: finalStartLat ? parseFloat(finalStartLat) : null,
+                startLng: finalStartLng ? parseFloat(finalStartLng) : null,
+                endLat: finalEndLat ? parseFloat(finalEndLat) : null,
+                endLng: finalEndLng ? parseFloat(finalEndLng) : null
             });
             setShowCreateModal(false);
             setFormData({ cargoId: '', startAddress: '', endAddress: '', startLat: '', startLng: '', endLat: '', endLng: '' });
@@ -227,7 +325,7 @@ const OwnerRoutesPage = () => {
     };
 
     return (
-        <Layout navigationPaths={navigation} showLogout onLogout={() => { authService.logout(); router.push('/'); }}>
+        <Layout title="Маршруты" navigationPaths={navigation} showLogout onLogout={() => { authService.logout(); router.push('/'); }}>
             <div className={styles.container}>
                 <h1>Управление маршрутами</h1>
                 {error && <div className={styles.error}>{error}</div>}
@@ -307,19 +405,17 @@ const OwnerRoutesPage = () => {
                                 </div>
                                 {geocodingLoading.end && <div style={{ fontSize: '12px', color: '#666' }}>Определение адреса...</div>}
                             </div>
-                            {(formData.startLat && formData.startLng && formData.endLat && formData.endLng) && (
-                                <div style={{ marginTop: '15px' }}>
-                                    <RouteMapView
-                                        startLat={parseFloat(formData.startLat)}
-                                        startLng={parseFloat(formData.startLng)}
-                                        endLat={parseFloat(formData.endLat)}
-                                        endLng={parseFloat(formData.endLng)}
-                                        startAddress={formData.startAddress}
-                                        endAddress={formData.endAddress}
-                                        height="300px"
-                                    />
-                                </div>
-                            )}
+                            <div style={{ marginTop: '15px' }}>
+                                <RouteMapView
+                                    startLat={formData.startLat || undefined}
+                                    startLng={formData.startLng || undefined}
+                                    endLat={formData.endLat || undefined}
+                                    endLng={formData.endLng || undefined}
+                                    startAddress={formData.startAddress || undefined}
+                                    endAddress={formData.endAddress || undefined}
+                                    height="300px"
+                                />
+                            </div>
                             <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
                                 <button type="submit">Создать</button>
                                 <button type="button" onClick={() => setShowCreateModal(false)}>Отмена</button>

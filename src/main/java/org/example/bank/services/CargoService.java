@@ -40,13 +40,19 @@ public class CargoService {
         cargo.setWeight(dto.getWeight());
         cargo = cargoRepository.save(cargo);
 
+        // Сохраняем локацию, если указаны координаты (адрес может быть пустым, но будет сохранен если указан)
         if (dto.getLatitude() != null && dto.getLongitude() != null) {
             CargoLocation location = new CargoLocation();
             location.setCargo(cargo);
             location.setLatitude(dto.getLatitude());
             location.setLongitude(dto.getLongitude());
-            location.setAddress(dto.getAddress());
+            // Сохраняем адрес, даже если он был определен автоматически из координат
+            location.setAddress(dto.getAddress() != null ? dto.getAddress() : "");
             cargoLocationRepository.save(location);
+        } else if (dto.getAddress() != null && !dto.getAddress().trim().isEmpty()) {
+            // Если указан только адрес, но нет координат, пытаемся сделать геокодинг
+            // Но так как координаты обязательны в БД, лучше не создавать локацию
+            // Фронтенд должен автоматически определить координаты из адреса перед отправкой
         }
 
         return convertToDTO(cargo);
@@ -122,15 +128,21 @@ public class CargoService {
         cargo.setWeight(dto.getWeight());
         cargo = cargoRepository.save(cargo);
 
+        // Обновляем или создаем локацию, если указаны координаты
         if (dto.getLatitude() != null && dto.getLongitude() != null) {
             CargoLocation location = cargoLocationRepository.findFirstByCargoIdOrderByUpdatedAtDesc(id)
                     .orElse(new CargoLocation());
             location.setCargo(cargo);
             location.setLatitude(dto.getLatitude());
             location.setLongitude(dto.getLongitude());
-            location.setAddress(dto.getAddress());
+            // Сохраняем адрес, даже если он был определен автоматически из координат
+            location.setAddress(dto.getAddress() != null ? dto.getAddress() : "");
             location.setUpdatedAt(new java.sql.Timestamp(System.currentTimeMillis()));
             cargoLocationRepository.save(location);
+        } else {
+            // Если координаты не указаны, но локация существует, удаляем её
+            cargoLocationRepository.findFirstByCargoIdOrderByUpdatedAtDesc(id)
+                    .ifPresent(cargoLocationRepository::delete);
         }
 
         return convertToDTO(cargo);
