@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { authService } from '../../services/authService';
 import api from '../../services/api';
@@ -47,6 +47,15 @@ const OwnerCargoPage = () => {
         address: ''
     });
     const [geocodingLoading, setGeocodingLoading] = useState(false);
+    const [showTenderModal, setShowTenderModal] = useState(false);
+    const [tenderCargo, setTenderCargo] = useState<Cargo | null>(null);
+    const [openTenderCargoIds, setOpenTenderCargoIds] = useState<Set<number>>(new Set());
+    const [tenderForm, setTenderForm] = useState({
+        endAt: '',
+        conditions: '',
+        expectedPrice: '',
+    });
+    const [tenderSuccessMessage, setTenderSuccessMessage] = useState<string | null>(null);
     const addressTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const coordsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -56,7 +65,22 @@ const OwnerCargoPage = () => {
             return;
         }
         fetchCargos();
+        fetchOpenTenders();
     }, [searchTerm, sortBy, sortOrder, minWeight, maxWeight]);
+
+    const fetchOpenTenders = async () => {
+        try {
+            const response = await api.get('/api/owner/tenders');
+            const ids = new Set<number>(
+                (response.data || [])
+                    .filter((t: { status: string; cargoId: number }) => t.status === 'OPEN')
+                    .map((t: { cargoId: number }) => t.cargoId)
+            );
+            setOpenTenderCargoIds(ids);
+        } catch {
+            // ignore
+        }
+    };
 
     const fetchCargos = async () => {
         try {
@@ -357,9 +381,37 @@ const OwnerCargoPage = () => {
         );
     };
 
+    const handleOpenTenderModal = (cargo: Cargo) => {
+        setTenderCargo(cargo);
+        setTenderForm({ endAt: '', conditions: '', expectedPrice: '' });
+        setShowTenderModal(true);
+    };
+
+    const handleCreateTender = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!tenderCargo) return;
+        try {
+            setError(null);
+            await api.post('/api/owner/tenders', {
+                cargoId: tenderCargo.id,
+                endAt: new Date(tenderForm.endAt).toISOString(),
+                conditions: tenderForm.conditions || null,
+                expectedPrice: tenderForm.expectedPrice ? parseFloat(tenderForm.expectedPrice) : null,
+            });
+            setShowTenderModal(false);
+            setTenderCargo(null);
+            fetchOpenTenders();
+            setTenderSuccessMessage('Тендер успешно открыт. Перевозчики могут отправлять предложения.');
+        } catch (err: any) {
+            const msg = err.response?.data;
+            setError(typeof msg === 'string' ? msg : 'Ошибка при открытии тендера');
+        }
+    };
+
     const navigation = {
         menu: [
             { title: 'Мои грузы', url: '/owner/cargo' },
+            { title: 'Тендеры', url: '/owner/tenders' },
             { title: 'Заявки', url: '/owner/requests' },
             { title: 'Чаты', url: '/owner/chats' },
             { title: 'Настройки', url: '/owner/settings' },
@@ -374,7 +426,12 @@ const OwnerCargoPage = () => {
                     <p style={{ color: '#666', marginTop: '8px' }}>Создавайте и управляйте своими грузами</p>
                 </div>
                 {error && <div className={styles.error}>{error}</div>}
-                
+                {tenderSuccessMessage && (
+                    <div style={{ padding: '12px 16px', marginBottom: '16px', background: '#e8f5e9', borderRadius: '8px', color: '#2e7d32' }}>
+                        {tenderSuccessMessage}
+                    </div>
+                )}
+
                 <div className={styles.filters}>
                     <input
                         type="text"
@@ -1355,6 +1412,11 @@ const OwnerCargoPage = () => {
                                     {cargo.location && (
                                         <button onClick={() => handleViewOnMap(cargo)}>На карте</button>
                                     )}
+                                    {openTenderCargoIds.has(cargo.id) ? (
+                                        <button type="button" onClick={() => router.push('/owner/tenders')}>Тендер открыт</button>
+                                    ) : (
+                                        <button type="button" onClick={() => handleOpenTenderModal(cargo)}>Открыть тендер</button>
+                                    )}
                                     <button onClick={() => handleEditCargo(cargo)} style={{ textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Редактировать</button>
                                     <button onClick={() => handleDeleteCargo(cargo.id)} style={{ background: 'linear-gradient(135deg, #dc3545 0%, #c82333 100%)', boxShadow: '0 2px 8px rgba(220, 53, 69, 0.2)' }}>
                                         Удалить
@@ -1362,6 +1424,48 @@ const OwnerCargoPage = () => {
                                 </div>
                             </div>
                         ))}
+                    </div>
+                )}
+                {showTenderModal && tenderCargo && (
+                    <div className={styles.modalOverlay} onClick={(e) => e.target === e.currentTarget && setShowTenderModal(false)}>
+                        <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+                            <h2>Открыть тендер: {tenderCargo.name}</h2>
+                            <form onSubmit={handleCreateTender}>
+                                <div style={{ marginBottom: '16px' }}>
+                                    <label>Срок окончания тендера *</label>
+                                    <input
+                                        type="datetime-local"
+                                        required
+                                        value={tenderForm.endAt}
+                                        onChange={(e) => setTenderForm({ ...tenderForm, endAt: e.target.value })}
+                                        style={{ width: '100%', padding: '10px', marginTop: '4px' }}
+                                    />
+                                </div>
+                                <div style={{ marginBottom: '16px' }}>
+                                    <label>Описание / условия</label>
+                                    <textarea
+                                        value={tenderForm.conditions}
+                                        onChange={(e) => setTenderForm({ ...tenderForm, conditions: e.target.value })}
+                                        style={{ width: '100%', padding: '10px', marginTop: '4px', minHeight: '100px' }}
+                                    />
+                                </div>
+                                <div style={{ marginBottom: '16px' }}>
+                                    <label>Ожидаемая цена (необязательно)</label>
+                                    <input
+                                        type="number"
+                                        step="0.01"
+                                        min="0"
+                                        value={tenderForm.expectedPrice}
+                                        onChange={(e) => setTenderForm({ ...tenderForm, expectedPrice: e.target.value })}
+                                        style={{ width: '100%', padding: '10px', marginTop: '4px' }}
+                                    />
+                                </div>
+                                <div style={{ display: 'flex', gap: '8px' }}>
+                                    <button type="submit">Открыть тендер</button>
+                                    <button type="button" onClick={() => setShowTenderModal(false)}>Отмена</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 )}
                 <ChatBot />

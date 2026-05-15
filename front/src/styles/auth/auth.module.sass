@@ -1,141 +1,259 @@
 .authContainer
     min-height: 100vh
     display: flex
-    flex-direction: column
     align-items: center
     justify-content: center
-    background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%)
-    padding: 20px
+    padding: 32px
+    background: #eef3f0
+    color: #18231f
 
-.authHeader
-    text-align: center
-    color: white
-    margin-bottom: 40px
+.authShell
+    width: 100%
+    max-width: 1180px
+    min-height: 720px
+    display: grid
+    grid-template-columns: minmax(0, 1.18fr) minmax(390px, .82fr)
+    gap: 24px
+
+.visualPanel
+    position: relative
+    overflow: hidden
+    display: flex
+    flex-direction: column
+    justify-content: space-between
+    min-height: 100%
+    padding: 40px
+    border-radius: 8px
+    background: linear-gradient(135deg, rgba(17, 28, 25, .92), rgba(26, 54, 48, .62)), url('/images/content/bankHeroImage.jpg') center/cover
+    color: #ffffff
+    box-shadow: 0 24px 70px rgba(16, 31, 28, .22)
+
+    &::after
+        content: ''
+        position: absolute
+        inset: 0
+        background: linear-gradient(180deg, rgba(255, 255, 255, .08), rgba(255, 255, 255, 0))
+        pointer-events: none
+
+    > *
+        position: relative
+        z-index: 1
+
+.brandMark
+    display: inline-flex
+    align-items: center
+    gap: 12px
+    width: fit-content
+    padding: 8px 12px 8px 8px
+    border: 1px solid rgba(255, 255, 255, .22)
+    border-radius: 8px
+    background: rgba(255, 255, 255, .12)
+    backdrop-filter: blur(12px)
+
+    span
+        display: inline-flex
+        align-items: center
+        justify-content: center
+        width: 36px
+        height: 36px
+        border-radius: 8px
+        background: #f7c948
+        color: #17231f
+        font-weight: 800
+
+    strong
+        font-size: 16px
+        line-height: 1
+
+.heroCopy
+    max-width: 620px
+    margin-top: auto
+    padding-top: 80px
 
     h1
+        margin: 14px 0 18px
         font-size: 48px
-        font-weight: 700
-        margin-bottom: 16px
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2)
+        line-height: 1.06
+        font-weight: 800
+        letter-spacing: 0
 
     p
-        font-size: 20px
-        opacity: 0.9
+        max-width: 560px
+        color: rgba(255, 255, 255, .78)
+        font-size: 17px
+        line-height: 1.7
+
+.eyebrow,
+.cardEyebrow
+    display: inline-flex
+    align-items: center
+    min-height: 28px
+    padding: 0 10px
+    border-radius: 8px
+    font-size: 12px
+    line-height: 1
+    font-weight: 800
+    text-transform: uppercase
+    letter-spacing: .08em
+
+.eyebrow
+    background: rgba(247, 201, 72, .18)
+    color: #f7c948
+
+.cardEyebrow
+    background: #e6f4ef
+    color: #1f7a5b
+
+.statsGrid
+    display: grid
+    grid-template-columns: repeat(3, minmax(0, 1fr))
+    gap: 12px
+    margin-top: 36px
+
+.statCard
+    min-height: 96px
+    padding: 18px
+    border: 1px solid rgba(255, 255, 255, .18)
+    border-radius: 8px
+    background: rgba(255, 255, 255, .12)
+    backdrop-filter: blur(12px)
+
+    strong
+        display: block
+        margin-bottom: 8px
+        font-size: 24px
+        line-height: 1
+
+    span
+        display: block
+        color: rgba(255, 255, 255, .74)
+        font-size: 13px
+        line-height: 1.45
 
 .authContent
-    background: white
-    border-radius: 16px
-    padding: 40px
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2)
-    max-width: 450px
-    width: 100%
+    display: flex
+    flex-direction: column
+    justify-content: center
+    align-self: stretch
+    padding: 44px
+    border: 1px solid rgba(19, 45, 38, .08)
+    border-radius: 8px
+    background: rgba(255, 255, 255, .94)
+    box-shadow: 0 24px 60px rgba(32, 55, 49, .15)
+
+.authHeader
+    margin-bottom: 28px
+
+    h2
+        margin: 14px 0 8px
+        color: #17231f
+        font-size: 32px
+        line-height: 1.2
+        font-weight: 800
+        letter-spacing: 0
+
+    p
+        color: #66736d
+        font-size: 15px
+        line-height: 1.65
 
 .switchForm
-    margin-top: 20px
+    margin-top: 24px
+    padding-top: 20px
+    border-top: 1px solid #e5ece8
     text-align: center
 
     p
-        color: #666
+        display: flex
+        justify-content: center
+        align-items: center
+        gap: 8px
+        flex-wrap: wrap
+        color: #6f7a76
         font-size: 14px
 
     button
-        background: none
-        border: none
-        color: #d32f2f
-        cursor: pointer
-        text-decoration: underline
+        color: #167a5a
         font-size: 14px
-        padding: 0
-        margin-left: 5px
+        font-weight: 800
+        transition: color .2s ease
 
         &:hover
-            color: #b71c1c
+            color: #0f5d44
 
-.transfer
-    width: 100%
-
-.title
-    font-size: 28px
-    font-weight: 700
-    margin-bottom: 8px
-    color: #333
-
-.text
-    font-size: 14px
-    color: #666
-    margin-bottom: 24px
-
-.form
+.stateScreen
+    min-height: 100vh
     display: flex
-    flex-direction: column
-    gap: 16px
-
-.field
-    display: flex
-    flex-direction: column
-
-.input
-    padding: 12px 16px
-    border: 2px solid #e0e0e0
-    border-radius: 8px
-    font-size: 16px
-    transition: border-color 0.3s ease
-
-    &:focus
-        outline: none
-        border-color: #d32f2f
-
-    &::placeholder
-        color: #999
-
-.btns
-    display: flex
+    align-items: center
+    justify-content: center
     gap: 12px
-    margin-top: 8px
+    background: #eef3f0
+    color: #27352f
+    font-weight: 700
 
-.button
-    flex: 1
-    padding: 12px 24px
-    background: #d32f2f
-    color: white
-    border: none
-    border-radius: 8px
-    font-size: 16px
-    font-weight: 600
-    cursor: pointer
-    transition: background 0.3s ease
+.loaderDot
+    width: 12px
+    height: 12px
+    border-radius: 50%
+    background: #1f7a5b
+    animation: pulse 1s ease-in-out infinite
 
-    &:hover
-        background: #b71c1c
+@keyframes pulse
+    0%, 100%
+        transform: scale(.75)
+        opacity: .55
+    50%
+        transform: scale(1)
+        opacity: 1
 
-    &:disabled
-        background: #ccc
-        cursor: not-allowed
+@media only screen and (max-width: 1023px)
+    .authContainer
+        padding: 20px
 
-.loginButton
-    background: #6c757d
+    .authShell
+        min-height: auto
+        grid-template-columns: 1fr
 
-    &:hover
-        background: #5a6268
+    .visualPanel
+        min-height: 430px
+        padding: 28px
 
-.error
-    background: #fee
-    color: #c33
-    padding: 12px 16px
-    border-radius: 8px
-    margin-bottom: 16px
-    font-size: 14px
-    border: 1px solid #fcc
+    .heroCopy
+        padding-top: 56px
 
-.success
-    background: #efe
-    color: #3c3
-    padding: 12px 16px
-    border-radius: 8px
-    margin-bottom: 16px
-    font-size: 14px
-    border: 1px solid #cfc
+        h1
+            font-size: 38px
 
+    .authContent
+        padding: 32px
 
+@media only screen and (max-width: 639px)
+    .authContainer
+        align-items: stretch
+        padding: 12px
 
+    .visualPanel
+        min-height: 420px
+        padding: 22px
 
+    .heroCopy
+        padding-top: 48px
+
+        h1
+            font-size: 30px
+
+        p
+            font-size: 15px
+
+    .statsGrid
+        grid-template-columns: 1fr
+
+    .statCard
+        min-height: auto
+
+    .authContent
+        padding: 24px
+
+    .authHeader
+        h2
+            font-size: 26px

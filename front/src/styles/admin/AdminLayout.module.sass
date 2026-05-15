@@ -1,90 +1,311 @@
 @import ../helpers
 
+$accent: #1f7a5b
+$accent-dark: #115b43
+$accent-soft: #e6f4ee
+$yellow: #f7c948
+$ink: #17231f
+$muted: #697873
+$line: #dfe8e4
+$white: #ffffff
+$danger: #b42318
+
 .layout
+    position: relative
     min-height: 100vh
-    background: $neutrals8
+    overflow: hidden
+    background: radial-gradient(circle at 8% 8%, rgba(31, 122, 91, .12), transparent 34%), radial-gradient(circle at 92% 4%, rgba(247, 201, 72, .18), transparent 30%), linear-gradient(180deg, #f7fbf9 0%, #eef3f0 100%)
+    color: $ink
+
+    &::before,
+    &::after
+        content: ""
+        position: fixed
+        border-radius: 50%
+        pointer-events: none
+        z-index: 0
+
+    &::before
+        width: 420px
+        height: 420px
+        right: -180px
+        top: 90px
+        background: rgba(31, 122, 91, .08)
+
+    &::after
+        width: 320px
+        height: 320px
+        left: -140px
+        bottom: 40px
+        background: rgba(247, 201, 72, .16)
+
     +dark
-        background: $neutrals1
+        background: radial-gradient(circle at 8% 8%, rgba(31, 122, 91, .20), transparent 34%), radial-gradient(circle at 92% 4%, rgba(247, 201, 72, .08), transparent 30%), linear-gradient(180deg, #101816 0%, $neutrals1 100%)
+        color: $neutrals8
+
+        &::before
+            background: rgba(31, 122, 91, .14)
+
+        &::after
+            background: rgba(247, 201, 72, .07)
 
 .header
-    background: $neutrals8
-    border-bottom: 2px solid $yellow
+    position: sticky
+    top: 0
     z-index: 20
-    padding: 16px 0
+    border-bottom: 1px solid rgba(31, 122, 91, .14)
+    background: linear-gradient(180deg, rgba(255, 255, 255, .94) 0%, rgba(255, 255, 255, .82) 100%)
+    backdrop-filter: blur(20px)
+    box-shadow: 0 18px 45px rgba(23, 35, 31, .08)
+
+    &::before
+        content: ""
+        position: absolute
+        inset: 0
+        pointer-events: none
+        background: radial-gradient(circle at 14% 0%, rgba(31, 122, 91, .12), transparent 32%), radial-gradient(circle at 86% 0%, rgba(247, 201, 72, .14), transparent 28%)
+
     +dark
-        background: $neutrals2
+        border-color: rgba($neutrals8, .08)
+        background: linear-gradient(180deg, rgba($neutrals1, .94) 0%, rgba($neutrals1, .82) 100%)
+        box-shadow: 0 18px 50px rgba(0, 0, 0, .24)
+
+        &::before
+            background: radial-gradient(circle at 14% 0%, rgba(31, 122, 91, .20), transparent 32%), radial-gradient(circle at 86% 0%, rgba(247, 201, 72, .08), transparent 28%)
 
 .headerContent
-    max-width: 1200px
+    position: relative
+    z-index: 1
+    width: 100%
+    max-width: 1360px
     margin: 0 auto
-    padding: 0 20px
+    padding: 14px 24px
     display: flex
     justify-content: space-between
     align-items: center
+    gap: 18px
 
 .logo
-    font-size: 24px
-    font-weight: 600
-    color: $neutrals2
+    display: inline-flex
+    align-items: center
+    gap: 12px
+    min-height: 54px
+    padding: 7px 14px 7px 7px
+    border: 1px solid rgba(23, 35, 31, .08)
+    border-radius: 18px
+    background: rgba(255, 255, 255, .72)
+    box-shadow: 0 12px 30px rgba(23, 35, 31, .08)
+    color: $ink
+    font-size: 18px
+    line-height: 1
+    font-weight: 950
     cursor: pointer
+    letter-spacing: -.02em
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease
+
+    &:hover
+        transform: translateY(-1px)
+        border-color: rgba($accent, .20)
+        box-shadow: 0 16px 36px rgba(23, 35, 31, .11)
+
     +dark
+        border-color: rgba($neutrals8, .10)
+        background: rgba($neutrals2, .62)
         color: $neutrals8
+
+.brandBadge
+    display: inline-flex
+    align-items: center
+    justify-content: center
+    width: 42px
+    height: 42px
+    flex: 0 0 42px
+    border-radius: 14px
+    background: linear-gradient(135deg, $yellow 0%, #ffe08a 100%)
+    color: $ink
+    font-size: 13px
+    font-weight: 950
+    line-height: 1
+    box-shadow: 0 10px 24px rgba(247, 201, 72, .26), inset 0 -2px 0 rgba(23, 35, 31, .12)
 
 .navigation
     display: flex
-    gap: 16px
+    align-items: center
+    gap: 8px
+    min-width: 0
+    padding: 5px
+    border: 1px solid rgba(23, 35, 31, .07)
+    border-radius: 18px
+    background: rgba(255, 255, 255, .54)
 
     button
-        padding: 8px 16px
-        background: none
-        border: none
-        color: $neutrals2
-        font-size: 16px
-        cursor: pointer
-        transition: color .2s
-        +dark
-            color: $neutrals8
+        position: relative
+        min-height: 42px
+        padding: 0 15px
+        border-radius: 13px
+        color: $muted
+        font-size: 14px
+        font-weight: 850
+        white-space: nowrap
+        transition: color .2s ease, background .2s ease, transform .2s ease, box-shadow .2s ease
+
+        &::after
+            content: ""
+            position: absolute
+            left: 14px
+            right: 14px
+            bottom: 6px
+            height: 2px
+            border-radius: 2px
+            background: $accent
+            opacity: 0
+            transform: scaleX(.4)
+            transition: opacity .2s ease, transform .2s ease
 
         &:hover
-            color: $yellow
+            background: rgba(31, 122, 91, .08)
+            color: $accent
+            transform: translateY(-1px)
+
+            &::after
+                opacity: 1
+                transform: scaleX(1)
+
+    +dark
+        border-color: rgba($neutrals8, .08)
+        background: rgba($neutrals2, .46)
+
+        button
+            color: rgba($neutrals8, .68)
+
+            &:hover
+                background: rgba($accent, .14)
+                color: #7ee0ba
 
 .logoutButton
-    padding: 8px 16px
-    background: $yellow
-    color: $neutrals8
-    border: none
-    border-radius: 4px
-    font-weight: 500
-    cursor: pointer
-    transition: background .2s
+    display: inline-flex
+    align-items: center
+    justify-content: center
+    min-height: 42px
+    padding: 0 18px
+    border-radius: 14px
+    background: linear-gradient(135deg, $accent 0%, $accent-dark 100%)
+    box-shadow: 0 12px 26px rgba(31, 122, 91, .22)
+    color: #ffffff
+    font-size: 14px
+    font-weight: 900
+    transition: background .2s ease, transform .2s ease, box-shadow .2s ease
 
     &:hover
-        background: darken($yellow, 10)
+        transform: translateY(-1px)
+        background: linear-gradient(135deg, lighten($accent, 4) 0%, $accent-dark 100%)
+        box-shadow: 0 16px 34px rgba(31, 122, 91, .28)
+
+    &:active
+        transform: translateY(0)
+        box-shadow: 0 8px 18px rgba(31, 122, 91, .20)
 
 .banner
-    position: absolute
-    top: -60px
-    width: 50%
-    display: flex
-    justify-content: center
-    align-items: center
-    background: transparent
-    padding: 0
-    margin: 0
-    z-index: 10
-    pointer-events: none
+    display: none
 
 .bannerImage
-    width: 100%
-    height: auto
-    display: block
-    object-fit: cover
-    max-height: 200px
-    pointer-events: none
+    display: none
 
 .main
-    max-width: 1200px
+    position: relative
+    z-index: 1
+    width: 100%
+    max-width: 1360px
+    min-height: calc(100vh - 83px)
     margin: 0 auto
-    padding: 20px
-    padding-top: 10px
-    min-height: calc(100vh - 80px) 
+    padding: 34px 24px 64px
+
+    > *
+        position: relative
+        z-index: 1
+
+@media only screen and (max-width: 1023px)
+    .headerContent
+        flex-wrap: wrap
+        padding: 12px 18px
+
+    .navigation
+        order: 3
+        width: 100%
+        overflow-x: auto
+        justify-content: flex-start
+        scrollbar-width: none
+
+        &::-webkit-scrollbar
+            display: none
+
+        button
+            flex: 0 0 auto
+
+    .main
+        padding: 28px 18px 56px
+
+@media only screen and (max-width: 767px)
+    .layout
+        &::before
+            width: 300px
+            height: 300px
+            right: -150px
+            top: 120px
+
+        &::after
+            width: 240px
+            height: 240px
+            left: -130px
+
+    .headerContent
+        gap: 12px
+        padding: 10px 14px
+
+    .logo
+        min-height: 48px
+        padding: 6px 12px 6px 6px
+        border-radius: 16px
+        font-size: 16px
+
+    .brandBadge
+        width: 38px
+        height: 38px
+        flex-basis: 38px
+        border-radius: 12px
+
+    .navigation
+        gap: 6px
+        padding: 4px
+        border-radius: 16px
+
+        button
+            min-height: 40px
+            padding: 0 12px
+            border-radius: 12px
+            font-size: 13px
+
+    .logoutButton
+        min-height: 40px
+        padding: 0 15px
+        border-radius: 12px
+
+    .main
+        min-height: calc(100vh - 125px)
+        padding: 22px 14px 44px
+
+@media only screen and (max-width: 479px)
+    .headerContent
+        padding: 10px 12px
+
+    .logo
+        gap: 10px
+        max-width: calc(100% - 96px)
+
+    .logoutButton
+        padding: 0 13px
+        font-size: 13px
+
+    .main
+        padding-left: 12px
+        padding-right: 12px

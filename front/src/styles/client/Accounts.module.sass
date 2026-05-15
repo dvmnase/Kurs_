@@ -1,238 +1,450 @@
+$accent: #1f7a5b
+$accent-dark: #115b43
+$accent-soft: #e6f4ee
+$yellow: #f7c948
+$yellow-soft: #fff6d8
+$ink: #17231f
+$muted: #6b7873
+$line: #dfe8e4
+$white: #ffffff
+$danger: #b42318
+$danger-soft: #fff1f0
+
 .container
-    padding: 2rem
-    max-width: 1200px
+    position: relative
+    max-width: 1360px
+    min-height: calc(100vh - 84px)
     margin: 0 auto
-    background: #f8f9fa
-    min-height: calc(100vh - 64px)
+    padding: 34px 24px 64px
+    color: $ink
+
+    &::before
+        content: ""
+        position: fixed
+        right: -150px
+        top: 120px
+        width: 360px
+        height: 360px
+        border-radius: 50%
+        background: rgba($accent, .08)
+        pointer-events: none
+        z-index: -1
+
+    &::after
+        content: ""
+        position: fixed
+        left: -120px
+        bottom: 80px
+        width: 280px
+        height: 280px
+        border-radius: 50%
+        background: rgba($yellow, .18)
+        pointer-events: none
+        z-index: -1
 
 .header
-    margin: 50px
+    position: relative
+    overflow: hidden
     display: flex
     justify-content: space-between
     align-items: center
-    margin-bottom: 2.5rem
-    padding: 1.5rem
-    background: white
-    border-radius: 12px
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08)
+    gap: 18px
+    margin-bottom: 24px
+    padding: 26px
+    border: 1px solid rgba(23, 35, 31, .08)
+    border-radius: 24px
+    background: linear-gradient(135deg, rgba(255, 255, 255, .92) 0%, rgba(246, 251, 248, .86) 100%)
+    box-shadow: 0 20px 55px rgba(23, 35, 31, .09)
+    backdrop-filter: blur(16px)
+
+    &::before
+        content: ""
+        position: absolute
+        right: -70px
+        top: -90px
+        width: 220px
+        height: 220px
+        border-radius: 50%
+        background: rgba($accent, .10)
+
+    &::after
+        content: ""
+        position: absolute
+        right: 110px
+        bottom: -70px
+        width: 150px
+        height: 150px
+        border-radius: 50%
+        background: rgba($yellow, .18)
 
     h1
+        position: relative
+        z-index: 1
         margin: 0
-        color: #1a237e
-        font-size: 2rem
-        font-weight: 600
-        letter-spacing: -0.5px
+        color: $ink
+        font-size: 34px
+        line-height: 1.12
+        font-weight: 950
+        letter-spacing: -.04em
 
-.createButton
-    background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%)
-    color: white
-    border: none
-    padding: 0.875rem 1.75rem
-    border-radius: 8px
-    cursor: pointer
-    font-size: 1rem
-    font-weight: 500
-    transition: all 0.3s ease
-    box-shadow: 0 4px 6px rgba(33, 150, 243, 0.2)
+        &::after
+            content: ""
+            display: block
+            width: 62px
+            height: 4px
+            margin-top: 12px
+            border-radius: 999px
+            background: linear-gradient(90deg, $accent 0%, $yellow 100%)
+
+.createButton,
+.submitButton
+    position: relative
+    z-index: 1
+    display: inline-flex
+    align-items: center
+    justify-content: center
+    min-height: 46px
+    padding: 0 20px
+    border: 0
+    border-radius: 15px
+    background: linear-gradient(135deg, $accent 0%, $accent-dark 100%)
+    color: #ffffff
+    font-size: 14px
+    font-weight: 900
+    letter-spacing: -.01em
+    box-shadow: 0 14px 30px rgba($accent, .24)
+    transition: transform .2s ease, background .2s ease, box-shadow .2s ease, opacity .2s ease
 
     &:hover
         transform: translateY(-2px)
-        box-shadow: 0 6px 12px rgba(33, 150, 243, 0.3)
-        background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%)
+        background: linear-gradient(135deg, lighten($accent, 4) 0%, $accent-dark 100%)
+        box-shadow: 0 18px 38px rgba($accent, .30)
+
+    &:active
+        transform: translateY(0)
+        box-shadow: 0 10px 22px rgba($accent, .22)
+
+.submitButton
+    min-width: 140px
 
 .accountsList
     display: grid
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr))
-    gap: 1.5rem
-    padding: 0.5rem
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr))
+    gap: 18px
 
 .accountCard
-    background: white
-    border-radius: 12px
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05)
-    padding: 1.5rem
-    transition: all 0.3s ease
-    border: 1px solid rgba(0, 0, 0, 0.05)
+    position: relative
+    overflow: hidden
+    padding: 24px
+    border: 1px solid rgba(23, 35, 31, .08)
+    border-radius: 24px
+    background: rgba(255, 255, 255, .88)
+    box-shadow: 0 18px 45px rgba(23, 35, 31, .08)
+    backdrop-filter: blur(14px)
+    transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease
+
+    &::before
+        content: ""
+        position: absolute
+        top: 0
+        left: 0
+        width: 100%
+        height: 5px
+        background: linear-gradient(90deg, $accent 0%, $yellow 100%)
+
+    &::after
+        content: ""
+        position: absolute
+        right: -58px
+        bottom: -58px
+        width: 150px
+        height: 150px
+        border-radius: 50%
+        background: rgba($accent, .06)
+        pointer-events: none
 
     &:hover
         transform: translateY(-4px)
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1)
-        border-color: rgba(33, 150, 243, 0.2)
+        border-color: rgba($accent, .28)
+        box-shadow: 0 24px 60px rgba(23, 35, 31, .13)
 
-.cardHeader
+.accountHeader
+    position: relative
+    z-index: 1
     display: flex
     justify-content: space-between
-    align-items: center
-    margin-bottom: 1.25rem
-    padding-bottom: 1rem
-    border-bottom: 1px solid #f0f0f0
+    align-items: flex-start
+    gap: 14px
+    margin-bottom: 18px
+    padding-bottom: 16px
+    border-bottom: 1px solid rgba(23, 35, 31, .08)
 
     h3
         margin: 0
-        color: #1a237e
-        font-size: 1.25rem
-        font-weight: 600
+        color: $ink
+        font-size: 21px
+        line-height: 1.25
+        font-weight: 950
+        letter-spacing: -.03em
 
 .status
-    padding: 0.5rem 1rem
-    border-radius: 6px
-    font-size: 0.875rem
-    font-weight: 500
-    letter-spacing: 0.3px
+    display: inline-flex
+    align-items: center
+    justify-content: center
+    flex: 0 0 auto
+    min-height: 30px
+    padding: 0 11px
+    border-radius: 999px
+    background: rgba($accent, .10)
+    color: $accent
+    font-size: 12px
+    font-weight: 900
+    white-space: nowrap
 
-    &.active
-        background-color: #e8f5e9
-        color: #2e7d32
+.accountBody
+    position: relative
+    z-index: 1
+    display: grid
+    gap: 10px
 
-    &.blocked
-        background-color: #ffebee
-        color: #c62828
-
-.cardBody
     p
-        margin: 0.75rem 0
-        color: #546e7a
-        font-size: 0.95rem
-        line-height: 1.5
+        display: flex
+        justify-content: space-between
+        gap: 14px
+        margin: 0
+        padding: 10px 12px
+        border-radius: 14px
+        background: rgba(238, 243, 240, .62)
+        color: $muted
+        font-size: 14px
+        line-height: 1.45
 
         strong
-            color: #37474f
-            font-weight: 600
+            color: $ink
+            font-weight: 900
 
 .accountActions
+    position: relative
+    z-index: 1
     display: flex
     justify-content: flex-end
+    gap: 10px
+    margin-top: 18px
 
-.closeButton
-    padding: 8px 16px
-    background-color: #f44336
-    color: white
-    border: none
-    border-radius: 4px
-    cursor: pointer
+.closeButton,
+.cancelButton
+    display: inline-flex
+    align-items: center
+    justify-content: center
+    min-height: 44px
+    padding: 0 18px
+    border: 1px solid rgba(23, 35, 31, .08)
+    border-radius: 14px
+    background: rgba(255, 255, 255, .72)
+    color: $ink
     font-size: 14px
-    transition: background-color 0.2s
+    font-weight: 900
+    box-shadow: 0 10px 22px rgba(23, 35, 31, .06)
+    backdrop-filter: blur(10px)
+    transition: background .2s ease, color .2s ease, transform .2s ease, box-shadow .2s ease, border-color .2s ease
+
     &:hover
-        background-color: #d32f2f
+        transform: translateY(-1px)
+        border-color: rgba($danger, .22)
+        background: $danger-soft
+        color: $danger
+        box-shadow: 0 14px 28px rgba(180, 35, 24, .10)
+
+.cancelButton
+    &:hover
+        border-color: rgba($accent, .24)
+        background: $accent-soft
+        color: $accent
+        box-shadow: 0 14px 28px rgba($accent, .12)
 
 .modal
     position: fixed
-    top: 0
-    left: 0
-    right: 0
-    bottom: 0
-    background-color: rgba(0, 0, 0, 0.6)
+    inset: 0
+    z-index: 1000
     display: flex
     justify-content: center
     align-items: center
-    z-index: 1000
-    backdrop-filter: blur(4px)
+    padding: 20px
+    background: rgba(14, 25, 22, .62)
+    backdrop-filter: blur(8px)
 
 .modalContent
-    background: white
-    padding: 2rem
-    border-radius: 16px
-    width: 100%
-    max-width: 500px
+    position: relative
+    overflow: hidden
+    width: min(520px, 96vw)
     max-height: 90vh
     overflow-y: auto
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1)
+    padding: 30px
+    border: 1px solid rgba(255, 255, 255, .72)
+    border-radius: 26px
+    background: linear-gradient(180deg, rgba(255, 255, 255, .98) 0%, rgba(247, 251, 249, .96) 100%)
+    box-shadow: 0 32px 90px rgba(14, 25, 22, .30)
+
+    &::before
+        content: ""
+        position: absolute
+        right: -80px
+        top: -80px
+        width: 200px
+        height: 200px
+        border-radius: 50%
+        background: rgba($accent, .10)
+        pointer-events: none
 
     h2
-        margin: 0 0 1.5rem
-        color: #1a237e
-        font-size: 1.5rem
-        font-weight: 600
-        letter-spacing: -0.5px
+        position: relative
+        z-index: 1
+        margin: 0 0 22px
+        color: $ink
+        font-size: 26px
+        line-height: 1.2
+        font-weight: 950
+        letter-spacing: -.03em
+
+        &::after
+            content: ""
+            display: block
+            width: 54px
+            height: 4px
+            margin-top: 12px
+            border-radius: 999px
+            background: linear-gradient(90deg, $accent 0%, $yellow 100%)
 
 .formGroup
-    margin-bottom: 1.5rem
+    position: relative
+    z-index: 1
+    margin-bottom: 17px
 
     label
         display: block
-        margin-bottom: 0.5rem
-        color: #37474f
-        font-size: 0.95rem
-        font-weight: 500
+        margin-bottom: 8px
+        color: $ink
+        font-size: 14px
+        font-weight: 900
 
-    select
+    select,
+    input,
+    textarea
         width: 100%
-        padding: 0.875rem
-        border: 2px solid #e0e0e0
-        border-radius: 8px
-        font-size: 1rem
-        transition: all 0.3s ease
-        background-color: #f8f9fa
+        min-height: 48px
+        padding: 0 14px
+        border: 1px solid $line
+        border-radius: 15px
+        background: rgba(255, 255, 255, .86)
+        color: $ink
+        font-size: 14px
+        font-weight: 700
+        outline: none
+        transition: border-color .2s ease, box-shadow .2s ease, background .2s ease
 
         &:focus
-            outline: none
-            border-color: #2196F3
-            background-color: white
-            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1)
+            border-color: rgba($accent, .55)
+            background: #ffffff
+            box-shadow: 0 0 0 4px rgba($accent, .12)
+
+    textarea
+        min-height: 110px
+        padding-top: 13px
+        resize: vertical
 
 .modalActions
+    position: relative
+    z-index: 1
     display: flex
     justify-content: flex-end
-    gap: 1rem
-    margin-top: 2rem
-    padding-top: 1.5rem
-    border-top: 1px solid #f0f0f0
+    gap: 10px
+    margin-top: 24px
+    padding-top: 20px
+    border-top: 1px solid rgba(23, 35, 31, .08)
 
-.cancelButton
-    background-color: #f5f5f5
-    color: #37474f
-    border: none
-    padding: 0.875rem 1.75rem
-    border-radius: 8px
-    cursor: pointer
-    font-size: 1rem
-    font-weight: 500
-    transition: all 0.3s ease
-
-    &:hover
-        background-color: #eeeeee
-        color: #1a237e
-
-.submitButton
-    background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%)
-    color: white
-    border: none
-    padding: 0.875rem 1.75rem
-    border-radius: 8px
-    cursor: pointer
-    font-size: 1rem
-    font-weight: 500
-    transition: all 0.3s ease
-    box-shadow: 0 4px 6px rgba(33, 150, 243, 0.2)
-
-    &:hover
-        transform: translateY(-2px)
-        box-shadow: 0 6px 12px rgba(33, 150, 243, 0.3)
-        background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%)
+.loading,
+.error,
+.success
+    position: relative
+    z-index: 1
+    margin-bottom: 18px
+    padding: 15px 16px
+    border-radius: 16px
+    font-size: 14px
+    line-height: 1.5
+    font-weight: 800
 
 .loading
-    text-align: center
-    padding: 3rem
-    color: #546e7a
-    font-size: 1.1rem
-    font-weight: 500
+    border: 1px solid rgba($accent, .14)
+    background: rgba($accent, .07)
+    color: $muted
 
 .error
-    background-color: #ffebee
-    color: #c62828
-    padding: 1rem 1.5rem
-    border-radius: 8px
-    margin-bottom: 1.5rem
-    font-weight: 500
-    border-left: 4px solid #c62828
-    box-shadow: 0 2px 4px rgba(198, 40, 40, 0.1)
+    border: 1px solid rgba(180, 35, 24, .18)
+    background: $danger-soft
+    color: $danger
 
 .success
-    background-color: #e8f5e9
-    color: #2e7d32
-    padding: 1rem 1.5rem
-    border-radius: 8px
-    margin-bottom: 1.5rem
-    font-weight: 500
-    border-left: 4px solid #2e7d32
-    box-shadow: 0 2px 4px rgba(46, 125, 50, 0.1) 
+    border: 1px solid rgba($accent, .18)
+    background: $accent-soft
+    color: $accent
+
+@media only screen and (max-width: 767px)
+    .container
+        padding: 22px 12px 44px
+
+    .header
+        align-items: flex-start
+        flex-direction: column
+        padding: 20px
+        border-radius: 22px
+
+        h1
+            font-size: 28px
+
+    .createButton,
+    .submitButton
+        width: 100%
+
+    .accountsList
+        grid-template-columns: 1fr
+
+    .accountCard
+        padding: 20px
+        border-radius: 22px
+
+    .accountHeader
+        flex-direction: column
+        align-items: flex-start
+
+    .accountBody
+        p
+            display: grid
+            gap: 4px
+
+    .modal
+        padding: 12px
+
+    .modalContent
+        padding: 24px
+        border-radius: 22px
+
+    .modalActions
+        flex-direction: column-reverse
+
+        button
+            width: 100%
+
+@media only screen and (max-width: 479px)
+    .container
+        padding-left: 10px
+        padding-right: 10px
+
+    .header
+        padding: 18px
+
+        h1
+            font-size: 25px
+
+    .modalContent
+        padding: 20px

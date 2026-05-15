@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { authService } from '../../services/authService';
 import Layout from '../../components/Layout';
 import styles from '../../styles/client/Applications.module.sass';
+import { getStatusKey, getStatusLabel } from '../../utils/statusLabels';
 
 interface Application {
     id: number;
@@ -181,16 +182,6 @@ const ApplicationsPage = () => {
         }
     };
 
-    const getStatusText = (status: string) => {
-        switch (status) {
-            case 'NEW': return 'Новая';
-            case 'IN_PROGRESS': return 'В обработке';
-            case 'APPROVED': return 'Одобрена';
-            case 'REJECTED': return 'Отклонена';
-            default: return status;
-        }
-    };
-
     const getCardTypeText = (type: string) => {
         switch (type) {
             case 'DEBIT': return 'Дебетовая';
@@ -251,8 +242,11 @@ const ApplicationsPage = () => {
                             >
                                 <div className={styles.cardHeader}>
                                     <h3>Заявка #{application.id}</h3>
-                                    <span className={`${styles.status} ${styles[application.status.toLowerCase()]}`}>
-                                        {getStatusText(application.status)}
+                                    <span
+                                        className={`${styles.status} ${styles[application.status.toLowerCase()]}`}
+                                        data-status={getStatusKey(application.status)}
+                                    >
+                                        {getStatusLabel(application.status)}
                                     </span>
                                 </div>
                                 <div className={styles.cardBody}>
@@ -334,8 +328,11 @@ const ApplicationsPage = () => {
                             <div className={styles.detailsContent}>
                                 <div className={styles.detailRow}>
                                     <span className={styles.detailLabel}>Статус:</span>
-                                    <span className={`${styles.status} ${styles[selectedApplication.status.toLowerCase()]}`}>
-                                        {getStatusText(selectedApplication.status)}
+                                    <span
+                                        className={`${styles.status} ${styles[selectedApplication.status.toLowerCase()]}`}
+                                        data-status={getStatusKey(selectedApplication.status)}
+                                    >
+                                        {getStatusLabel(selectedApplication.status)}
                                     </span>
                                 </div>
                                 <div className={styles.detailRow}>

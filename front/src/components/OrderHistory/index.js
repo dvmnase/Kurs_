@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import cn from 'classnames';
 import styles from './OrderHistory.module.sass';
 import { authService } from '../../services/authService';
+import { getStatusKey, getStatusLabel } from '../../utils/statusLabels';
 
 const OrderHistory = () => {
     const router = useRouter();
@@ -65,36 +66,6 @@ const OrderHistory = () => {
         });
     };
 
-    const getStatusColor = (status) => {
-        switch (status) {
-            case 'NEW':
-                return styles.statusNew;
-            case 'IN_PROGRESS':
-                return styles.statusInProgress;
-            case 'COMPLETED':
-                return styles.statusCompleted;
-            case 'CANCELLED':
-                return styles.statusCancelled;
-            default:
-                return '';
-        }
-    };
-
-    const getStatusText = (status) => {
-        switch (status) {
-            case 'NEW':
-                return 'Новый';
-            case 'IN_PROGRESS':
-                return 'В работе';
-            case 'COMPLETED':
-                return 'Завершен';
-            case 'CANCELLED':
-                return 'Отменен';
-            default:
-                return status;
-        }
-    };
-
     const filteredOrders = orders.filter(order => {
         if (filter === 'all') return true;
         return order.status === filter;
@@ -122,8 +93,11 @@ const OrderHistory = () => {
                         >
                             <div className={styles.orderHeader}>
                                 <h3 className={styles.serviceName}>{order.serviceName}</h3>
-                                <span className={cn(styles.status, styles[order.status.toLowerCase()])}>
-                                    {order.status}
+                                <span
+                                    className={cn(styles.status, styles[getStatusKey(order.status).toLowerCase()])}
+                                    data-status={getStatusKey(order.status)}
+                                >
+                                    {getStatusLabel(order.status)}
                                 </span>
                             </div>
                             <div className={styles.orderDetails}>

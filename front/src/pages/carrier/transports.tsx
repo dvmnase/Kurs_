@@ -89,6 +89,7 @@ const CarrierTransportsPage = () => {
 
     const navigation = {
         menu: [
+            { title: 'Тендеры', url: '/carrier/tenders' },
             { title: 'Заявки', url: '/carrier/requests' },
             { title: 'Транспорт', url: '/carrier/transports' },
             { title: 'Настройки', url: '/carrier/settings' },
@@ -104,7 +105,7 @@ const CarrierTransportsPage = () => {
                     <button onClick={() => setShowCreateModal(true)}>Добавить транспорт</button>
                     <button onClick={handleExportExcel}>Экспорт в Excel</button>
                 </div>
-                
+
                 {showCreateModal && (
                     <div className={styles.modalOverlay} onClick={(e) => {
                         if (e.target === e.currentTarget) {
@@ -114,13 +115,13 @@ const CarrierTransportsPage = () => {
                         <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px', paddingBottom: '16px', borderBottom: '4px solid #4caf50' }}>
                                 <h2 style={{ margin: 0, fontSize: '32px', fontWeight: 700, color: '#1b5e20', letterSpacing: '-0.5px', lineHeight: '1.3' }}>Добавить транспорт</h2>
-                                <button 
+                                <button
                                     type="button"
                                     onClick={() => setShowCreateModal(false)}
-                                    style={{ 
-                                        background: 'transparent', 
-                                        border: 'none', 
-                                        fontSize: '24px', 
+                                    style={{
+                                        background: 'transparent',
+                                        border: 'none',
+                                        fontSize: '24px',
                                         cursor: 'pointer',
                                         color: '#333',
                                         padding: '0',
@@ -327,21 +328,15 @@ const CarrierTransportsPage = () => {
                                 <h3>{transport.type}</h3>
                                 <p>Номер: {transport.numberPlate}</p>
                                 {transport.capacity && <p>Грузоподъемность: {transport.capacity} т</p>}
-                                <button 
-                                    onClick={() => handleDeleteTransport(transport.id)}
-                                    style={{
-                                        marginTop: '10px',
-                                        padding: '8px 16px',
-                                        background: '#f44336',
-                                        color: 'white',
-                                        border: 'none',
-                                        borderRadius: '8px',
-                                        cursor: 'pointer',
-                                        fontSize: '14px'
-                                    }}
-                                >
-                                    Удалить
-                                </button>
+                                <div className={styles.transportActions}>
+                                    <button
+                                        type="button"
+                                        className={styles.deleteTransportButton}
+                                        onClick={() => handleDeleteTransport(transport.id)}
+                                    >
+                                        Удалить
+                                    </button>
+                                </div>
                             </div>
                         ))}
                     </div>

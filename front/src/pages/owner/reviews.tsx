@@ -101,6 +101,7 @@ const OwnerReviewsPage = () => {
     const navigation = {
         menu: [
             { title: 'Мои грузы', url: '/owner/cargo' },
+            { title: 'Тендеры', url: '/owner/tenders' },
             { title: 'Заявки', url: '/owner/requests' },
             { title: 'Чаты', url: '/owner/chats' },
             { title: 'Отзывы', url: '/owner/reviews' },

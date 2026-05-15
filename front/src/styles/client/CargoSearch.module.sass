@@ -1,0 +1,134 @@
+$accent: #1f7a5b
+$ink: #17231f
+$muted: #6b7873
+$line: #dfe8e4
+
+.container
+    min-height: 100vh
+    padding: 108px 24px 56px
+    background: #eef3f0
+    color: $ink
+
+.header
+    max-width: 1180px
+    margin: 0 auto 22px
+    padding: 24px
+    border: 1px solid $line
+    border-radius: 8px
+    background: #ffffff
+    box-shadow: 0 12px 30px rgba(23, 35, 31, .07)
+
+    h1
+        margin: 0 0 8px
+        font-size: 34px
+        line-height: 1.15
+        font-weight: 800
+        letter-spacing: 0
+
+.subtitle
+    color: $muted
+    font-size: 15px
+    line-height: 1.7
+
+.searchSection
+    max-width: 1180px
+    margin: 0 auto 20px
+
+.filters
+    display: grid
+    grid-template-columns: minmax(260px, 1fr) minmax(170px, auto) minmax(170px, auto)
+    gap: 12px
+    padding: 16px
+    border: 1px solid $line
+    border-radius: 8px
+    background: #ffffff
+    box-shadow: 0 10px 26px rgba(23, 35, 31, .06)
+
+.searchInput,
+.sortSelect
+    width: 100%
+    min-height: 44px
+    padding: 0 13px
+    border: 1px solid $line
+    border-radius: 8px
+    background: #fbfdfc
+    color: $ink
+    font-family: inherit
+    font-size: 14px
+    transition: border-color .2s ease, box-shadow .2s ease, background .2s ease
+
+    &:focus
+        border-color: $accent
+        background: #ffffff
+        box-shadow: 0 0 0 4px rgba($accent, .12)
+
+.error,
+.loading,
+.noResults
+    max-width: 1180px
+    margin: 0 auto 18px
+    padding: 16px
+    border-radius: 8px
+    font-weight: 700
+
+.error
+    border: 1px solid rgba(180, 35, 24, .18)
+    background: #fff1f0
+    color: #b42318
+
+.loading,
+.noResults
+    border: 1px solid $line
+    background: #ffffff
+    color: $muted
+
+.cargosGrid
+    max-width: 1180px
+    margin: 0 auto
+    display: grid
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr))
+    gap: 16px
+
+.cargoCard
+    padding: 22px
+    border: 1px solid $line
+    border-radius: 8px
+    background: #ffffff
+    box-shadow: 0 12px 30px rgba(23, 35, 31, .07)
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease
+
+    &:hover
+        transform: translateY(-2px)
+        border-color: rgba($accent, .35)
+        box-shadow: 0 18px 38px rgba(23, 35, 31, .11)
+
+.cargoName
+    margin: 0 0 10px
+    color: $ink
+    font-size: 20px
+    line-height: 1.25
+    font-weight: 800
+
+.cargoDescription,
+.cargoWeight,
+.cargoAddress
+    margin-bottom: 8px
+    color: $muted
+    font-size: 14px
+    line-height: 1.55
+
+    strong
+        color: $ink
+
+@media only screen and (max-width: 767px)
+    .container
+        padding: 92px 12px 40px
+
+    .header
+        padding: 18px
+
+        h1
+            font-size: 27px
+
+    .filters
+        grid-template-columns: 1fr

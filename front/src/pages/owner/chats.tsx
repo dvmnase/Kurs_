@@ -7,6 +7,7 @@ import ChatBot from '../../components/ChatBot';
 import RequestChat from '../../components/RequestChat';
 import styles from '../../styles/client/ClientHome.module.sass';
 import chatStyles from '../../styles/client/Chats.module.sass';
+import { getStatusKey, getStatusLabel } from '../../utils/statusLabels';
 
 interface Request {
     id: number;
@@ -22,18 +23,6 @@ interface Request {
         createdAt: string;
     };
 }
-
-const getStatusText = (status: string): string => {
-    const statusMap: { [key: string]: string } = {
-        'NEW': 'Новая',
-        'PENDING': 'Ожидает',
-        'ACCEPTED': 'Принята',
-        'DECLINED': 'Отклонена',
-        'CANCELLED': 'Отменена',
-        'IN_PROGRESS': 'В процессе'
-    };
-    return statusMap[status] || status;
-};
 
 const getStatusColor = (status: string): string => {
     const colorMap: { [key: string]: string } = {
@@ -133,6 +122,7 @@ const OwnerChatsPage = () => {
     const navigation = {
         menu: [
             { title: 'Мои грузы', url: '/owner/cargo' },
+            { title: 'Тендеры', url: '/owner/tenders' },
             { title: 'Заявки', url: '/owner/requests' },
             { title: 'Чаты', url: '/owner/chats' },
             { title: 'Настройки', url: '/owner/settings' },
@@ -182,12 +172,9 @@ const OwnerChatsPage = () => {
                                                 <h3>Заявка #{request.id}</h3>
                                                 <span
                                                     className={chatStyles.chatStatus}
-                                                    style={{
-                                                        background: getStatusColor(request.status) + '20',
-                                                        color: getStatusColor(request.status)
-                                                    }}
+                                                    data-status={getStatusKey(request.status)}
                                                 >
-                                                    {getStatusText(request.status)}
+                                                    {getStatusLabel(request.status)}
                                                 </span>
                                             </div>
                                             <div className={chatStyles.chatItemInfo}>

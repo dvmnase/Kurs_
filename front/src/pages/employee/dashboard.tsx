@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import styles from '../../styles/components/EmployeeDashboard.module.sass';
 import { authService } from '../../services/authService';
 import Header from '../../components/Header';
+import { getStatusKey, getStatusLabel } from '../../utils/statusLabels';
 
 interface Application {
     id: number;
@@ -202,16 +203,6 @@ const EmployeeDashboard = () => {
         }
     };
 
-    const getStatusText = (status: string) => {
-        switch (status) {
-            case 'NEW': return 'Новая';
-            case 'IN_PROGRESS': return 'В работе';
-            case 'APPROVED': return 'Одобрена';
-            case 'REJECTED': return 'Отклонена';
-            default: return status;
-        }
-    };
-
     const getTypeText = (type: string) => {
         switch (type) {
             case 'OPEN_ACCOUNT': return 'Открытие счета';
@@ -403,8 +394,11 @@ const EmployeeDashboard = () => {
                       <div key={app.id} className={styles.applicationCard}>
                           <div className={styles.cardHeader}>
                               <h3>Заявка #{app.id} - {getTypeText(app.type)}</h3>
-                              <span className={`${styles.status} ${styles[app.status.toLowerCase()]}`}>
-                                  {getStatusText(app.status)}
+                              <span
+                                  className={`${styles.status} ${styles[app.status.toLowerCase()]}`}
+                                  data-status={getStatusKey(app.status)}
+                              >
+                                  {getStatusLabel(app.status)}
                               </span>
                           </div>
                           <div className={styles.cardBody}>
@@ -475,7 +469,9 @@ const EmployeeDashboard = () => {
                             </div>
                             <div className={styles.modalRow}>
                                 <span>Статус:</span>
-                                <span>{getStatusText(selectedApplication.status)}</span>
+                                <span data-status={getStatusKey(selectedApplication.status)}>
+                                    {getStatusLabel(selectedApplication.status)}
+                                </span>
                             </div>
                             {selectedApplication.client && (
                               <>

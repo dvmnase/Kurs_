@@ -1,34 +1,131 @@
 @import ../helpers
 
+$accent: #1f7a5b
+$accent-dark: #115b43
+$accent-soft: #e6f4ee
+$yellow: #f7c948
+$yellow-soft: #fff6d8
+$blue-soft: #edf5ff
+$blue: #2f6fbd
+$ink: #17231f
+$muted: #6b7873
+$line: #dfe8e4
+$surface: #ffffff
+$danger: #b42318
+$danger-soft: #fff1f0
+
 .container
-    max-width: 800px
+    position: relative
+    max-width: 860px
     margin: 0 auto
-    padding: 20px
+    padding: 28px 20px 56px
+    color: $ink
+
+    &::before
+        content: ""
+        position: fixed
+        right: -140px
+        top: 120px
+        width: 340px
+        height: 340px
+        border-radius: 50%
+        background: rgba($accent, .08)
+        pointer-events: none
+        z-index: -1
+
+    &::after
+        content: ""
+        position: fixed
+        left: -120px
+        bottom: 80px
+        width: 280px
+        height: 280px
+        border-radius: 50%
+        background: rgba($yellow, .16)
+        pointer-events: none
+        z-index: -1
 
     h2
-        font-size: 24px
-        font-weight: 600
-        color: $neutrals2
-        margin-bottom: 30px
-        +dark
+        position: relative
+        overflow: hidden
+        margin: 0 0 24px
+        padding: 26px
+        border: 1px solid rgba(23, 35, 31, .08)
+        border-radius: 24px
+        background: linear-gradient(135deg, rgba(255, 255, 255, .94) 0%, rgba(246, 251, 248, .88) 100%)
+        box-shadow: 0 20px 55px rgba(23, 35, 31, .09)
+        backdrop-filter: blur(16px)
+        color: $ink
+        font-size: 32px
+        line-height: 1.12
+        font-weight: 950
+        letter-spacing: -.04em
+
+        &::before
+            content: ""
+            position: absolute
+            right: -70px
+            top: -90px
+            width: 220px
+            height: 220px
+            border-radius: 50%
+            background: rgba($accent, .10)
+
+        &::after
+            content: ""
+            display: block
+            width: 62px
+            height: 4px
+            margin-top: 12px
+            border-radius: 999px
+            background: linear-gradient(90deg, $accent 0%, $yellow 100%)
+
+    +dark
+        color: $neutrals8
+
+        &::before
+            background: rgba($accent, .14)
+
+        &::after
+            background: rgba($yellow, .07)
+
+        h2
+            border-color: rgba($neutrals8, .10)
+            background: linear-gradient(135deg, rgba($neutrals2, .82) 0%, rgba($neutrals1, .92) 100%)
+            box-shadow: 0 20px 55px rgba(0, 0, 0, .24)
             color: $neutrals8
 
 .details
-    background: $neutrals8
-    padding: 20px
-    border-radius: 8px
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1)
-    margin-bottom: 20px
+    position: relative
+    overflow: hidden
+    margin-bottom: 22px
+    padding: 26px
+    border: 1px solid rgba(23, 35, 31, .08)
+    border-radius: 24px
+    background: rgba(255, 255, 255, .90)
+    box-shadow: 0 20px 55px rgba(23, 35, 31, .09)
+    backdrop-filter: blur(16px)
+
+    &::before
+        content: ""
+        position: absolute
+        top: 0
+        left: 0
+        width: 100%
+        height: 5px
+        background: linear-gradient(90deg, $accent 0%, $yellow 100%)
+
     +dark
-        background: $neutrals2
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3)
+        border-color: rgba($neutrals8, .10)
+        background: rgba($neutrals2, .76)
+        box-shadow: 0 20px 55px rgba(0, 0, 0, .24)
 
 .section
-    margin-bottom: 20px
-    padding-bottom: 20px
-    border-bottom: 1px solid $neutrals6
-    +dark
-        border-color: $neutrals3
+    position: relative
+    z-index: 1
+    margin-bottom: 22px
+    padding-bottom: 22px
+    border-bottom: 1px solid rgba(23, 35, 31, .08)
 
     &:last-child
         margin-bottom: 0
@@ -36,90 +133,184 @@
         border-bottom: none
 
     h3
-        font-size: 18px
-        font-weight: 600
-        color: $neutrals2
-        margin-bottom: 15px
-        +dark
-            color: $neutrals8
+        margin: 0 0 16px
+        color: $ink
+        font-size: 20px
+        line-height: 1.25
+        font-weight: 950
+        letter-spacing: -.03em
 
     p
-        margin: 8px 0
-        color: $neutrals4
-        +dark
-            color: $neutrals6
+        display: flex
+        justify-content: space-between
+        gap: 14px
+        margin: 0 0 10px
+        padding: 11px 13px
+        border-radius: 15px
+        background: rgba(238, 243, 240, .62)
+        color: $muted
+        font-size: 14px
+        line-height: 1.5
 
         strong
-            color: $neutrals2
-            margin-right: 8px
-            +dark
+            color: $ink
+            font-weight: 900
+
+    +dark
+        border-color: rgba($neutrals8, .08)
+
+        h3
+            color: $neutrals8
+
+        p
+            background: rgba($neutrals1, .42)
+            color: rgba($neutrals8, .68)
+
+            strong
                 color: $neutrals8
 
 .status
-    display: inline-block
-    padding: 6px 12px
-    border-radius: 4px
-    font-weight: 500
-    margin-bottom: 10px
+    display: inline-flex
+    align-items: center
+    justify-content: center
+    min-height: 32px
+    margin-bottom: 12px
+    padding: 0 13px
+    border-radius: 999px
+    font-size: 12px
+    font-weight: 950
+    white-space: nowrap
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .35)
 
     &.NEW
-        background: rgba($blue, 0.1)
+        background: $blue-soft
         color: $blue
 
     &.IN_PROGRESS
-        background: rgba($yellow, 0.1)
-        color: $yellow
+        background: $yellow-soft
+        color: #9a6a12
 
     &.COMPLETED
-        background: rgba($green, 0.1)
-        color: $green
+        background: $accent-soft
+        color: $accent
 
     &.CANCELLED
-        background: rgba($orange, 0.1)
-        color: $orange
+        background: $danger-soft
+        color: $danger
 
 .actions
     display: flex
+    flex-wrap: wrap
     gap: 10px
-    margin-top: 20px
+    margin-top: 22px
 
-.cancelButton, .reviewButton
-    padding: 12px 20px
-    border-radius: 4px
-    font-weight: 500
+.cancelButton,
+.reviewButton
+    display: inline-flex
+    align-items: center
+    justify-content: center
+    min-height: 46px
+    padding: 0 20px
+    border: 0
+    border-radius: 15px
+    font-size: 14px
+    font-weight: 900
     cursor: pointer
-    transition: all .2s
+    transition: transform .2s ease, box-shadow .2s ease, background .2s ease, color .2s ease
+
+    &:hover
+        transform: translateY(-2px)
+
+    &:active
+        transform: translateY(0)
 
 .cancelButton
-    background: $orange
-    color: white
-    border: none
+    background: $danger-soft
+    color: $danger
+    box-shadow: 0 0 0 1px rgba($danger, .14) inset, 0 10px 22px rgba(180, 35, 24, .08)
 
     &:hover
-        background: darken($orange, 10)
+        background: $danger
+        color: #ffffff
+        box-shadow: 0 16px 32px rgba(180, 35, 24, .22)
 
 .reviewButton
-    background: $yellow
-    color: $neutrals8
-    border: none
+    background: linear-gradient(135deg, $accent 0%, $accent-dark 100%)
+    color: #ffffff
+    box-shadow: 0 14px 30px rgba($accent, .24)
 
     &:hover
-        background: darken($yellow, 10)
+        background: linear-gradient(135deg, lighten($accent, 4) 0%, $accent-dark 100%)
+        box-shadow: 0 18px 38px rgba($accent, .30)
 
 .loading
+    margin: 24px 0
+    padding: 34px
+    border: 1px solid rgba(23, 35, 31, .08)
+    border-radius: 22px
+    background: rgba(255, 255, 255, .82)
+    box-shadow: 0 16px 40px rgba(23, 35, 31, .07)
+    color: $muted
+    font-size: 16px
+    line-height: 1.5
+    font-weight: 850
     text-align: center
-    padding: 40px
-    font-size: 18px
-    color: $neutrals4
+
     +dark
-        color: $neutrals6
+        border-color: rgba($neutrals8, .10)
+        background: rgba($neutrals2, .72)
+        color: rgba($neutrals8, .68)
 
 .error
-    text-align: center
-    padding: 20px
-    background: rgba($orange, 0.1)
-    color: $orange
-    border-radius: 8px
     margin: 20px 0
+    padding: 16px
+    border: 1px solid rgba($danger, .18)
+    border-radius: 16px
+    background: $danger-soft
+    color: $danger
+    font-size: 14px
+    line-height: 1.5
+    font-weight: 850
+    text-align: center
+
     +dark
-        background: rgba($orange, 0.2) 
+        background: rgba($danger, .12)
+        color: #ff9b7e
+
+@media only screen and (max-width: 767px)
+    .container
+        padding: 20px 12px 44px
+
+        h2
+            padding: 22px
+            border-radius: 22px
+            font-size: 27px
+
+    .details
+        padding: 22px
+        border-radius: 22px
+
+    .section
+        p
+            display: grid
+            gap: 4px
+
+    .actions
+        display: grid
+        grid-template-columns: 1fr
+
+    .cancelButton,
+    .reviewButton
+        width: 100%
+
+@media only screen and (max-width: 479px)
+    .container
+        padding-left: 10px
+        padding-right: 10px
+
+        h2
+            padding: 18px
+            font-size: 25px
+
+    .details
+        padding: 18px

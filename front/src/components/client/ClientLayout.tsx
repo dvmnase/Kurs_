@@ -1,5 +1,6 @@
 import React from 'react';
 import Header from '../Header';
+import Footer from '../Footer';
 import styles from '../../styles/client/ClientLayout.module.sass';
 import { useRouter } from 'next/router';
 import { authService } from '../../services/authService';
@@ -69,6 +70,7 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({ children }) => {
             <main className={styles.main}>
                 {children}
             </main>
+            <Footer />
         </div>
     );
 };

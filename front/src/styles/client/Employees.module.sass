@@ -1,160 +1,161 @@
 @import ../helpers
 
+$accent: #1f7a5b
+$accent-dark: #115b43
+$ink: #17231f
+$muted: #6b7873
+$line: #dfe8e4
+
 .container
-    max-width: 1200px
+    max-width: 1360px
     margin: 0 auto
-    padding: 40px 20px
+    padding: 32px 24px 56px
+    color: $ink
 
     h1
-        margin-bottom: 40px
+        margin: 0 0 24px
+        color: $ink
         font-size: 32px
-        font-weight: 600
-        color: $neutrals2
-        +dark
-            color: $neutrals8
+        line-height: 1.15
+        font-weight: 800
 
 .employeesGrid
     display: grid
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr))
-    gap: 30px
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr))
+    gap: 16px
 
 .employeeCard
-    background: $neutrals8
-    border-radius: 16px
     overflow: hidden
+    border: 1px solid $line
+    border-radius: 8px
+    background: #ffffff
+    box-shadow: 0 12px 30px rgba(23, 35, 31, .07)
     cursor: pointer
-    transition: transform .2s, box-shadow .2s
-    +dark
-        background: $neutrals2
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease
 
     &:hover
-        transform: translateY(-4px)
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1)
-        +dark
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3)
+        transform: translateY(-2px)
+        border-color: rgba($accent, .35)
+        box-shadow: 0 18px 38px rgba(23, 35, 31, .11)
 
 .employeeImage
     position: relative
     width: 100%
-    height: 300px
+    height: 260px
+    background: #f1f6f3
 
 .employeeInfo
-    padding: 24px
+    padding: 20px
 
     h3
         margin: 0 0 8px
+        color: $ink
         font-size: 20px
-        font-weight: 600
-        color: $neutrals2
-        +dark
-            color: $neutrals8
+        font-weight: 800
 
     .position
         margin: 0 0 12px
-        font-size: 16px
-        color: $orange
-        font-weight: 500
+        color: $accent
+        font-size: 14px
+        font-weight: 900
 
     .description
         margin: 0 0 16px
+        color: $muted
         font-size: 14px
-        color: $neutrals4
-        line-height: 1.5
-        +dark
-            color: $neutrals6
+        line-height: 1.55
 
 .rating
     display: flex
     gap: 4px
 
-    .star, .starFilled
+    .star,
+    .starFilled
+        color: #f7c948
         font-size: 20px
         cursor: pointer
 
     .star
-        color: $neutrals6
-
-    .starFilled
-        color: $orange
+        color: #dfe8e4
 
 .modal
     max-width: 600px
 
 .modalContent
     padding: 24px
-    background: $neutrals8
-    border-radius: 16px
-    +dark
-        background: $neutrals2
+    border: 1px solid $line
+    border-radius: 8px
+    background: #ffffff
 
     h2
-        margin: 0 0 24px
+        margin: 0 0 22px
+        color: $ink
         font-size: 24px
-        font-weight: 600
-        color: $neutrals2
-        +dark
-            color: $neutrals8
+        font-weight: 800
 
 .ratingInput
     display: flex
     align-items: center
-    gap: 16px
-    margin-bottom: 24px
+    gap: 14px
+    margin-bottom: 20px
 
     p
         margin: 0
-        font-size: 16px
-        color: $neutrals4
-        +dark
-            color: $neutrals6
+        color: $muted
+        font-size: 14px
+        font-weight: 700
 
 .reviewInput
     width: 100%
-    padding: 12px
-    border: 2px solid $neutrals6
+    min-height: 120px
+    padding: 13px
+    border: 1px solid $line
     border-radius: 8px
-    font-size: 16px
-    color: $neutrals2
-    background: $white
+    background: #fbfdfc
+    color: $ink
+    font-size: 14px
     resize: vertical
-    margin-bottom: 24px
-    +dark
-        background: $neutrals2
-        border-color: $neutrals4
-        color: $neutrals8
+    margin-bottom: 20px
 
     &:focus
-        outline: none
-        border-color: $orange
+        border-color: $accent
+        box-shadow: 0 0 0 4px rgba($accent, .12)
 
 .submitButton
     width: 100%
-    padding: 16px
-    background: $orange
-    color: $white
-    border: none
+    min-height: 44px
     border-radius: 8px
-    font-size: 16px
-    font-weight: 600
-    cursor: pointer
-    transition: background .2s
+    background: $accent
+    color: #ffffff
+    font-size: 14px
+    font-weight: 800
 
     &:hover
-        background: darken($orange, 10)
+        background: $accent-dark
 
     &:disabled
-        background: $neutrals6
+        background: #b8c7c1
         cursor: not-allowed
 
-.loading, .error
+.loading,
+.error
+    padding: 18px
+    border-radius: 8px
+    font-size: 14px
+    font-weight: 700
     text-align: center
-    padding: 40px
-    font-size: 18px
-    color: $neutrals4
-    +dark
-        color: $neutrals6
+
+.loading
+    color: $muted
 
 .error
-    color: $dark-orange
-    +dark
-        color: $dark-orange 
+    border: 1px solid rgba(180, 35, 24, .18)
+    background: #fff1f0
+    color: #b42318
+
+@media only screen and (max-width: 767px)
+    .container
+        padding: 22px 12px 40px
+
+        h1
+            font-size: 27px

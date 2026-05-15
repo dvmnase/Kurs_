@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { authService } from '../../services/authService';
 import Layout from '../../components/Layout';
 import styles from '../../styles/client/Accounts.module.sass';
+import { getStatusKey, getStatusLabel } from '../../utils/statusLabels';
 
 interface Account {
     id: number;
@@ -217,8 +218,11 @@ const AccountsPage = () => {
                             <div key={account.id} className={styles.accountCard}>
                                 <div className={styles.accountHeader}>
                                     <h3>Счет #{account.accountNumber}</h3>
-                                    <span className={`${styles.status} ${styles[account.status.toLowerCase()]}`}>
-                                        {account.status}
+                                    <span
+                                        className={`${styles.status} ${styles[account.status.toLowerCase()]}`}
+                                        data-status={getStatusKey(account.status)}
+                                    >
+                                        {getStatusLabel(account.status)}
                                     </span>
                                 </div>
                                 <div className={styles.accountBody}>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
 import styles from '../../styles/client/OrderList.module.sass';
+import { getStatusKey, getStatusLabel } from '../../utils/statusLabels';
 
 const OrderList = () => {
     const [orders, setOrders] = useState([]);
@@ -62,8 +63,11 @@ const OrderList = () => {
                     <div key={order.id} className={styles.orderCard}>
                         <div className={styles.orderHeader}>
                             <h3>Order #{order.id}</h3>
-                            <span className={`${styles.status} ${styles[order.status]}`}>
-                                {order.status}
+                            <span
+                                className={`${styles.status} ${styles[order.status]}`}
+                                data-status={getStatusKey(order.status)}
+                            >
+                                {getStatusLabel(order.status)}
                             </span>
                         </div>
                         <div className={styles.orderDetails}>

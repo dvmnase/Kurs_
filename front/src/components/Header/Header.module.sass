@@ -1,256 +1,422 @@
 @import ../../styles/helpers
 
+$accent: #1f7a5b
+$accent-dark: #115b43
+$accent-soft: #e6f4ee
+$yellow: #f7c948
+$ink: #17231f
+$muted: #697873
+$line: rgba(23, 35, 31, .1)
+$white: #ffffff
+$danger: #b42318
+
 .header
     position: fixed
-    top: 0px
+    top: 0
     left: 0
     width: 100%
     z-index: 20
-    padding: 10px 0
-    background: $white
-    border-bottom: 1px solid $neutrals6
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2)
-    +m
-        padding: 10px 0
-        border: none
-        top: 50px
+    padding: 12px 0
+    border-bottom: 1px solid rgba(31, 122, 91, .14)
+    background: linear-gradient(180deg, rgba(255, 255, 255, .94) 0%, rgba(255, 255, 255, .84) 100%)
+    backdrop-filter: blur(20px)
+    box-shadow: 0 18px 45px rgba(23, 35, 31, .08)
+
+    &::before
+        content: ""
+        position: absolute
+        inset: 0
+        pointer-events: none
+        background: radial-gradient(circle at 12% 0%, rgba(31, 122, 91, .12), transparent 30%), radial-gradient(circle at 90% 0%, rgba(247, 201, 72, .14), transparent 28%)
+        opacity: .9
+
     +dark
-        background: $neutrals1
-        border-color: $neutrals3
-        box-shadow: 0 0 10px 0 rgba(107, 107, 107, 0.2)
+        border-color: rgba($neutrals8, .08)
+        background: linear-gradient(180deg, rgba($neutrals1, .94) 0%, rgba($neutrals1, .84) 100%)
+        box-shadow: 0 18px 50px rgba(0, 0, 0, .24)
+
+        &::before
+            background: radial-gradient(circle at 12% 0%, rgba(31, 122, 91, .20), transparent 30%), radial-gradient(circle at 90% 0%, rgba(247, 201, 72, .08), transparent 28%)
 
 .container
+    position: relative
+    z-index: 1
     display: flex
     align-items: center
-    & > .button
-        margin-right: 12px
-        background: transparent
-        transition: all 0.5s ease-out
-        color: $neutrals4
-        svg
-            fill: $neutrals4
-        +m
-            display: none
-        +dark
-            svg
-                fill: $neutrals4
-        &:hover
-            background: transparent
-            color: $orange
-            svg
-                fill: $orange
-    .login
-        border: 1px solid $orange
-        color: $orange
-        transparent: all 0.5s ease-out
-        &:hover
-            background: $orange
-            color: $white
-    .logout
-        border: 1px solid $dark-orange
-        color: $dark-orange
-        transparent: all 0.5s ease-out
-        &:hover
-            background: $dark-orange
-            color: $white
+    gap: 20px
 
 .logo
     position: relative
     z-index: 12
-    display: inline-block
+    display: inline-flex
+    align-items: center
     flex-shrink: 0
-    width: 128px
-    margin-right: 32px
-    +d
-        margin-right: auto
-    img
-        width: 50%
-        height: auto
+    gap: 12px
+    min-width: 190px
+    padding: 7px 12px 7px 7px
+    border: 1px solid rgba(23, 35, 31, .08)
+    border-radius: 18px
+    background: rgba(255, 255, 255, .72)
+    color: $ink
+    font-weight: 900
+    box-shadow: 0 12px 30px rgba(23, 35, 31, .08)
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease
+
+    &:hover
+        transform: translateY(-1px)
+        border-color: rgba($accent, .18)
+        box-shadow: 0 16px 36px rgba(23, 35, 31, .11)
+
+    +dark
+        border-color: rgba($neutrals8, .10)
+        background: rgba($neutrals2, .62)
+        color: $neutrals8
+
+.brandBadge
+    display: inline-flex
+    align-items: center
+    justify-content: center
+    width: 44px
+    height: 44px
+    flex: 0 0 44px
+    border-radius: 14px
+    background: linear-gradient(135deg, $yellow 0%, #ffe08a 100%)
+    color: $ink
+    font-size: 14px
+    font-weight: 950
+    line-height: 1
+    box-shadow: 0 10px 24px rgba(247, 201, 72, .28), inset 0 -2px 0 rgba(23, 35, 31, .12)
+
+.brandName
+    display: block
+    color: inherit
+    font-size: 18px
+    line-height: 1
+    font-weight: 950
+    letter-spacing: -.02em
 
 .wrapper
     display: flex
     align-items: center
-    flex-grow: 1
-    +d
-        flex-grow: 0
+    flex: 1
+    min-width: 0
+
     +m
-        position: absolute
-        top: 0
-        left: 0
-        right: 0
+        position: fixed
+        inset: 0
+        display: flex
         flex-direction: column
         align-items: stretch
-        height: 100vh
-        margin: 0
-        padding: 140px 32px 40px
-        box-shadow: 0px 64px 64px rgba(31, 47, 70, 0.2)
-        background: $neutrals8
+        padding: 112px 24px 32px
+        background: radial-gradient(circle at 10% 12%, rgba(31, 122, 91, .13), transparent 34%), radial-gradient(circle at 92% 18%, rgba(247, 201, 72, .15), transparent 30%), rgba(255, 255, 255, .98)
         visibility: hidden
         opacity: 0
-        transition: all .2s
+        transform: translateY(-10px)
+        transition: opacity .22s ease, transform .22s ease, visibility .22s ease
+
         +dark
-            background: $neutrals1
+            background: radial-gradient(circle at 10% 12%, rgba(31, 122, 91, .22), transparent 34%), radial-gradient(circle at 92% 18%, rgba(247, 201, 72, .08), transparent 30%), rgba($neutrals1, .98)
+
         &.active
             visibility: visible
             opacity: 1
-    .button
-        display: none
-        +m
-            display: inline-flex
-            margin-top: 16px
+            transform: translateY(0)
 
 .nav
     display: flex
-    margin-right: auto
-    border-left: 2px solid $neutrals6
-    +m
-        display: flex
-        flex-direction: column
-        margin: 0 0 40px
-        border: none
+    align-items: center
+    gap: 7px
+    min-width: 0
+    padding: 5px
+    border: 1px solid rgba(23, 35, 31, .07)
+    border-radius: 18px
+    background: rgba(255, 255, 255, .54)
+
     +dark
-        border-color: $neutrals3
+        border-color: rgba($neutrals8, .08)
+        background: rgba($neutrals2, .46)
+
+    +m
+        flex-direction: column
+        align-items: stretch
+        gap: 10px
+        width: 100%
+        padding: 10px
+        border-radius: 24px
+        background: rgba(255, 255, 255, .78)
+        box-shadow: 0 20px 50px rgba(23, 35, 31, .10)
+
+        +dark
+            background: rgba($neutrals2, .68)
 
 .link
-    margin-left: 32px
-    +dm-sans
-    line-height: 40px
-    color: $neutrals4
-    transition: color .2s
-    +m
-        margin-left: 0
-        font-size: 24px
-        line-height: 64px
-    &:hover,
-    &.active
-        color: $orange
-    &:nth-child(n+6)
-        display: none
-        +m
-            display: block
-
-.search
     position: relative
-    flex-shrink: 0
-    width: 256px
-    margin-right: 24px
-    +t
-        display: none
-    +m
-        display: block
-        width: 100%
-        margin: auto 0 0
+    display: inline-flex
+    align-items: center
+    justify-content: center
+    min-height: 40px
+    padding: 0 15px
+    border-radius: 13px
+    color: $muted
+    font-size: 14px
+    font-weight: 850
+    line-height: 1
+    white-space: nowrap
+    transition: color .2s ease, background .2s ease, transform .2s ease, box-shadow .2s ease
 
-.input
-    width: 100%
-    height: 40px
-    padding: 0 42px 0 16px
-    background: none
-    border: 2px solid $neutrals6
-    border-radius: 8px
-    +poppins
-    +caption-2
-    transition: border-color .2s
-    +placeholder
-        color: $neutrals4
-    +dark
-        border-color: $neutrals3
-        color: $neutrals8
-    &:focus
-        border-color: $neutrals4
+    &::after
+        content: ""
+        position: absolute
+        left: 14px
+        right: 14px
+        bottom: 6px
+        height: 2px
+        border-radius: 2px
+        background: $accent
+        opacity: 0
+        transform: scaleX(.4)
+        transition: opacity .2s ease, transform .2s ease
 
-.result
-    position: absolute
-    top: 0
-    right: 0
-    bottom: 0
-    width: 42px
-    svg
-        fill: $neutrals4
-        transition: fill .2s
     &:hover
-        svg
-            fill: $orange
+        background: rgba(31, 122, 91, .08)
+        color: $accent
+        transform: translateY(-1px)
 
-.notification
-    margin-right: 24px
+    &.active
+        background: $accent-soft
+        color: $accent
+        box-shadow: 0 10px 24px rgba(31, 122, 91, .12)
+
+        &::after
+            opacity: 1
+            transform: scaleX(1)
+
     +m
-        margin-right: 20px
+        min-height: 54px
+        justify-content: center
+        border-radius: 16px
+        font-size: 18px
+
+    +dark
+        color: rgba($neutrals8, .68)
+    
+        &:hover
+            background: rgba($accent, .14)
+            color: #e0de7e
+
+        &.active
+            background: rgba($accent, .20)
+            color: #e0c67e
+            box-shadow: none
+
+.version
+    display: flex
+    align-items: center
+    margin-left: auto
+    gap: 10px
+
+    +m
+        width: 100%
+        margin: 18px 0 0
+
+.button
+    display: inline-flex
+    align-items: center
+    justify-content: center
+    flex-shrink: 0
+    min-height: 42px
+    padding: 0 18px
+    border-radius: 14px
+    background: transparent
+    box-shadow: none
+    font-size: 14px
+    font-weight: 900
+    transition: background .2s ease, color .2s ease, transform .2s ease, box-shadow .2s ease, border-color .2s ease
+
+    &:hover
+        transform: translateY(-1px)
+
+    +m
+        display: none
+
+.login
+    border: 1px solid rgba($accent, .24)
+    color: $accent
+    background: rgba(255, 255, 255, .58)
+
+    &:hover
+        border-color: rgba($accent, .45)
+        background: linear-gradient(135deg, $accent 0%, $accent-dark 100%)
+        color: #ffffff
+        box-shadow: 0 14px 30px rgba(31, 122, 91, .22)
+
+    +dark
+        background: rgba($neutrals2, .58)
+
+.logout
+    border: 1px solid rgba(217, 45, 32, .22)
+    color: $danger
+    background: rgba(255, 255, 255, .58)
+
+    &:hover
+        border-color: rgba($danger, .45)
+        background: $danger
+        color: #ffffff
+        box-shadow: 0 14px 30px rgba(180, 35, 24, .20)
+
+    +dark
+        background: rgba($neutrals2, .58)
 
 .burger
     display: none
+
     +m
-        display: block
         position: relative
-        margin-left: 20px
-        width: 32px
-        height: 32px
-        background: none
-        -webkit-tap-highlight-color: rgba(0,0,0,0)
+        z-index: 12
+        display: block
+        width: 44px
+        height: 44px
+        flex: 0 0 44px
+        margin-left: auto
+        border: 1px solid rgba(23, 35, 31, .08)
+        border-radius: 14px
+        background: rgba(255, 255, 255, .72)
+        box-shadow: 0 12px 28px rgba(23, 35, 31, .08)
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0)
+        transition: background .2s ease, border-color .2s ease
+
+        +dark
+            border-color: rgba($neutrals8, .10)
+            background: rgba($neutrals2, .72)
+
         &.active
+            background: $accent
+
+            &:before,
+            &:after
+                background: #ffffff
+
             &:before
                 transform: translateY(0) rotate(-45deg)
+
             &:after
                 transform: translateY(0) rotate(45deg)
+
         &:before,
         &:after
             content: ''
             position: absolute
-            top: 16px
-            left: 6px
+            top: 21px
+            left: 12px
             width: 20px
             height: 2px
-            background: $neutrals4
+            background: $ink
             border-radius: 2px
-            transition: transform .2s
-        &:before
-            transform: translateY(-4px)
-        &:after
-            transform: translateY(3px)
+            transition: transform .2s ease, background .2s ease
 
-.version
-    margin-right: 8px
+        &:before
+            transform: translateY(-5px)
+
+        &:after
+            transform: translateY(5px)
 
 .modal
     :global(.modal-overlay)
-        background: rgba(0, 0, 0, 0.5)
+        background: rgba(14, 25, 22, .58)
+        backdrop-filter: blur(8px)
 
 .steps
     position: relative
-    max-width: 400px
+    max-width: 430px
     margin: 0 auto
     padding: 30px
-    background: $white
-    border-radius: 8px
+    border: 1px solid rgba(23, 35, 31, .08)
+    border-radius: 24px
+    background: rgba(255, 255, 255, .96)
+    box-shadow: 0 28px 80px rgba(23, 35, 31, .22)
+
     +dark
-        background: $neutrals1
+        border-color: rgba($neutrals8, .10)
+        background: rgba($neutrals1, .96)
 
 .tabs
-    display: flex
-    margin-bottom: 32px
-    border-bottom: 1px solid $neutrals6
+    display: grid
+    grid-template-columns: 1fr 1fr
+    gap: 6px
+    margin-bottom: 24px
+    padding: 5px
+    border: 1px solid #dfe8e4
+    border-radius: 16px
+    background: #f5faf7
+
     +dark
-        border-color: $neutrals3
+        border-color: rgba($neutrals8, .10)
+        background: rgba($neutrals2, .58)
 
 .tab
-    flex: 1
-    padding: 0 0 20px
-    +dm-sans
-    font-size: 16px
-    line-height: 1.5
-    font-weight: 500
-    text-align: center
-    color: $neutrals4
-    transition: all .2s
-    +dark
-        color: $neutrals6
+    min-height: 44px
+    border-radius: 12px
+    color: $muted
+    font-size: 14px
+    font-weight: 900
+    transition: color .2s ease, background .2s ease, box-shadow .2s ease
+
+    &:hover
+        color: $accent
+
     &.active
-        color: $orange
-        +dark
-            color: $orange
-        &:after
-            transform: translateX(-50%) scaleX(1)
+        background: #ffffff
+        color: $accent
+        box-shadow: 0 10px 24px rgba(23, 35, 31, .08)
+
+    +dark
+        color: rgba($neutrals8, .62)
+
+        &.active
+            background: rgba($neutrals1, .9)
+            color: #e0de7e
 
 .content
-    padding: 0 5px
-    
+    padding: 0
+
+@media only screen and (max-width: 767px)
+    .header
+        padding: 10px 0
+
+    .container
+        gap: 12px
+
+    .logo
+        min-width: auto
+        padding-right: 14px
+
+    .brandBadge
+        width: 40px
+        height: 40px
+        flex-basis: 40px
+        border-radius: 12px
+
+    .brandName
+        font-size: 17px
+
+@media only screen and (max-width: 479px)
+    .wrapper
+        padding-left: 16px
+        padding-right: 16px
+
+    .logo
+        gap: 10px
+
+    .brandBadge
+        width: 38px
+        height: 38px
+        flex-basis: 38px
+
+    .brandName
+        font-size: 16px
+
+    .steps
+        padding: 22px
+        border-radius: 20px
+
+        

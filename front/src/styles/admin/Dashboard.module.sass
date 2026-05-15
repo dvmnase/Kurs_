@@ -1,133 +1,478 @@
+$accent: #1f7a5b
+$accent-dark: #115b43
+$accent-soft: #e6f4ee
+$yellow: #f7c948
+$yellow-soft: #fff6d8
+$ink: #17231f
+$muted: #6b7873
+$line: #dfe8e4
+$surface: #ffffff
+$danger: #b42318
+$danger-soft: #fff1f0
+
 .dashboard
-    display: flex
-    min-height: 100vh
+    position: relative
+    display: grid
+    grid-template-columns: 292px minmax(0, 1fr)
+    gap: 22px
+    min-height: calc(100vh - 128px)
+
+    &::before
+        content: ""
+        position: fixed
+        right: -170px
+        top: 120px
+        width: 380px
+        height: 380px
+        border-radius: 50%
+        background: rgba($accent, .08)
+        pointer-events: none
+        z-index: -1
+
+    &::after
+        content: ""
+        position: fixed
+        left: -130px
+        bottom: 70px
+        width: 300px
+        height: 300px
+        border-radius: 50%
+        background: rgba($yellow, .16)
+        pointer-events: none
+        z-index: -1
 
 .sidebar
-    width: 250px
-    background: #f5f5f5
-    padding: 20px
-    border-right: 1px solid #ddd
+    align-self: start
+    position: sticky
+    top: 96px
+    overflow: hidden
+    padding: 12px
+    border: 1px solid rgba(23, 35, 31, .08)
+    border-radius: 24px
+    background: rgba(255, 255, 255, .86)
+    box-shadow: 0 20px 50px rgba(23, 35, 31, .09)
+    backdrop-filter: blur(16px)
+
+    &::before
+        content: ""
+        display: block
+        height: 5px
+        margin: -12px -12px 12px
+        background: linear-gradient(90deg, $accent 0%, $yellow 100%)
 
 .tab
-    display: block
+    position: relative
+    display: flex
+    align-items: center
     width: 100%
-    padding: 15px
-    margin-bottom: 10px
-    background: white
-    border: 1px solid #ddd
-    border-radius: 5px
-    cursor: pointer
+    min-height: 48px
+    padding: 0 15px
+    margin-bottom: 7px
+    border-radius: 15px
+    color: $muted
+    font-size: 14px
+    font-weight: 900
     text-align: left
-    transition: all 0.3s
+    transition: background .2s ease, color .2s ease, transform .2s ease, box-shadow .2s ease
+
+    &::before
+        content: ""
+        width: 8px
+        height: 8px
+        margin-right: 10px
+        border-radius: 50%
+        background: rgba($accent, .25)
+        transition: background .2s ease, box-shadow .2s ease
 
     &:hover
-        background: #e9e9e9
+        background: rgba($accent, .08)
+        color: $accent
+        transform: translateX(2px)
+
+        &::before
+            background: $accent
 
     &.active
-        background: #007bff
-        color: white
-        border-color: #007bff
+        background: linear-gradient(135deg, $accent 0%, $accent-dark 100%)
+        color: #ffffff
+        box-shadow: 0 14px 28px rgba($accent, .22)
+
+        &::before
+            background: #ffffff
+            box-shadow: 0 0 0 4px rgba(255, 255, 255, .18)
+
+    &:last-child
+        margin-bottom: 0
 
 .content
-    flex: 1
-    padding: 30px
+    position: relative
+    min-width: 0
+    overflow: hidden
+    padding: 28px
+    border: 1px solid rgba(23, 35, 31, .08)
+    border-radius: 28px
+    background: rgba(255, 255, 255, .90)
+    box-shadow: 0 20px 55px rgba(23, 35, 31, .09)
+    backdrop-filter: blur(16px)
+
+    &::before
+        content: ""
+        position: absolute
+        right: -90px
+        top: -90px
+        width: 240px
+        height: 240px
+        border-radius: 50%
+        background: rgba($accent, .07)
+        pointer-events: none
+
+    &::after
+        content: ""
+        position: absolute
+        left: 30px
+        top: 0
+        width: 80px
+        height: 5px
+        border-radius: 0 0 999px 999px
+        background: linear-gradient(90deg, $accent 0%, $yellow 100%)
+
+    > *
+        position: relative
+        z-index: 1
+
+    h2
+        margin: 0 0 22px
+        color: $ink
+        font-size: 30px
+        line-height: 1.15
+        font-weight: 950
+        letter-spacing: -.04em
+
+    h3
+        margin: 0 0 16px
+        color: $ink
+        font-size: 21px
+        line-height: 1.25
+        font-weight: 950
+        letter-spacing: -.03em
+
+    h4
+        margin: 0 0 12px
+        color: $ink
+        font-size: 16px
+        line-height: 1.3
+        font-weight: 900
+
+    button
+        display: inline-flex
+        align-items: center
+        justify-content: center
+        min-height: 42px
+        padding: 0 16px
+        border: 0
+        border-radius: 14px !important
+        background: linear-gradient(135deg, $accent 0%, $accent-dark 100%)
+        color: #ffffff
+        font-size: 14px
+        font-weight: 900
+        box-shadow: 0 12px 26px rgba($accent, .20)
+        transition: transform .2s ease, box-shadow .2s ease, background .2s ease, color .2s ease, opacity .2s ease
+
+        &:hover
+            transform: translateY(-1px)
+            background: linear-gradient(135deg, lighten($accent, 4) 0%, $accent-dark 100%)
+            box-shadow: 0 16px 34px rgba($accent, .26)
+
+        &:active
+            transform: translateY(0)
+            box-shadow: 0 8px 18px rgba($accent, .18)
+
+        &[type="button"]
+            background: rgba(255, 255, 255, .76)
+            color: $ink
+            box-shadow: 0 0 0 1px rgba(23, 35, 31, .09) inset, 0 10px 22px rgba(23, 35, 31, .05)
+
+            &:hover
+                background: $accent-soft
+                color: $accent
+                box-shadow: 0 0 0 1px rgba($accent, .20) inset, 0 14px 28px rgba($accent, .10)
+
+    table
+        width: 100%
+        border-collapse: separate !important
+        border-spacing: 0
+        overflow: hidden
+        border: 1px solid rgba(23, 35, 31, .08)
+        border-radius: 20px !important
+        background: #ffffff
+        box-shadow: 0 14px 34px rgba(23, 35, 31, .07)
+
+    th
+        padding: 15px 16px
+        border-bottom: 1px solid rgba(23, 35, 31, .08)
+        background: linear-gradient(180deg, #f6fbf8 0%, #eef7f2 100%) !important
+        color: $ink
+        font-size: 13px
+        font-weight: 950
+        text-align: left
+        white-space: nowrap
+
+    td
+        padding: 14px 16px
+        border-bottom: 1px solid rgba(23, 35, 31, .06)
+        color: #32413b
+        font-size: 14px
+        line-height: 1.45
+
+    tr
+        transition: background .2s ease
+
+        &:hover
+            td
+                background: rgba($accent, .035)
+
+        &:last-child
+            td
+                border-bottom: 0
 
 .chart
-    margin-top: 20px
+    margin-top: 24px
+    padding: 20px
+    border: 1px solid rgba(23, 35, 31, .08)
+    border-radius: 22px
+    background: linear-gradient(180deg, rgba(255, 255, 255, .86) 0%, rgba(246, 251, 248, .86) 100%)
+    box-shadow: 0 14px 34px rgba(23, 35, 31, .06)
 
 .chartBar
-    margin-bottom: 15px
+    margin-bottom: 16px
+
+    &:last-child
+        margin-bottom: 0
 
 .chartLabel
-    font-size: 14px
-    margin-bottom: 5px
-    font-weight: 500
+    display: flex
+    justify-content: space-between
+    gap: 12px
+    margin-bottom: 8px
+    color: $ink
+    font-size: 13px
+    font-weight: 900
 
 .chartBarContainer
     width: 100%
-    height: 30px
-    background: #f0f0f0
-    border-radius: 5px
+    height: 34px
     overflow: hidden
+    border-radius: 999px
+    background: #eef3f0
+    box-shadow: inset 0 1px 0 rgba(23, 35, 31, .04)
 
 .chartBarFill
     height: 100%
-    background: #007bff
     display: flex
     align-items: center
-    padding: 0 10px
-    color: white
-    font-weight: bold
-    transition: width 0.3s
+    justify-content: flex-end
+    min-width: 34px
+    padding: 0 13px
+    border-radius: 999px
+    background: linear-gradient(90deg, $accent 0%, lighten($accent, 8) 100%)
+    color: #ffffff
+    font-size: 13px
+    font-weight: 950
+    box-shadow: 0 8px 20px rgba($accent, .18)
+    transition: width .35s ease
 
 .pieChart
     display: flex
     flex-direction: column
     align-items: center
-    gap: 20px
+    gap: 18px
+    padding: 20px
+    border: 1px solid rgba(23, 35, 31, .08)
+    border-radius: 22px
+    background: rgba(255, 255, 255, .72)
+
+    svg
+        max-width: 100%
+        height: auto
+        filter: drop-shadow(0 12px 20px rgba(23, 35, 31, .10))
 
 .pieLegend
-    display: flex
-    flex-direction: column
+    display: grid
     gap: 10px
-    margin-top: 20px
+    width: 100%
+    margin-top: 4px
 
 .legendItem
     display: flex
     align-items: center
     gap: 10px
+    min-height: 34px
+    padding: 0 12px
+    border-radius: 12px
+    background: rgba(238, 243, 240, .68)
+    color: $muted
+    font-size: 13px
+    font-weight: 800
 
 .legendColor
-    width: 20px
-    height: 20px
-    border-radius: 3px
+    width: 14px
+    height: 14px
+    flex: 0 0 14px
+    border-radius: 5px
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, .9)
 
 .modal
     position: fixed
     top: 50%
     left: 50%
-    transform: translate(-50%, -50%)
-    background: white
-    padding: 30px
-    border-radius: 10px
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3)
     z-index: 1000
-    max-width: 500px
-    width: 90%
+    width: min(520px, 92vw)
     max-height: 90vh
-    overflow-y: auto
+    overflow: hidden
+    padding: 30px
+    border: 1px solid rgba(255, 255, 255, .72)
+    border-radius: 26px
+    background: linear-gradient(180deg, rgba(255, 255, 255, .98) 0%, rgba(247, 251, 249, .96) 100%)
+    box-shadow: 0 32px 90px rgba(14, 25, 22, .30)
+    transform: translate(-50%, -50%)
+
+    &::before
+        content: ""
+        position: absolute
+        right: -80px
+        top: -80px
+        width: 200px
+        height: 200px
+        border-radius: 50%
+        background: rgba($accent, .10)
+        pointer-events: none
 
     form
-        display: flex
-        flex-direction: column
+        position: relative
+        z-index: 1
+        display: grid
         gap: 15px
+        max-height: calc(90vh - 60px)
+        overflow-y: auto
+        padding-right: 2px
 
-        input, select
-            padding: 10px
-            border: 1px solid #ddd
-            border-radius: 5px
+        input,
+        select,
+        textarea
+            width: 100%
+            min-height: 48px
+            padding: 0 14px
+            border: 1px solid $line
+            border-radius: 15px
+            background: rgba(255, 255, 255, .86)
+            color: $ink
             font-size: 14px
+            font-weight: 750
+            outline: none
+            transition: border-color .2s ease, box-shadow .2s ease, background .2s ease
+
+            &:focus
+                border-color: rgba($accent, .55)
+                background: #ffffff
+                box-shadow: 0 0 0 4px rgba($accent, .12)
+
+        textarea
+            min-height: 110px
+            padding-top: 13px
+            resize: vertical
 
         button
-            padding: 10px 20px
-            background: #007bff
-            color: white
-            border: none
-            border-radius: 5px
-            cursor: pointer
+            min-height: 44px
+            padding: 0 18px
+            border-radius: 14px
+            background: linear-gradient(135deg, $accent 0%, $accent-dark 100%)
+            color: #ffffff
+            font-size: 14px
+            font-weight: 900
+            box-shadow: 0 12px 26px rgba($accent, .20)
+            transition: transform .2s ease, box-shadow .2s ease, background .2s ease, color .2s ease
 
             &:hover
-                background: #0056b3
+                transform: translateY(-1px)
+                background: linear-gradient(135deg, lighten($accent, 4) 0%, $accent-dark 100%)
+                box-shadow: 0 16px 34px rgba($accent, .26)
 
             &[type="button"]
-                background: #6c757d
+                background: rgba(255, 255, 255, .76)
+                color: $ink
+                box-shadow: 0 0 0 1px rgba(23, 35, 31, .09) inset, 0 10px 22px rgba(23, 35, 31, .05)
 
                 &:hover
-                    background: #5a6268
+                    background: $accent-soft
+                    color: $accent
+                    box-shadow: 0 0 0 1px rgba($accent, .20) inset, 0 14px 28px rgba($accent, .10)
 
 .error
-    background: #f8d7da
-    color: #721c24
-    padding: 15px
-    border-radius: 5px
-    margin-bottom: 20px
+    margin-bottom: 18px
+    padding: 15px 16px
+    border: 1px solid rgba($danger, .18)
+    border-radius: 16px
+    background: $danger-soft
+    color: $danger
+    font-size: 14px
+    line-height: 1.5
+    font-weight: 850
+
+@media only screen and (max-width: 1023px)
+    .dashboard
+        grid-template-columns: 1fr
+        gap: 18px
+
+    .sidebar
+        position: static
+        display: grid
+        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr))
+        gap: 8px
+        border-radius: 22px
+
+    .tab
+        margin-bottom: 0
+
+@media only screen and (max-width: 767px)
+    .dashboard
+        min-height: auto
+
+    .content
+        padding: 20px
+        border-radius: 24px
+        overflow-x: auto
+
+        h2
+            font-size: 25px
+
+        h3
+            font-size: 19px
+
+        table
+            min-width: 680px
+
+    .sidebar
+        grid-template-columns: 1fr
+        padding: 10px
+
+    .tab
+        min-height: 46px
+
+    .modal
+        width: calc(100vw - 24px)
+        padding: 24px
+        border-radius: 22px
+
+@media only screen and (max-width: 479px)
+    .content
+        padding: 18px
+        border-radius: 22px
+
+    .chart
+        padding: 16px
+
+    .pieChart
+        padding: 16px
+
+    .modal
+        padding: 20px

@@ -6,6 +6,7 @@ import styles from '../../styles/client/Orders.module.sass';
 import { useRouter } from 'next/router';
 import cn from 'classnames';
 import axios from 'axios';
+import { getStatusKey, getStatusLabel } from '../../utils/statusLabels';
 
 interface Order {
     id: number;
@@ -92,21 +93,6 @@ const OrdersPage = () => {
         router.push(`/client/orders/${orderId}`);
     };
 
-    const getStatusTranslation = (status: string) => {
-        switch (status) {
-            case 'NEW':
-                return 'Новый';
-            case 'IN_PROGRESS':
-                return 'В работе';
-            case 'COMPLETED':
-                return 'Завершен';
-            case 'CANCELLED':
-                return 'Отменен';
-            default:
-                return status;
-        }
-    };
-
     if (loading) {
         return (
             <ClientLayout>
@@ -139,8 +125,11 @@ const OrdersPage = () => {
                             >
                                 <div className={styles.orderHeader}>
                                     <h3 className={styles.serviceName}>{order.serviceName}</h3>
-                                    <span className={cn(styles.status, styles[order.status.toLowerCase()])}>
-                                        {getStatusTranslation(order.status)}
+                                    <span
+                                        className={cn(styles.status, styles[getStatusKey(order.status).toLowerCase()])}
+                                        data-status={getStatusKey(order.status)}
+                                    >
+                                        {getStatusLabel(order.status)}
                                     </span>
                                 </div>
                                 <div className={styles.orderDetails}>

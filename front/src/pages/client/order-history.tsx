@@ -5,6 +5,7 @@ import ProtectedRoute from '../../components/auth/ProtectedRoute';
 import styles from '../../styles/client/OrderHistory.module.sass';
 import { useRouter } from 'next/router';
 import cn from 'classnames';
+import { getStatusKey, getStatusLabel } from '../../utils/statusLabels';
 
 interface Order {
     id: number;
@@ -63,21 +64,6 @@ const OrderHistoryPage = () => {
 
     const handleOrderClick = (orderId: number) => {
         router.push(`/client/orders/${orderId}`);
-    };
-
-    const getStatusTranslation = (status: string) => {
-        switch (status) {
-            case 'NEW':
-                return 'Новый';
-            case 'IN_PROGRESS':
-                return 'В работе';
-            case 'COMPLETED':
-                return 'Завершен';
-            case 'CANCELLED':
-                return 'Отменен';
-            default:
-                return status;
-        }
     };
 
     const filteredOrders = orders.filter(order => {
@@ -146,8 +132,11 @@ const OrderHistoryPage = () => {
                                 >
                                     <div className={styles.orderHeader}>
                                         <h3>Заказ #{order.id}</h3>
-                                        <span className={cn(styles.status, styles[order.status])}>
-                                            {getStatusTranslation(order.status)}
+                                        <span
+                                            className={cn(styles.status, styles[getStatusKey(order.status)])}
+                                            data-status={getStatusKey(order.status)}
+                                        >
+                                            {getStatusLabel(order.status)}
                                         </span>
                                     </div>
                                     <div className={styles.orderDetails}>

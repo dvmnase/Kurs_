@@ -16,6 +16,7 @@ const SignInForm: React.FC<SignInFormProps> = ({ className, onSuccess }) => {
     password: ''
   });
   const [error, setError] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -28,14 +29,13 @@ const SignInForm: React.FC<SignInFormProps> = ({ className, onSuccess }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setIsSubmitting(true);
     try {
       const response = await authService.signIn(formData);
       if (response.token) {
-        // Сохраняем токен и роль
         localStorage.setItem('token', response.token);
         localStorage.setItem('role', response.role);
 
-        // Сохраняем данные пользователя
         if (response.data) {
           const userData = {
             ...response.data,
@@ -59,7 +59,9 @@ const SignInForm: React.FC<SignInFormProps> = ({ className, onSuccess }) => {
         }
       }
     } catch (err: any) {
-      setError('Ошибка при авторизации');
+      setError('Не удалось войти. Проверьте логин и пароль.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -67,7 +69,7 @@ const SignInForm: React.FC<SignInFormProps> = ({ className, onSuccess }) => {
     <div className={cn(className, styles.transfer)}>
       <div className={cn('h4', styles.title)}>Вход</div>
       <div className={styles.text}>
-        Введите свои данные для входа
+        Введите данные учетной записи, чтобы продолжить работу.
       </div>
       {error && <div className={styles.error}>{error}</div>}
       <form className={styles.form} onSubmit={handleSubmit}>
@@ -94,8 +96,8 @@ const SignInForm: React.FC<SignInFormProps> = ({ className, onSuccess }) => {
           />
         </div>
         <div className={styles.btns}>
-          <button type="submit" className={cn('button', styles.button)}>
-            Войти
+          <button type="submit" className={cn('button', styles.button)} disabled={isSubmitting}>
+            {isSubmitting ? 'Входим...' : 'Войти'}
           </button>
         </div>
       </form>

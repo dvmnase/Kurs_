@@ -20,7 +20,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             <header className={styles.header}>
                 <div className={styles.headerContent}>
                     <div className={styles.logo} onClick={() => router.push('/admin/dashboard')}>
-                        Admin
+                        <span className={styles.brandBadge}>HT</span>
+                        <span>HeatTruck Admin</span>
                     </div>
                     <button className={styles.logoutButton} onClick={handleLogout}>
                         Выйти
@@ -30,7 +31,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             <div className={styles.banner}>
                 <img 
                     src="/images/girlyanda.png" 
-                    alt="Гирлянда" 
+                    alt="" 
                     className={styles.bannerImage}
                 />
             </div>

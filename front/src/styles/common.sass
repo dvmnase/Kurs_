@@ -1,7 +1,7 @@
 // common styles
 body
     min-width: 375px
-    background: $neutrals8
+    background: #eef3f0
     +poppins
     font-size: 14px
     line-height: calc(24/14)
@@ -14,6 +14,70 @@ body
 
 a
     text-decoration: none
+
+button,
+input,
+select,
+textarea
+    font-family: inherit
+    letter-spacing: 0
+
+button
+    border-radius: 8px
+
+button:not([aria-label="user-information"]):not([aria-label="close"]):not([class*="burger"]):not([class*="close"]):not([class*="tab"])
+    min-height: 44px
+    padding: 0 18px
+    font-size: 14px
+    font-weight: 800
+
+[data-status]
+    display: inline-flex
+    align-items: center
+    justify-content: center
+    min-height: 28px
+    padding: 0 10px
+    border-radius: 8px
+    border: 1px solid transparent
+    font-size: 12px
+    line-height: 1
+    font-weight: 800
+    text-transform: none
+    white-space: nowrap
+
+[data-status="NEW"],
+[data-status="OPEN"]
+    border-color: rgba(68, 55, 255, .16)
+    background: rgba(68, 55, 255, .08)
+    color: #4437ff
+
+[data-status="PENDING"],
+[data-status="IN_PROGRESS"]
+    border-color: rgba(183, 121, 31, .18)
+    background: rgba(247, 201, 72, .18)
+    color: #9a650f
+
+[data-status="ACCEPTED"],
+[data-status="ACTIVE"],
+[data-status="APPROVED"],
+[data-status="COMPLETED"]
+    border-color: rgba(31, 122, 91, .18)
+    background: #e8f5ef
+    color: #1f7a5b
+
+[data-status="DECLINED"],
+[data-status="REJECTED"],
+[data-status="CANCELLED"],
+[data-status="CANCELED"],
+[data-status="BLOCKED"]
+    border-color: rgba(180, 35, 24, .18)
+    background: #fff1f0
+    color: #b42318
+
+[data-status="CLOSED"]
+    border-color: rgba(23, 35, 31, .12)
+    background: #edf1ef
+    color: #56645f
 
 svg,
 img

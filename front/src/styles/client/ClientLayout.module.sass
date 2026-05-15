@@ -4,38 +4,25 @@
     min-height: 100vh
     display: flex
     flex-direction: column
-    background: $neutrals8
+    background: #eef3f0
+    color: #17231f
     +dark
         background: $neutrals1
+        color: $neutrals8
 
 .banner
-    position: fixed
-    top: 88px
-    left: 0
-    width: 100%
-    display: flex
-    justify-content: center
-    align-items: center
-    background: transparent
-    padding: 0
-    margin: 0
-    z-index: 50
-    pointer-events: none
+    display: none
 
 .bannerImage
-    width: 100%
-    height: auto
-    display: block
-    object-fit: cover
-    max-height: 200px
-    pointer-events: none
+    display: none
 
 .main
     flex: 1
-    padding: 20px
-    max-width: 1200px
-    margin: 0 auto
     width: 100%
+    max-width: 1360px
+    margin: 0 auto
+    padding: 108px 24px 56px
 
-    +m
-        padding: 16px 
+@media only screen and (max-width: 767px)
+    .main
+        padding: 92px 12px 40px

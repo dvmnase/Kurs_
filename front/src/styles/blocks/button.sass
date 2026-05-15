@@ -1,98 +1,167 @@
+$button-accent: #1f7a5b
+$button-accent-dark: #115b43
+$button-accent-soft: #e6f4ee
+$button-yellow: #f7c948
+$button-yellow-dark: #e0ad25
+$button-coral: #d95d39
+$button-coral-dark: #b94728
+$button-ink: #17231f
+$button-muted: #687873
+$button-line: #dfe8e4
+
 [class^="button"]
   display: inline-flex
   justify-content: center
   align-items: center
-  height: 48px
-  padding: 0 24px
-  background: $orange
-  border-radius: 24px
+  min-height: 44px
+  padding: 0 20px
+  border: 0
+  border-radius: 14px
+  background: linear-gradient(135deg, $button-accent 0%, $button-accent-dark 100%)
+  box-shadow: 0 12px 26px rgba(31, 122, 91, .22)
   +button-1
   text-align: center
-  color: $neutrals8
-  transition: all .2s
+  color: #ffffff
+  font-weight: 850
+  letter-spacing: -.01em
+  transition: background .2s, color .2s, box-shadow .2s, transform .2s, opacity .2s
+
   &:hover
-    background: darken($orange, 10)
+    background: linear-gradient(135deg, lighten($button-accent, 4) 0%, $button-accent-dark 100%)
+    box-shadow: 0 16px 34px rgba(31, 122, 91, .28)
+    transform: translateY(-1px)
+
+  &:active
+    transform: translateY(0)
+    box-shadow: 0 8px 18px rgba(31, 122, 91, .20)
+
   &.disabled
     opacity: .5
     pointer-events: none
+
   &.done
-    background: $neutrals5
+    background: linear-gradient(135deg, #7a8f87 0%, #50645d 100%)
+    box-shadow: 0 10px 22px rgba(80, 100, 93, .18)
+
   &.loading
-    background: darken($orange, 15)
+    background: linear-gradient(135deg, $button-accent-dark 0%, #0d4734 100%)
     font-size: 0
+
   &.error
-    box-shadow: 0 0 0 2px $neutrals6 inset
-    background: none
-    color: $pink
+    box-shadow: 0 0 0 1px rgba($button-coral, .35) inset
+    background: rgba($button-coral, .08)
+    color: $button-coral
+
     +dark-common
-      box-shadow: 0 0 0 2px $neutrals4 inset
+      box-shadow: 0 0 0 1px rgba($button-coral, .45) inset
+      background: rgba($button-coral, .12)
+      color: #ff9b7e
+
   svg
-    fill: $neutrals8
+    fill: currentColor
+
   &:not([class^="button-circle"])
     svg
       &:first-child
-        margin-right: 15px
+        margin-right: 12px
+
       &:last-child
-        margin-left: 15px
+        margin-left: 12px
 
 .button-stroke
-  background: none
-  box-shadow: 0 0 0 2px $neutrals6 inset
-  color: $neutrals2
+  background: rgba(255, 255, 255, .72)
+  box-shadow: 0 0 0 1px rgba(31, 122, 91, .22) inset
+  color: $button-accent
+  backdrop-filter: blur(10px)
+
   svg
-    fill: $neutrals2
+    fill: currentColor
     transition: fill .2s
+
   &:hover
-    background: $orange
-    box-shadow: 0 0 0 2px $orange inset
-    color: $neutrals8
+    background: $button-accent-soft
+    box-shadow: 0 0 0 1px rgba(31, 122, 91, .34) inset, 0 12px 26px rgba(31, 122, 91, .12)
+    color: $button-accent-dark
+
     svg
-      fill: $neutrals8
+      fill: currentColor
+
   +dark-common
-    box-shadow: 0 0 0 2px $neutrals3 inset
-    color: $neutrals8
+    background: rgba($neutrals2, .58)
+    box-shadow: 0 0 0 1px rgba($neutrals8, .12) inset
+    color: rgba($neutrals8, .86)
+
     svg
-      fill: $neutrals8
+      fill: currentColor
+
     &:hover
-      box-shadow: 0 0 0 2px $orange inset
-  
+      background: rgba(31, 122, 91, .18)
+      box-shadow: 0 0 0 1px rgba(31, 122, 91, .34) inset
+      color: #7ee0ba
+
 .button-pink
-  background: $pink
+  background: linear-gradient(135deg, $button-coral 0%, $button-coral-dark 100%)
+  box-shadow: 0 12px 26px rgba(217, 93, 57, .20)
+
   &:hover
-    background: darken($pink, 12)
+    background: linear-gradient(135deg, lighten($button-coral, 4) 0%, $button-coral-dark 100%)
+    box-shadow: 0 16px 34px rgba(217, 93, 57, .26)
+
+.button-yellow
+  background: linear-gradient(135deg, $button-yellow 0%, $button-yellow-dark 100%)
+  box-shadow: 0 12px 26px rgba(247, 201, 72, .24)
+  color: $button-ink
+
+  &:hover
+    background: linear-gradient(135deg, lighten($button-yellow, 4) 0%, $button-yellow-dark 100%)
+    box-shadow: 0 16px 34px rgba(247, 201, 72, .30)
+    color: $button-ink
 
 .button-small
-  height: 40px
-  border-radius: 20px
+  min-height: 40px
+  border-radius: 12px
   padding: 0 16px
   font-size: 14px
 
 .button-circle-stroke
-  flex: 0 0 48px
-  width: 48px
-  height: 48px
+  flex: 0 0 44px
+  width: 44px
+  height: 44px
+  min-height: 44px
   padding: 0
-  border-radius: 50%
-  box-shadow: 0 0 0 2px $neutrals6 inset
-  background: transparent
-  transition: all .2s
+  border-radius: 14px
+  box-shadow: 0 0 0 1px rgba(31, 122, 91, .22) inset
+  background: rgba(255, 255, 255, .72)
+  color: $button-accent
+  transition: background .2s, color .2s, box-shadow .2s, transform .2s
+  backdrop-filter: blur(10px)
+
   svg
-      fill: $neutrals4
-      transition: fill .2s
+    fill: currentColor
+    transition: fill .2s
+
   &:hover
-      background: $orange
-      box-shadow: 0 0 0 2px $orange inset
-      svg
-          fill: $neutrals8
+    background: $button-accent
+    box-shadow: 0 12px 26px rgba(31, 122, 91, .18)
+    color: #ffffff
+    transform: translateY(-1px)
+
+    svg
+      fill: currentColor
+
   +dark-common
-    box-shadow: 0 0 0 2px $neutrals3 inset
+    background: rgba($neutrals2, .58)
+    box-shadow: 0 0 0 1px rgba($neutrals8, .12) inset
+    color: rgba($neutrals8, .78)
+
     &:hover
-      background: $neutrals3
+      background: rgba(31, 122, 91, .22)
+      box-shadow: 0 0 0 1px rgba(31, 122, 91, .32) inset
+      color: #7ee0ba
 
 .button-circle-stroke.button-small
   flex: 0 0 40px
   width: 40px
   height: 40px
-
-
-
+  min-height: 40px
+  border-radius: 12px

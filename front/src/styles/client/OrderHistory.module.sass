@@ -1,144 +1,126 @@
-@import ../helpers
+$accent: #1f7a5b
+$ink: #17231f
+$muted: #6b7873
+$line: #dfe8e4
 
 .container
-    max-width: 1200px
+    max-width: 1360px
     margin: 0 auto
-    padding: 20px
+    padding: 32px 24px 56px
+    color: $ink
 
     h1
-        font-size: 24px
-        font-weight: 600
-        color: $neutrals2
-        margin-bottom: 30px
-        +dark
-            color: $neutrals8
+        margin: 0 0 20px
+        color: $ink
+        font-size: 32px
+        line-height: 1.15
+        font-weight: 800
 
 .filters
     display: flex
-    gap: 16px
-    margin-bottom: 30px
-    +m
-        flex-direction: column
+    flex-wrap: wrap
+    gap: 10px
+    margin-bottom: 24px
 
 .filterButton
-    padding: 8px 16px
-    border: 2px solid $neutrals6
+    min-height: 40px
+    padding: 0 14px
+    border: 1px solid $line
     border-radius: 8px
-    background: $neutrals8
-    color: $neutrals4
-    font-weight: 500
-    cursor: pointer
-    transition: all .2s
-    +dark
-        background: $neutrals2
-        border-color: $neutrals3
-        color: $neutrals6
-    &:hover
-        border-color: $orange
-        color: $orange
+    background: #ffffff
+    color: $muted
+    font-size: 14px
+    font-weight: 800
+    transition: background .2s ease, color .2s ease, border-color .2s ease
+
+    &:hover,
     &.active
-        background: $orange
-        border-color: $orange
-        color: white
-        +dark
-            background: $orange
-            border-color: $orange
-            color: white
+        border-color: rgba($accent, .28)
+        background: #e8f5ef
+        color: $accent
 
 .ordersList
-    display: flex
-    flex-direction: column
-    gap: 20px
+    display: grid
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr))
+    gap: 16px
 
 .orderCard
-    background: $neutrals8
-    border-radius: 12px
-    padding: 20px
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1)
+    padding: 22px
+    border: 1px solid $line
+    border-radius: 8px
+    background: #ffffff
+    box-shadow: 0 12px 30px rgba(23, 35, 31, .07)
     cursor: pointer
-    transition: transform .2s, box-shadow .2s
-    +dark
-        background: $neutrals2
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3)
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease
+
     &:hover
-        transform: translateY(-4px)
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15)
-        +dark
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4)
+        transform: translateY(-2px)
+        border-color: rgba($accent, .35)
+        box-shadow: 0 18px 38px rgba(23, 35, 31, .11)
 
 .orderHeader
     display: flex
     justify-content: space-between
     align-items: center
+    gap: 12px
     margin-bottom: 16px
+    padding-bottom: 14px
+    border-bottom: 1px solid $line
 
     h3
-        font-size: 18px
-        font-weight: 600
-        color: $neutrals2
-        +dark
-            color: $neutrals8
+        margin: 0
+        color: $ink
+        font-size: 20px
+        line-height: 1.25
+        font-weight: 800
 
 .status
-    padding: 6px 12px
-    border-radius: 4px
-    font-weight: 500
-    font-size: 14px
-
-    &.NEW
-        background: rgba($blue, 0.1)
-        color: $blue
-
-    &.IN_PROGRESS
-        background: rgba($yellow, 0.1)
-        color: $yellow
-
-    &.COMPLETED
-        background: rgba($green, 0.1)
-        color: $green
-
-    &.CANCELLED
-        background: rgba($orange, 0.1)
-        color: $orange
+    min-height: 28px
+    padding: 0 10px
+    border-radius: 8px
+    font-size: 12px
+    font-weight: 800
 
 .orderDetails
     p
         margin: 8px 0
-        color: $neutrals4
-        +dark
-            color: $neutrals6
+        color: $muted
+        font-size: 14px
+        line-height: 1.55
 
         strong
-            color: $neutrals2
-            margin-right: 8px
-            +dark
-                color: $neutrals8
+            color: $ink
 
-.empty
-    text-align: center
-    padding: 40px
-    background: $neutrals8
-    border-radius: 12px
-    color: $neutrals4
-    font-size: 18px
-    +dark
-        background: $neutrals2
-        color: $neutrals6
+.empty,
+.loading,
+.error
+    padding: 18px
+    border-radius: 8px
+    font-size: 14px
+    line-height: 1.5
+    font-weight: 700
 
+.empty,
 .loading
-    text-align: center
-    padding: 40px
-    font-size: 18px
-    color: $neutrals4
-    +dark
-        color: $neutrals6
+    border: 1px solid $line
+    background: #ffffff
+    color: $muted
 
 .error
-    text-align: center
-    padding: 20px
-    background: rgba($orange, 0.1)
-    color: $orange
-    border-radius: 8px
-    margin: 20px 0
-    +dark
-        background: rgba($orange, 0.2) 
+    border: 1px solid rgba(180, 35, 24, .18)
+    background: #fff1f0
+    color: #b42318
+
+@media only screen and (max-width: 767px)
+    .container
+        padding: 22px 12px 40px
+
+        h1
+            font-size: 27px
+
+    .ordersList
+        grid-template-columns: 1fr
+
+    .orderHeader
+        align-items: flex-start
+        flex-direction: column

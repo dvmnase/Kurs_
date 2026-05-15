@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { authService } from '../services/authService';
 import styles from '../styles/components/OrderTracking.module.sass';
+import { getStatusKey, getStatusLabel } from '../utils/statusLabels';
 
 interface Order {
     orderId: number;
@@ -158,21 +159,6 @@ const OrderTracking = () => {
         }
     };
 
-    const getStatusText = (status: string) => {
-        switch (status.toUpperCase()) {
-            case 'NEW':
-                return 'Новый';
-            case 'IN_PROGRESS':
-                return 'В работе';
-            case 'COMPLETED':
-                return 'Завершен';
-            case 'CANCELLED':
-                return 'Отменен';
-            default:
-                return status;
-        }
-    };
-
     if (loading) {
         return <div className={styles.loading}>Загрузка...</div>;
     }
@@ -221,8 +207,11 @@ const OrderTracking = () => {
                     </div>
                     <div className={styles.detail}>
                         <span className={styles.label}>Статус:</span>
-                        <span className={`${styles.value} ${getStatusColor(selectedOrder.status)}`}>
-                            {getStatusText(selectedOrder.status)}
+                        <span
+                            className={`${styles.value} ${getStatusColor(selectedOrder.status)}`}
+                            data-status={getStatusKey(selectedOrder.status)}
+                        >
+                            {getStatusLabel(selectedOrder.status)}
                         </span>
                     </div>
                     {selectedOrder.employeeName && (

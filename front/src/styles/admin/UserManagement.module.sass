@@ -1,110 +1,301 @@
 @import ../helpers
 
+$accent: #1f7a5b
+$accent-dark: #115b43
+$accent-soft: #e6f4ee
+$yellow: #f7c948
+$yellow-soft: #fff6d8
+$ink: #17231f
+$muted: #6b7873
+$line: #dfe8e4
+$surface: #ffffff
+$danger: #b42318
+$danger-soft: #fff1f0
+
 .container
-    padding: 20px
+    position: relative
     max-width: 1200px
     margin: 0 auto
+    padding: 28px
+    color: $ink
 
-.title
-    font-size: 24px
-    font-weight: 600
-    color: $neutrals2
-    margin-bottom: 20px
+    &::before
+        content: ""
+        position: fixed
+        right: -140px
+        top: 120px
+        width: 340px
+        height: 340px
+        border-radius: 50%
+        background: rgba($accent, .08)
+        pointer-events: none
+        z-index: -1
+
+    &::after
+        content: ""
+        position: fixed
+        left: -120px
+        bottom: 80px
+        width: 280px
+        height: 280px
+        border-radius: 50%
+        background: rgba($yellow, .16)
+        pointer-events: none
+        z-index: -1
+
     +dark
         color: $neutrals8
 
+        &::before
+            background: rgba($accent, .14)
+
+        &::after
+            background: rgba($yellow, .07)
+
+.title
+    position: relative
+    margin: 0 0 24px
+    padding: 26px
+    overflow: hidden
+    border: 1px solid rgba(23, 35, 31, .08)
+    border-radius: 24px
+    background: linear-gradient(135deg, rgba(255, 255, 255, .94) 0%, rgba(246, 251, 248, .88) 100%)
+    box-shadow: 0 20px 55px rgba(23, 35, 31, .09)
+    backdrop-filter: blur(16px)
+    color: $ink
+    font-size: 32px
+    line-height: 1.12
+    font-weight: 950
+    letter-spacing: -.04em
+
+    &::before
+        content: ""
+        position: absolute
+        right: -70px
+        top: -90px
+        width: 220px
+        height: 220px
+        border-radius: 50%
+        background: rgba($accent, .10)
+
+    &::after
+        content: ""
+        display: block
+        width: 62px
+        height: 4px
+        margin-top: 12px
+        border-radius: 999px
+        background: linear-gradient(90deg, $accent 0%, $yellow 100%)
+
+    +dark
+        border-color: rgba($neutrals8, .10)
+        background: linear-gradient(135deg, rgba($neutrals2, .82) 0%, rgba($neutrals1, .92) 100%)
+        box-shadow: 0 20px 55px rgba(0, 0, 0, .24)
+        color: $neutrals8
+
 .error
-    color: #f44336
-    padding: 10px
-    margin: 10px 0
-    background-color: #ffebee
-    border-radius: 4px
+    margin: 0 0 18px
+    padding: 14px 16px
+    border: 1px solid rgba($danger, .18)
+    border-radius: 16px
+    background: $danger-soft
+    color: $danger
+    font-size: 14px
+    line-height: 1.5
+    font-weight: 850
     text-align: center
 
 .table
     width: 100%
-    border-collapse: collapse
-    margin-top: 20px
-    background: white
-    border-radius: 8px
+    margin-top: 0
     overflow: hidden
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1)
+    border: 1px solid rgba(23, 35, 31, .08)
+    border-radius: 24px
+    background: rgba(255, 255, 255, .90)
+    box-shadow: 0 20px 55px rgba(23, 35, 31, .09)
+    backdrop-filter: blur(16px)
 
-    th, td
-        padding: 12px
+    +dark
+        border-color: rgba($neutrals8, .10)
+        background: rgba($neutrals2, .76)
+        box-shadow: 0 20px 55px rgba(0, 0, 0, .24)
+
+    th,
+    td
+        padding: 14px 16px
         text-align: left
-        border-bottom: 1px solid #eee
+        border-bottom: 1px solid rgba(23, 35, 31, .07)
 
     th
-        background-color: #f8f9fa
-        font-weight: 600
-        color: #333
+        background: linear-gradient(180deg, #f6fbf8 0%, #eef7f2 100%)
+        color: $ink
+        font-size: 13px
+        font-weight: 950
+        text-transform: uppercase
+        letter-spacing: .035em
 
-    tr:hover
-        background-color: #f8f9fa
+    td
+        color: #32413b
+        font-size: 14px
+        line-height: 1.45
+
+    tr
+        transition: background .2s ease
+
+        &:hover
+            background: rgba($accent, .035)
+
+        &:last-child
+            td
+                border-bottom: 0
+
+    +dark
+        th
+            background: rgba($neutrals3, .78)
+            color: rgba($neutrals8, .86)
+
+        td
+            border-color: rgba($neutrals8, .08)
+            color: rgba($neutrals8, .78)
+
+        tr:hover
+            background: rgba($accent, .10)
 
 .header
     display: grid
     grid-template-columns: 80px 1fr 1fr 1fr 1fr 1fr
-    padding: 16px
-    background: $neutrals6
-    font-weight: 600
-    color: $neutrals2
+    gap: 8px
+    padding: 16px 18px
+    background: linear-gradient(180deg, #f6fbf8 0%, #eef7f2 100%)
+    color: $ink
+    font-size: 13px
+    font-weight: 950
+    text-transform: uppercase
+    letter-spacing: .035em
+
     +dark
-        background: $neutrals3
-        color: $neutrals8
+        background: rgba($neutrals3, .78)
+        color: rgba($neutrals8, .86)
 
 .row
     display: grid
     grid-template-columns: 80px 1fr 1fr 1fr 1fr 1fr
-    padding: 16px
-    border-bottom: 1px solid $neutrals6
-    +dark
-        border-color: $neutrals3
+    gap: 8px
+    align-items: center
+    padding: 16px 18px
+    border-bottom: 1px solid rgba(23, 35, 31, .07)
+    transition: background .2s ease
+
+    &:hover
+        background: rgba($accent, .035)
+
     &:last-child
         border-bottom: none
 
-.cell
-    padding: 0 8px
-    color: $neutrals2
     +dark
-        color: $neutrals8
+        border-color: rgba($neutrals8, .08)
+
+        &:hover
+            background: rgba($accent, .10)
+
+.cell
+    min-width: 0
+    padding: 0 6px
+    color: #32413b
+    font-size: 14px
+    line-height: 1.45
+    word-break: break-word
+
+    +dark
+        color: rgba($neutrals8, .78)
 
 .status
-    padding: 6px 12px
-    border-radius: 4px
-    font-size: 14px
-    font-weight: 500
+    display: inline-flex
+    align-items: center
+    justify-content: center
+    min-height: 30px
+    padding: 0 12px
+    border-radius: 999px
+    font-size: 12px
+    font-weight: 900
+    white-space: nowrap
 
     &.active
-        background-color: #e6f7e6
-        color: #2e7d32
+        background: rgba($accent, .10)
+        color: $accent
+        box-shadow: 0 0 0 1px rgba($accent, .12) inset
 
     &.blocked
-        background-color: #ffebee
-        color: #c62828
+        background: $danger-soft
+        color: $danger
+        box-shadow: 0 0 0 1px rgba($danger, .14) inset
 
 .actionButton
-    padding: 8px 16px
-    border: none
-    border-radius: 4px
+    display: inline-flex
+    align-items: center
+    justify-content: center
+    min-height: 38px
+    padding: 0 14px
+    border: 0
+    border-radius: 13px
     cursor: pointer
-    font-weight: 500
-    transition: all 0.3s ease
-    color: white
+    font-size: 13px
+    font-weight: 900
+    color: #ffffff
+    transition: transform .2s ease, box-shadow .2s ease, background .2s ease, color .2s ease, opacity .2s ease
 
     &:hover
-        opacity: 0.9
         transform: translateY(-1px)
 
+    &:active
+        transform: translateY(0)
+
 .blockButton
-    background-color: #f44336
+    background: $danger
+    box-shadow: 0 12px 24px rgba($danger, .18)
 
     &:hover
-        background-color: #d32f2f
+        background: darken($danger, 7)
+        box-shadow: 0 16px 30px rgba($danger, .24)
 
 .unblockButton
-    background-color: #4caf50
+    background: linear-gradient(135deg, $accent 0%, $accent-dark 100%)
+    box-shadow: 0 12px 24px rgba($accent, .20)
 
     &:hover
-        background-color: #388e3c 
+        background: linear-gradient(135deg, lighten($accent, 4) 0%, $accent-dark 100%)
+        box-shadow: 0 16px 30px rgba($accent, .26)
+
+@media only screen and (max-width: 1023px)
+    .table
+        overflow-x: auto
+
+    .header,
+    .row
+        min-width: 820px
+
+@media only screen and (max-width: 767px)
+    .container
+        padding: 20px 12px 42px
+
+    .title
+        padding: 22px
+        border-radius: 22px
+        font-size: 27px
+
+    .table
+        border-radius: 22px
+
+    .header,
+    .row
+        min-width: 760px
+        padding: 14px
+
+@media only screen and (max-width: 479px)
+    .container
+        padding-left: 10px
+        padding-right: 10px
+
+    .title
+        padding: 18px
+        font-size: 25px

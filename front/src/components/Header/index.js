@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react'
 import cn from 'classnames'
 import AppLink from '../AppLink'
 import Icon from '../Icon'
-import Image from 'next/image'
 import User from './User'
 import Theme from '../Theme'
 import Modal from '../Modal'
@@ -89,17 +88,10 @@ const Header = ({ navigation, showLogout, onLogout }) => {
   return (
     <>
       <header className={styles.header}>
-        <div className={cn('container', styles.container)} aria-hidden="true">
+        <div className={cn('container', styles.container)}>
           <AppLink className={styles.logo} href={userRole === 'USER' ? '/client' : '/'} onClick={handleLogoClick}>
-            <Image
-              width={256}
-              height={120}
-              objectFit='contain'
-              className={styles.pic}
-              src="/favicon/favicon.png"
-              alt="Logo"
-              priority
-            />
+            <span className={styles.brandBadge}>HT</span>
+            <span className={styles.brandName}>HeatTruck</span>
           </AppLink>
           <div className={cn(styles.wrapper, { [styles.active]: visibleNav })}>
             <nav className={styles.nav}>
@@ -133,12 +125,11 @@ const Header = ({ navigation, showLogout, onLogout }) => {
           </div>
           {authService.isAuthenticated() && (
             <span className="opacity-50 cursor-not-allowed">
-          </span>
+            </span>
           )}
           {showLogout ? (
             <button
               aria-label="logout"
-              aria-hidden="true"
               className={cn('button-small', styles.button, styles.logout)}
               onClick={onLogout}
             >
@@ -147,7 +138,6 @@ const Header = ({ navigation, showLogout, onLogout }) => {
           ) : (
             <button
               aria-label="login"
-              aria-hidden="true"
               className={cn('button-small', styles.button, styles.login)}
               onClick={() => setVisibleAuthModal(true)}
             >
@@ -156,7 +146,6 @@ const Header = ({ navigation, showLogout, onLogout }) => {
           )}
           <button
             aria-label="user-information"
-            aria-hidden="true"
             className={cn(styles.burger, { [styles.active]: visibleNav })}
             onClick={() => setVisibleNav(!visibleNav)}
           />

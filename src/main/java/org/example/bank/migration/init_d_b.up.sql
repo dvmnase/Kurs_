@@ -157,6 +157,41 @@ CREATE TABLE IF NOT EXISTS analytics (
     calculated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
 
+-- ============================
+-- TENDERS (тендеры)
+-- ============================
+CREATE TABLE IF NOT EXISTS tenders (
+    id BIGSERIAL PRIMARY KEY,
+    cargo_id BIGINT NOT NULL,
+    owner_id BIGINT NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'OPEN'
+        CHECK (status IN ('OPEN', 'CLOSED')),
+    end_at TIMESTAMP NOT NULL,
+    conditions TEXT,
+    expected_price DECIMAL(12,2),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    closed_at TIMESTAMP,
+    request_id BIGINT,
+    FOREIGN KEY (cargo_id) REFERENCES cargo(id) ON DELETE CASCADE,
+    FOREIGN KEY (owner_id) REFERENCES owners(id) ON DELETE CASCADE,
+    FOREIGN KEY (request_id) REFERENCES requests(id) ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS tender_bids (
+    id BIGSERIAL PRIMARY KEY,
+    tender_id BIGINT NOT NULL,
+    carrier_id BIGINT NOT NULL,
+    price DECIMAL(12,2) NOT NULL,
+    delivery_date DATE NOT NULL,
+    comment TEXT,
+    status VARCHAR(20) NOT NULL DEFAULT 'PENDING'
+        CHECK (status IN ('PENDING', 'ACCEPTED', 'REJECTED')),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (tender_id) REFERENCES tenders(id) ON DELETE CASCADE,
+    FOREIGN KEY (carrier_id) REFERENCES carriers(id) ON DELETE CASCADE,
+    UNIQUE (tender_id, carrier_id)
+);
+
 CREATE TABLE IF NOT EXISTS messages (
                                         id BIGSERIAL PRIMARY KEY,
                                         request_id BIGINT NOT NULL,

@@ -318,6 +318,7 @@ const OwnerRoutesPage = () => {
     const navigation = {
         menu: [
             { title: 'Мои грузы', url: '/owner/cargo' },
+            { title: 'Тендеры', url: '/owner/tenders' },
             { title: 'Заявки', url: '/owner/requests' },
             { title: 'Маршруты', url: '/owner/routes' },
             { title: 'Настройки', url: '/owner/settings' },

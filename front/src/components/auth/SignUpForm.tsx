@@ -26,7 +26,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ className, onSuccess, onSwitchT
   const [isLoading, setIsLoading] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -42,10 +42,10 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ className, onSuccess, onSwitchT
 
     try {
       await authService.signUp(formData);
-      setSuccess('Регистрация успешно завершена! Теперь вы можете войти в систему.');
+      setSuccess('Аккаунт создан. Теперь можно войти в систему.');
       setIsRegistered(true);
     } catch (err: any) {
-      setError(err.response?.data || 'Ошибка при регистрации');
+      setError(err.response?.data || 'Не удалось зарегистрироваться. Проверьте данные и попробуйте еще раз.');
     } finally {
       setIsLoading(false);
     }
@@ -59,7 +59,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ className, onSuccess, onSwitchT
     <div className={cn(className, styles.transfer)}>
       <div className={cn('h4', styles.title)}>Регистрация</div>
       <div className={styles.text}>
-        {!isRegistered ? 'Введите свои данные для регистрации' : ''}
+        {!isRegistered ? 'Создайте профиль и выберите роль для работы в системе.' : ''}
       </div>
       {error && <div className={styles.error}>{error}</div>}
       {success && <div className={styles.success}>{success}</div>}
@@ -152,7 +152,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ className, onSuccess, onSwitchT
               className={cn('button', styles.button)}
               disabled={isLoading}
             >
-              {isLoading ? 'Регистрация...' : 'Зарегистрироваться'}
+              {isLoading ? 'Создаем аккаунт...' : 'Зарегистрироваться'}
             </button>
           </div>
         </form>
@@ -162,7 +162,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ className, onSuccess, onSwitchT
             onClick={handleGoToLogin}
             className={cn('button', styles.button, styles.loginButton)}
           >
-            Перейти к входу
+            Перейти ко входу
           </button>
         </div>
       )}

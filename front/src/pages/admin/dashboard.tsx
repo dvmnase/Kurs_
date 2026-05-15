@@ -5,6 +5,7 @@ import AdminLayout from '../../components/admin/AdminLayout';
 import api from '../../services/api';
 import styles from '../../styles/admin/Dashboard.module.sass';
 import cn from 'classnames';
+import { getStatusLabel } from '../../utils/statusLabels';
 
 // Simple chart component using CSS
 const SimpleChart: React.FC<{ data: { label: string; value: number }[] }> = ({ data }) => {
@@ -263,18 +264,6 @@ const AdminDashboard = () => {
                 setError('Ошибка при удалении пользователя');
             }
         }
-    };
-
-    const getStatusLabel = (status: string): string => {
-        const statusMap: { [key: string]: string } = {
-            'NEW': 'Новая',
-            'PENDING': 'Ожидает',
-            'ACCEPTED': 'Принята',
-            'DECLINED': 'Отклонена',
-            'CANCELLED': 'Отменена',
-            'IN_PROGRESS': 'В процессе'
-        };
-        return statusMap[status] || status;
     };
 
     const getMetricLabel = (metric: string): string => {

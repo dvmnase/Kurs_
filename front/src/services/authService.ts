@@ -9,6 +9,7 @@ export interface SignUpData {
     role: string;
     fullName: string;
     phoneNumber: string;
+    address?: string;
     companyName?: string; // для перевозчиков
 }
 
@@ -52,9 +53,12 @@ export interface AuthService {
     getUser: () => UserData | null;
     isAuthenticated: () => boolean;
     getUserFullName: () => string | null;
+    getClientId: () => number | null;
     getOwnerId: () => number | null;
     getCarrierId: () => number | null;
     isAdmin: () => boolean;
+    isClient: () => boolean;
+    isEmployee: () => boolean;
     isOwner: () => boolean;
     isCarrier: () => boolean;
 }
@@ -109,9 +113,9 @@ export const authService: AuthService = {
                 } else if (role === 'OWNER' || role === 'CARRIER') {
                     // Для OWNER и CARRIER сохраняем базовые данные из ответа
                     const basicData = {
-                        id: userData?.id || 0,
-                        fullName: userData?.fullName || '',
-                        phone: userData?.phone || userData?.phoneNumber || '',
+                        id: 0,
+                        fullName: '',
+                        phoneNumber: '',
                         role: role
                     };
                     localStorage.setItem('user', JSON.stringify(basicData));
@@ -191,6 +195,21 @@ export const authService: AuthService = {
         }
     },
 
+    getClientId: () => {
+        if (!isBrowser) return null;
+        const userStr = localStorage.getItem('user');
+        if (!userStr || userStr === 'undefined') return null;
+        try {
+            const user = JSON.parse(userStr);
+            const clientRoles = ['USER', 'ROLE_USER', 'CLIENT'];
+            if (!user || !clientRoles.includes(user.role)) return null;
+            return user.id;
+        } catch (e) {
+            console.error('Error parsing user data:', e);
+            return null;
+        }
+    },
+
     getOwnerId: () => {
         if (!isBrowser) return null;
         const userStr = localStorage.getItem('user');
@@ -226,6 +245,18 @@ export const authService: AuthService = {
         if (!isBrowser) return false;
         const role = localStorage.getItem('role');
         return role === 'ADMIN';
+    },
+
+    isClient: () => {
+        if (!isBrowser) return false;
+        const role = localStorage.getItem('role');
+        return role === 'USER' || role === 'ROLE_USER' || role === 'CLIENT';
+    },
+
+    isEmployee: () => {
+        if (!isBrowser) return false;
+        const role = localStorage.getItem('role');
+        return role === 'EMPLOYEE' || role === 'ROLE_EMPLOYEE';
     },
 
     isOwner: () => {
